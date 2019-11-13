@@ -1,4 +1,7 @@
 ﻿import GameConfig from "./GameConfig";
+import resource from "./script/resource";
+import GLOBAL from './script/Global';
+import MenuLayer from './script/menuLayer';
 class Main {
 	constructor() {
 		//根据IDE设置初始化引擎		
@@ -20,6 +23,45 @@ class Main {
 		if (GameConfig.stat) Laya.Stat.show();
 		Laya.alertGlobalError = true;
 
+		
+		this.GLOBAL = GLOBAL;
+		if (this.GLOBAL.CONF.DEGRADE) {
+			delete resource.cloudSmallLeft;
+			delete resource.cloudSmallRight;
+            delete resource.cloudLargeLeft;
+            delete resource.cloudLargeRight;
+            delete resource.mgForestLeft;
+            delete resource.mgForestRight;
+            delete resource.mgWaterLeft;
+            delete resource.mgWaterRight;
+            delete resource.mgCityLeft;
+            delete resource.mgCityRight;
+            delete resource.fgForestLeft;
+            delete resource.fgForestRight;
+            delete resource.fgWaterLeft;
+            delete resource.fgWaterRight;
+            delete resource.fgCityLeft;
+            delete resource.fgCityRight;
+            delete resource.grassLeft;
+            delete resource.grassRight;
+            delete resource.bridgeLeft;
+            delete resource.bridgeRight;
+            delete resource.roadLeft;
+            delete resource.roadRight;
+		} else {
+            delete resource.forestDegLeft;
+            delete resource.forestDegRight;
+            delete resource.waterDegLeft;
+            delete resource.waterDegRight;
+            delete resource.cityDegLeft;
+            delete resource.cityDegRight;
+		}
+		var loadSource = Object.values(resource).map(function(item) {return item.url});
+		console.log(loadSource, 'loadSource');
+		Laya.loader.load(loadSource,
+			Laya.Handler.create(this, this.loadComplete),
+			Laya.Handler.create(this, this.loadProgress, [], false)
+		);
 		//激活资源版本控制，version.json由IDE发布功能自动生成，如果没有也不影响后续流程
 		Laya.ResourceVersion.enable("version.json", Laya.Handler.create(this, this.onVersionLoaded), Laya.ResourceVersion.FILENAME_VERSION);
 	}
@@ -31,7 +73,41 @@ class Main {
 
 	onConfigLoaded() {
 		//加载IDE指定的场景
-		GameConfig.startScene && Laya.Scene.open(GameConfig.startScene);
+		if (this.GLOBAL.CONF.STATUS !== 4) {
+			var test = new MenuLayer();
+			Laya.stage.addChild(test);
+		}
+	}
+	/** 资源加载完成时回调*/
+	loadComplete(isSuccess) {
+		console.log(666);
+		const progressTip = document.getElementById('progress_tip');
+		const progress = document.getElementById('progress');
+		const percent = document.getElementById('percent');
+		const body = document.body;
+		body.className = body.className.replace('no-scroll', '');
+		body.removeChild(progress.parentNode);
+		body.removeChild(progressTip);
+		// if (GLOBAL.DATA.STATUS !== 4) {
+		//     const finishLayer = new FinishLayer();
+		//     Tiny.app.run(finishLayer);
+		// } else {
+		//     const menuLayer = new MenuLayer();
+		//     Tiny.app.run(menuLayer);
+		// }
+		// window.kfcMario.runDanmu && window.kfcMario.runDanmu();
+		// window.kfcMario.gameInitCallback && window.kfcMario.gameInitCallback();
+	}
+	
+	/**资源加载过程中的进度回调
+	 * progress 取值 0-1 */
+	loadProgress(pro) {
+		const progressTip = document.getElementById('progress_tip');
+		const progress = document.getElementById('progress');
+		const percent = document.getElementById('percent');
+		const num = ((+pro)*100).toFixed();
+		percent.innerHTML = `${num}%`;
+		progress.style.width = `${num}%`;
 	}
 }
 //激活启动类

@@ -3,7 +3,6 @@ import GameUI from "./script/GameUI"
 import GameControl from "./script/GameControl"
 import Bullet from "./script/Bullet"
 import DropBox from "./script/DropBox"
-import resource from "./script/resource"
 
 export default class GameConfig {
     static init() {
@@ -30,31 +29,3 @@ GameConfig.physicsDebug = false;
 GameConfig.exportSceneToJson = true;
 
 GameConfig.init();
-Laya.loader.load(resource, Laya.Handler.create(this, function (e) {
-    let resManager = ResLoader.getInstance();
-    let loading = new ui.view.gameLoadingUI();
-    Laya.stage.addChild(loading);
-    let sp_mask = loading.sp_mask;
-    sp_mask.optimizeScrollRect = true;
-    const progressTip = document.getElementById('progress_tip');
-    const progress = document.getElementById('progress');
-    const percent = document.getElementById('percent');
-    const num = +pre;
-    percent.innerHTML = `${num}%`;
-    progress.style.width = `${num}%`;
-    const body = document.body;
-    body.className = body.className.replace('no-scroll', '');
-    body.removeChild(progress.parentNode);
-    body.removeChild(progressTip);
-    if (GLOBAL.DATA.STATUS === 4) {
-        const finishLayer = new FinishLayer();
-        Tiny.app.run(finishLayer);
-    } else {
-        const menuLayer = new MenuLayer();
-        Tiny.app.run(menuLayer);
-        // menuLayer.emit('transitionend');
-    }
-    Tiny.app.view.style.opacity = '1';
-    window.kfcMario.runDanmu && window.kfcMario.runDanmu();
-    window.kfcMario.gameInitCallback && window.kfcMario.gameInitCallback();
-}));
