@@ -16,7 +16,8 @@ class BackgroundDegrade extends Laya.Sprite {
         this._newGroundIndex = 1;
         let bgPos = 0;
         for (let i = 0; i < 2; i++) {
-            const bg = new Laya.Sprite(this._bgList[i]);
+            const bg = new Laya.Sprite();
+            bg.loadImage(this._bgList[i]);
             // @ts-ignore
             bg._inview = true;
             // @ts-ignore

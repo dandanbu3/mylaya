@@ -11,8 +11,10 @@ class BackgroundScene extends Laya.Sprite {
         this._groundCache = [];
         this._newGroundIndex = 1;
 
-        const bgLeft = Laya.Sprite(resource['bgLeft'].url);
-        const bgRight = Laya.Sprite(resource['bgRight'].url);
+        const bgLeft = Laya.Sprite();
+        bgLeft.loadImage(resource['bgLeft'].url);
+        const bgRight = Laya.Sprite();
+        bgRight.loadImage(resource['bgRight'].url);
         
         this._bgWidth = 2180;
         for (let i = 0; i < 4; i++) {
@@ -24,10 +26,14 @@ class BackgroundScene extends Laya.Sprite {
             this._bgCache.push(sprite);
         }
         
-        const cloudSmallLeft = Laya.Sprite(resource['cloudSmallLeft'].url);
-        const cloudSmallRight = Laya.Sprite(resource['cloudSmallRight'].url);
-        const cloudLargeLeft = Laya.Sprite(resource['cloudLargeLeft'].url);
-        const cloudLargeRight = Laya.Sprite(resource['cloudLargeRight'].url);
+        const cloudSmallLeft = Laya.Sprite();
+        cloudSmallLeft.loadImage(resource['cloudSmallLeft'].url);
+        const cloudSmallRight = Laya.Sprite();
+        cloudSmallRight.loadImage(resource['cloudSmallRight'].url);
+        const cloudLargeLeft = Laya.Sprite();
+        cloudLargeLeft.loadImage(resource['cloudLargeLeft'].url);
+        const cloudLargeRight = Laya.Sprite();
+        cloudLargeRight.loadImage(resource['cloudLargeRight'].url);
         this._cloudList = [cloudSmallLeft, cloudSmallRight, cloudLargeLeft, cloudLargeRight, cloudSmallLeft, cloudSmallRight];
         let cloudPosX = 0;
         for (let i = 0; i < 2; i++) {
