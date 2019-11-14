@@ -792,13 +792,16 @@
 
         drawSetting () { // 背景图&故事背景
             const textBg = new Laya.Sprite(`${alias}text_bg.png`);
+            textBg.autoSize = true;
             textBg.pivot(0.5, 1);
             textBg.pos(375, 588);
             this.addChild(textBg);
             this._storySetting = new Laya.Sprite(RESOURCES['storySetting'].url);
+            this._storySetting.autoSize = true;
             this._storySetting.pivot(0.5, 0);
             this._storySetting.pos(375, 548);
             const copy = new Laya.Sprite(RESOURCES['storySetting'].url);
+            copy.autoSize = true;
             copy.pos(-239.5, 308);
             this.addChild(copy);
             this.addChild(this._storySetting);
