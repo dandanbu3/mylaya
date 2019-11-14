@@ -1,6 +1,6 @@
 import resource from './resource';
 // import MainLayer from './MainLayer';
-// import HeaderScene from './HeaderScene';
+import HeaderScene from './HeaderScene';
 import GLOBAL from './Global';
 import Util from './utils';
 // import Sound from './Sound';
@@ -17,8 +17,8 @@ export default class menuLayer extends Laya.Scene {
         this.drawBtns();
         this.drawTips();
         this.drawFrame();
-        // this._header = new HeaderScene();
-        // this.addChild(this._header);
+        this._header = new HeaderScene();
+        this.addChild(this._header);
         const isFrist = Util.storage.get('bili_mario_visited') !== 'visited';
         if (isFrist) { // 第一次进入页面，加手提示
             let ani = new Laya.Animation();
@@ -127,10 +127,12 @@ export default class menuLayer extends Laya.Scene {
     }
     drawFrame () {
         let logo = new Laya.Animation();
+        logo.width = 240;
+        logo.height = 120;
         logo.loadImages(this.aniUrls("logo/logo_", 27));
         logo.interval = 160;
-        logo.pivot(0.5, 0);
-        logo.pos(375, 277);
+        logo.pivot(0, 0);
+        logo.pos(55, 277);
         logo.play();
         this.addChild(logo);
         const frame = new Laya.Sprite(resource['frame'].url);
@@ -204,19 +206,26 @@ class GrilRadio extends Laya.Sprite {
         this.height = 120;
         this._checked = checked;
         this._selectBg = new Laya.Sprite(`${alias}select_bg.png`);
+        this._selectBg.width = 160;
+        this._selectBg.height = 160;
         this._selectFront = new Laya.Sprite(`${alias}select_front.png`);
+        this._selectFront.width = 188;
+        this._selectFront.height = 192;
         this._selectedBg = new Laya.Sprite(`${alias}selected_bg.png`);
+        this._selectedBg.width = 160;
+        this._selectedBg.height = 160;
         this._selectedFront = new Laya.Sprite(`${alias}selected_front.png`);
+        this._selectedFront.width = 188;
+        this._selectedFront.height = 192;
         this._selectedIcon = new Laya.Sprite(`${alias}selected_icon.png`);
+        this._selectedIcon.width = 56;
+        this._selectedIcon.height = 56;
         this._bgSprite = this._checked ? this._selectedBg : this._selectBg;
-        this._bgSprite.pos(79, 82);
+        this._bgSprite.pos(0, 0);
         this.addChild(this._bgSprite);
-        if (animateSprite) {
-            animateSprite.play();
-            this.addChild(animateSprite);
-        }
+        
         this._frontSprite = this._checked ? this._selectedFront : this._selectFront;
-        this._frontSprite.pos(93, 96);
+        this._frontSprite.pos(0, 0);
         this.addChild(this._frontSprite);
         this._iconSprite = this._selectedIcon;
         if (!this._checked) {
@@ -224,7 +233,11 @@ class GrilRadio extends Laya.Sprite {
         } else {
             this.scale(1.1, 1.1);
         }
-        this._iconSprite.pos(51, 40);
+        this._iconSprite.pos(0, 0);
         this.addChild(this._iconSprite);
+        if (animateSprite) {
+            animateSprite.play();
+            this.addChild(animateSprite);
+        }
     }
 }

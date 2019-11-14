@@ -1,6 +1,6 @@
 import GLOBAL from './Global';
 
-class HeaderScene extends Tiny.Container {
+class HeaderScene extends Laya.Scene {
     constructor () {
         super();
         this._remainBox = GLOBAL.DATA.DISPLAY_CHANCE;
@@ -20,14 +20,14 @@ class HeaderScene extends Tiny.Container {
             numArr.reverse();
         }
         numArr.forEach((item, index) => {
-            const sprite = new Tiny.Sprite(Tiny.Texture.fromFrame(`tileset-num-${size}_${item}.png`));
+            const sprite = new Laya.Sprite(`num/${size}_${item}.png`);
             // @ts-ignore
             sprite._num = Number(item);
-            sprite.setAnchor(0.5, 1);
+            sprite.pivot(0.5, 1);
             if (reverse) {
-                sprite.setPosition(pos.x - index * (interval), pos.y);
+                sprite.getPositionX(pos.x - index * (interval), pos.y);
             } else {
-                sprite.setPosition(pos.x + index * (interval), pos.y);
+                sprite.pos(pos.x + index * (interval), pos.y);
             }
             this[cacheKey].push(sprite);
             this.addChild(sprite);
@@ -35,14 +35,16 @@ class HeaderScene extends Tiny.Container {
     }
     drawPrizeTotal () {
         if (!GLOBAL.DATA.IS_LOGIN) {
-            const avatar = new Tiny.Sprite(Tiny.Texture.fromFrame('tileset-other-noface.png'));
-            avatar.setAnchor(0);
-            avatar.setPosition(60, 60);
+            const avatar = new Laya.Sprite('other/noface.png');
+            avatar.autoSize = true;
+            avatar.pivot(0, 0);
+            avatar.pos(60, 60);
             avatar.setEventEnabled(true);
             this.addChild(avatar);
-            const login = new Tiny.Sprite(Tiny.Texture.fromFrame(`tileset-other-login.png`));
-            login.setAnchor(0, 1);
-            login.setPosition(60, 146);
+            const login = new Laya.Sprite(`other/login.png`);
+            login.autoSize = true;
+            login.pivot(0, 1);
+            login.pos(60, 146);
             login.setEventEnabled(true);
             avatar.tap = login.tap = (event) => {
                 event.data.originalEvent.preventDefault();
@@ -50,32 +52,36 @@ class HeaderScene extends Tiny.Container {
             };
             this.addChild(login);
         }
-        const bg = new Tiny.Sprite(Tiny.Texture.fromFrame(`tileset-icons-header_left.png`));
-        bg.setAnchor(0);
-        bg.setPosition(40, 44);
+        const bg = new Laya.Sprite(`icons/header_left.png`);
+        bg.autoSize = true;
+        bg.pivot(0, 0);
+        bg.pos(40, 44);
         this.addChild(bg);
-        const x = new Tiny.Sprite(Tiny.Texture.fromFrame(`tileset-num-lg_x.png`));
-        x.setAnchor(0, 1);
-        x.setPosition(175, 94);
+        const x = new Laya.Sprite(`num/lg_x.png`);
+        x.autoSize = true;
+        x.pivot(0, 1);
+        x.pos(175, 94);
         this.addChild(x);
         this.reset();
     }
     drawRank () {
-        const bgOne = new Tiny.Sprite(Tiny.Texture.fromFrame(`tileset-icons-best_global.png`));
-        bgOne.setAnchor(0);
-        bgOne.setPosition(366, 44);
+        const bgOne = new Laya.Sprite(`icons/best_global.png`);
+        bgOne.autoSize = true;
+        bgOne.pivot(0, 0);
+        bgOne.pos(366, 44);
         this.addChild(bgOne);
-        const bgTwo = new Tiny.Sprite(Tiny.Texture.fromFrame(`tileset-icons-best_personal.png`));
-        bgTwo.setAnchor(0);
-        bgTwo.setPosition(366, 116);
+        const bgTwo = new Laya.Sprite(`icons/best_personal.png`);
+        bgTwo.autoSize = true;
+        bgTwo.pivot(0, 0);
+        bgTwo.pos(366, 116);
         this.addChild(bgTwo);
-        const m = new Tiny.Sprite(Tiny.Texture.fromFrame(`tileset-num-sm_m.png`));
-        m.setAnchor(0, 1);
-        m.setPosition(678, 80);
+        const m = new Laya.Sprite(`num/sm_m.png`);
+        m.pivot(0, 1);
+        m.pos(678, 80);
         this.addChild(m);
-        const mPersonal = new Tiny.Sprite(Tiny.Texture.fromFrame(`tileset-num-sm_m.png`));
-        mPersonal.setAnchor(0, 1);
-        mPersonal.setPosition(678, 153);
+        const mPersonal = new Laya.Sprite(`tileset-num-sm_m.png`);
+        mPersonal.pivot(0, 1);
+        mPersonal.pos(678, 153);
         this.addChild(mPersonal);
         this.syncRecord();
     }
@@ -90,19 +96,19 @@ class HeaderScene extends Tiny.Container {
                 const oldArr = oldValue.split('');
                 newArr.forEach((item, index) => {
                     if (item !== oldArr[index]) {
-                        const newSprite = new Tiny.Sprite(Tiny.Texture.fromFrame(`tileset-num-lg_${item}.png`));
-                        newSprite.setAnchor(0.5, 1);
-                        newSprite.setPosition(207 + index * 28, 44);
+                        const newSprite = new Laya.Sprite(`num/lg_${item}.png`);
+                        newSprite.pivot(0.5, 1);
+                        newSprite.pos(207 + index * 28, 44);
                         this.addChild(newSprite);
                         const oldSprite = this._prizeNumCache[index];
                         this._prizeNumCache.splice(index, 1, newSprite);
-                        const moveAction = Tiny.MoveTo(500, Tiny.point(207 + index * 28, 94));
-                        newSprite.runAction(moveAction);
-                        const oldAction = Tiny.MoveTo(500, Tiny.point(oldSprite.getPositionX(), oldSprite.getPositionY() + 50));
-                        oldAction.onComplete = () => {
-                            this.removeChild(oldSprite);
-                        };
-                        oldSprite.runAction(oldAction);
+                        // const moveAction = Tiny.MoveTo(500, Tiny.point(207 + index * 28, 94));
+                        // newSprite.runAction(moveAction);
+                        // const oldAction = Tiny.MoveTo(500, Tiny.point(oldSprite.getPositionX(), oldSprite.getPositionY() + 50));
+                        // oldAction.onComplete = () => {
+                        //     this.removeChild(oldSprite);
+                        // };
+                        // oldSprite.runAction(oldAction);
                     }
                 });
             }

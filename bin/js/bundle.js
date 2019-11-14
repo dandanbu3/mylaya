@@ -519,6 +519,130 @@
         ENEMY_CONF
     };
 
+    class HeaderScene extends Laya.Scene {
+        constructor () {
+            super();
+            this._remainBox = GLOBAL.DATA.DISPLAY_CHANCE;
+            this._prizeNumCache = [];
+            this._recordAllNumCache = [];
+            this._recordSelfNumCache = [];
+            this.drawPrizeTotal();
+            this.drawRank();
+        }
+        drawNum (cacheKey, num, size = 'lg', pos, interval = 28, reverse = false) {
+            this[cacheKey].forEach(sprite => {
+                this.removeChild(sprite);
+            });
+            this[cacheKey] = [];
+            const numArr = num.toString().split('');
+            if (reverse) {
+                numArr.reverse();
+            }
+            numArr.forEach((item, index) => {
+                const sprite = new Laya.Sprite(`num/${size}_${item}.png`);
+                // @ts-ignore
+                sprite._num = Number(item);
+                sprite.pivot(0.5, 1);
+                if (reverse) {
+                    sprite.getPositionX(pos.x - index * (interval), pos.y);
+                } else {
+                    sprite.pos(pos.x + index * (interval), pos.y);
+                }
+                this[cacheKey].push(sprite);
+                this.addChild(sprite);
+            });
+        }
+        drawPrizeTotal () {
+            if (!GLOBAL.DATA.IS_LOGIN) {
+                const avatar = new Laya.Sprite('other/noface.png');
+                avatar.autoSize = true;
+                avatar.pivot(0, 0);
+                avatar.pos(60, 60);
+                avatar.setEventEnabled(true);
+                this.addChild(avatar);
+                const login = new Laya.Sprite(`other/login.png`);
+                login.autoSize = true;
+                login.pivot(0, 1);
+                login.pos(60, 146);
+                login.setEventEnabled(true);
+                avatar.tap = login.tap = (event) => {
+                    event.data.originalEvent.preventDefault();
+                    window.kfcMario.goToLogin && window.kfcMario.goToLogin();
+                };
+                this.addChild(login);
+            }
+            const bg = new Laya.Sprite(`icons/header_left.png`);
+            bg.autoSize = true;
+            bg.pivot(0, 0);
+            bg.pos(40, 44);
+            this.addChild(bg);
+            const x = new Laya.Sprite(`num/lg_x.png`);
+            x.autoSize = true;
+            x.pivot(0, 1);
+            x.pos(175, 94);
+            this.addChild(x);
+            this.reset();
+        }
+        drawRank () {
+            const bgOne = new Laya.Sprite(`icons/best_global.png`);
+            bgOne.autoSize = true;
+            bgOne.pivot(0, 0);
+            bgOne.pos(366, 44);
+            this.addChild(bgOne);
+            const bgTwo = new Laya.Sprite(`icons/best_personal.png`);
+            bgTwo.autoSize = true;
+            bgTwo.pivot(0, 0);
+            bgTwo.pos(366, 116);
+            this.addChild(bgTwo);
+            const m = new Laya.Sprite(`num/sm_m.png`);
+            m.pivot(0, 1);
+            m.pos(678, 80);
+            this.addChild(m);
+            const mPersonal = new Laya.Sprite(`tileset-num-sm_m.png`);
+            mPersonal.pivot(0, 1);
+            mPersonal.pos(678, 153);
+            this.addChild(mPersonal);
+            this.syncRecord();
+        }
+        releaseOneBox () {
+            if (this._remainBox > 0) {
+                const oldValue = this._remainBox.toString();
+                const newValue = (--this._remainBox).toString();
+                if (newValue.length < oldValue.length) {
+                    this.reset();
+                } else {
+                    const newArr = newValue.split('');
+                    const oldArr = oldValue.split('');
+                    newArr.forEach((item, index) => {
+                        if (item !== oldArr[index]) {
+                            const newSprite = new Laya.Sprite(`num/lg_${item}.png`);
+                            newSprite.pivot(0.5, 1);
+                            newSprite.pos(207 + index * 28, 44);
+                            this.addChild(newSprite);
+                            const oldSprite = this._prizeNumCache[index];
+                            this._prizeNumCache.splice(index, 1, newSprite);
+                            // const moveAction = Tiny.MoveTo(500, Tiny.point(207 + index * 28, 94));
+                            // newSprite.runAction(moveAction);
+                            // const oldAction = Tiny.MoveTo(500, Tiny.point(oldSprite.getPositionX(), oldSprite.getPositionY() + 50));
+                            // oldAction.onComplete = () => {
+                            //     this.removeChild(oldSprite);
+                            // };
+                            // oldSprite.runAction(oldAction);
+                        }
+                    });
+                }
+            }
+        }
+        reset (remainBox) {
+            this._remainBox = remainBox === undefined ? GLOBAL.DATA.DISPLAY_CHANCE : remainBox;
+            this.drawNum('_prizeNumCache', this._remainBox, 'lg', {x: 207, y: 94});
+        }
+        syncRecord () {
+            this.drawNum('_recordAllNumCache', GLOBAL.DATA.ALL_RECORD, 'sm', {x: 665, y: 80}, 20, true);
+            this.drawNum('_recordSelfNumCache', GLOBAL.DATA.SELF_RECORD, 'sm', {x: 665, y: 153}, 20, true);
+        }
+    }
+
     const Util = {
         webp: (function() {
             try {
@@ -703,8 +827,8 @@
             this.drawBtns();
             this.drawTips();
             this.drawFrame();
-            // this._header = new HeaderScene();
-            // this.addChild(this._header);
+            this._header = new HeaderScene();
+            this.addChild(this._header);
             const isFrist = Util.storage.get('bili_mario_visited') !== 'visited';
             if (isFrist) { // 第一次进入页面，加手提示
                 let ani = new Laya.Animation();
@@ -813,10 +937,12 @@
         }
         drawFrame () {
             let logo = new Laya.Animation();
+            logo.width = 240;
+            logo.height = 120;
             logo.loadImages(this.aniUrls("logo/logo_", 27));
             logo.interval = 160;
-            logo.pivot(0.5, 0);
-            logo.pos(375, 277);
+            logo.pivot(0, 0);
+            logo.pos(55, 277);
             logo.play();
             this.addChild(logo);
             const frame = new Laya.Sprite(RESOURCES['frame'].url);
@@ -890,19 +1016,26 @@
             this.height = 120;
             this._checked = checked;
             this._selectBg = new Laya.Sprite(`${alias}select_bg.png`);
+            this._selectBg.width = 160;
+            this._selectBg.height = 160;
             this._selectFront = new Laya.Sprite(`${alias}select_front.png`);
+            this._selectFront.width = 188;
+            this._selectFront.height = 192;
             this._selectedBg = new Laya.Sprite(`${alias}selected_bg.png`);
+            this._selectedBg.width = 160;
+            this._selectedBg.height = 160;
             this._selectedFront = new Laya.Sprite(`${alias}selected_front.png`);
+            this._selectedFront.width = 188;
+            this._selectedFront.height = 192;
             this._selectedIcon = new Laya.Sprite(`${alias}selected_icon.png`);
+            this._selectedIcon.width = 56;
+            this._selectedIcon.height = 56;
             this._bgSprite = this._checked ? this._selectedBg : this._selectBg;
-            this._bgSprite.pos(79, 82);
+            this._bgSprite.pos(0, 0);
             this.addChild(this._bgSprite);
-            if (animateSprite) {
-                animateSprite.play();
-                this.addChild(animateSprite);
-            }
+            
             this._frontSprite = this._checked ? this._selectedFront : this._selectFront;
-            this._frontSprite.pos(93, 96);
+            this._frontSprite.pos(0, 0);
             this.addChild(this._frontSprite);
             this._iconSprite = this._selectedIcon;
             if (!this._checked) {
@@ -910,8 +1043,12 @@
             } else {
                 this.scale(1.1, 1.1);
             }
-            this._iconSprite.pos(51, 40);
+            this._iconSprite.pos(0, 0);
             this.addChild(this._iconSprite);
+            if (animateSprite) {
+                animateSprite.play();
+                this.addChild(animateSprite);
+            }
         }
     }
 
