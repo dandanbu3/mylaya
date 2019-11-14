@@ -544,7 +544,7 @@
                 sprite._num = Number(item);
                 sprite.pivot(0.5, 1);
                 if (reverse) {
-                    sprite.getPositionX(pos.x - index * (interval), pos.y);
+                    sprite.pos(pos.x - index * (interval), pos.y);
                 } else {
                     sprite.pos(pos.x + index * (interval), pos.y);
                 }
@@ -558,13 +558,13 @@
                 avatar.autoSize = true;
                 avatar.pivot(0, 0);
                 avatar.pos(60, 60);
-                avatar.setEventEnabled(true);
+                // avatar.setEventEnabled(true);
                 this.addChild(avatar);
                 const login = new Laya.Sprite(`other/login.png`);
                 login.autoSize = true;
                 login.pivot(0, 1);
                 login.pos(60, 146);
-                login.setEventEnabled(true);
+                // login.setEventEnabled(true);
                 avatar.tap = login.tap = (event) => {
                     event.data.originalEvent.preventDefault();
                     window.kfcMario.goToLogin && window.kfcMario.goToLogin();
@@ -819,6 +819,15 @@
     class menuLayer extends Laya.Scene {
         constructor() {
             super();
+            this.test = new Laya.Sprite();
+            this.test.loadImage(`${alias}select_bg.png`);
+            // this.test.autoSize = true;
+            // this.test.width = 160;
+            // this.test.height = 160;
+            this.test.name = 'test';
+            this.test.pivot(0, 0);
+            this.test.pos(160, 160);
+            this.addChild(this.test);
             this._choosen = 'girl22';
             this.height = 1144;
             this.width = 750;
@@ -836,7 +845,7 @@
                 ani.interval = 30;			// 设置播放间隔（单位：毫秒）
                 ani.index = 1;				// 当前播放索引	
                 ani.pivot(0.5, 0);
-                ani.pos(534, 904);
+                ani.pos(534, 1004);
                 ani.loadImages(this.aniUrls("other/hand_", 12));
                 ani.play();
             }
@@ -869,7 +878,8 @@
                 text.x = 355;
                 text.y = 6;
                 this.addChild(text);
-                const icon = new Laya.Sprite(`${alias}tip_horn.png`);
+                const icon = new Laya.Sprite();
+                icon.loadImage(`${alias}tip_horn.png`);
                 icon.pos(310 - text.width / 2, 6);
                 this.addChild(icon);
                 this.addChild(sprite);
@@ -915,22 +925,26 @@
         }
 
         drawSetting () { // 背景图&故事背景
-            const textBg = new Laya.Sprite(`${alias}text_bg.png`);
+            const textBg = new Laya.Sprite();
+            textBg.loadImage(`${alias}text_bg.png`);
             textBg.autoSize = true;
             textBg.pivot(0.5, 1);
             textBg.pos(375, 588);
             this.addChild(textBg);
-            this._storySetting = new Laya.Sprite(RESOURCES['storySetting'].url);
+            this._storySetting = new Laya.Sprite();
+            this._storySetting.loadImage(RESOURCES['storySetting'].url);
             this._storySetting.autoSize = true;
             this._storySetting.pivot(0.5, 0);
             this._storySetting.pos(375, 548);
-            const copy = new Laya.Sprite(RESOURCES['storySetting'].url);
+            const copy = new Laya.Sprite();
+            copy.loadImage(RESOURCES['storySetting'].url);
             copy.autoSize = true;
             copy.pos(-239.5, 308);
             this.addChild(copy);
             this.addChild(this._storySetting);
             // this.startStoryScroll();
-            const menuBg = new Laya.Sprite(RESOURCES['menuBg'].url);
+            const menuBg = new Laya.Sprite();
+            menuBg.loadImage(RESOURCES['menuBg'].url);
             menuBg.pivot(0, 0);
             menuBg.pos(20, 192);
             this.addChild(menuBg);
@@ -945,7 +959,8 @@
             logo.pos(55, 277);
             logo.play();
             this.addChild(logo);
-            const frame = new Laya.Sprite(RESOURCES['frame'].url);
+            const frame = new Laya.Sprite();
+            frame.loadImage(RESOURCES['frame'].url);
             frame.pivot(0, 0);
             frame.pos(0, 0);
             this.addChild(frame);
@@ -973,7 +988,8 @@
             // this._btnStart.setEventEnabled(true);
             // this._btnStart.tap = this.onReady.bind(this);
             this.addChild(this._btnStart);
-            this._btnRule = new Laya.Sprite(`${alias}btn_rule.png`);
+            this._btnRule = new Laya.Sprite();
+            this._btnRule.loadImage(`${alias}btn_rule.png`);
             this._btnRule.pivot(0, 0);
             this._btnRule.pos(94, 1003);
             // this._btnRule.setEventEnabled(true);
@@ -985,8 +1001,10 @@
             };
             this.addChild(this._btnRule);
 
-            const museTexture = new Laya.Sprite(`${alias}btn_muse_large.png`);
-            const soundTexture = new Laya.Sprite(`${alias}btn_sound_large.png`);
+            const museTexture = new Laya.Sprite();
+            museTexture.loadImage(`${alias}btn_muse_large.png`);
+            const soundTexture = new Laya.Sprite();
+            soundTexture.loadImage(`${alias}btn_sound_large.png`);
             if (GLOBAL.CONF.SOUND_ON) {
                 Sound.playBg();
             }
@@ -1015,19 +1033,24 @@
             this.width = 120;
             this.height = 120;
             this._checked = checked;
-            this._selectBg = new Laya.Sprite(`${alias}select_bg.png`);
+            this._selectBg = new Laya.Sprite();
+            this._selectBg.loadImage(`${alias}select_bg.png`);
             this._selectBg.width = 160;
             this._selectBg.height = 160;
-            this._selectFront = new Laya.Sprite(`${alias}select_front.png`);
+            this._selectFront = new Laya.Sprite();
+            this._selectFront.loadImage(`${alias}select_front.png`);
             this._selectFront.width = 188;
             this._selectFront.height = 192;
-            this._selectedBg = new Laya.Sprite(`${alias}selected_bg.png`);
+            this._selectedBg = new Laya.Sprite();
+            this._selectedBg.loadImage(`${alias}selected_bg.png`);
             this._selectedBg.width = 160;
             this._selectedBg.height = 160;
-            this._selectedFront = new Laya.Sprite(`${alias}selected_front.png`);
+            this._selectedFront = new Laya.Sprite();
+            this._selectedFront.loadImage(`${alias}selected_front.png`);
             this._selectedFront.width = 188;
             this._selectedFront.height = 192;
-            this._selectedIcon = new Laya.Sprite(`${alias}selected_icon.png`);
+            this._selectedIcon = new Laya.Sprite();
+            this._selectedIcon.loadImage(`${alias}selected_icon.png`);
             this._selectedIcon.width = 56;
             this._selectedIcon.height = 56;
             this._bgSprite = this._checked ? this._selectedBg : this._selectBg;

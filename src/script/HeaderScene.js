@@ -25,7 +25,7 @@ class HeaderScene extends Laya.Scene {
             sprite._num = Number(item);
             sprite.pivot(0.5, 1);
             if (reverse) {
-                sprite.getPositionX(pos.x - index * (interval), pos.y);
+                sprite.pos(pos.x - index * (interval), pos.y);
             } else {
                 sprite.pos(pos.x + index * (interval), pos.y);
             }
@@ -39,13 +39,13 @@ class HeaderScene extends Laya.Scene {
             avatar.autoSize = true;
             avatar.pivot(0, 0);
             avatar.pos(60, 60);
-            avatar.setEventEnabled(true);
+            // avatar.setEventEnabled(true);
             this.addChild(avatar);
             const login = new Laya.Sprite(`other/login.png`);
             login.autoSize = true;
             login.pivot(0, 1);
             login.pos(60, 146);
-            login.setEventEnabled(true);
+            // login.setEventEnabled(true);
             avatar.tap = login.tap = (event) => {
                 event.data.originalEvent.preventDefault();
                 window.kfcMario.goToLogin && window.kfcMario.goToLogin();
