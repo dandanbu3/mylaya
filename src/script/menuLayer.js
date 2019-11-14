@@ -10,6 +10,8 @@ export default class menuLayer extends Laya.Scene {
     constructor() {
         super();
         this._choosen = 'girl22';
+        this.height = 1144;
+        this.width = 750;
         this.drawSetting();
         this.drawRadio();
         this.drawBtns();
@@ -23,8 +25,8 @@ export default class menuLayer extends Laya.Scene {
             this.addChild(ani);
             ani.interval = 30;			// 设置播放间隔（单位：毫秒）
             ani.index = 1;				// 当前播放索引	
+            ani.pivot(0.5, 0);
             ani.pos(534, 904);
-            ani.pivot(0);
             ani.loadImages(this.aniUrls("other/hand_", 12));
             ani.play();
         }
@@ -41,7 +43,7 @@ export default class menuLayer extends Laya.Scene {
     }
     drawTips () {
         const sprite = new Laya.Sprite();
-        sprite.pivot(0);
+        sprite.pivot(0, 0);
         sprite.pos(20, 192);
         if (GLOBAL.DATA.STATUS === 1) {
             sprite.loadImage(`${alias}tip_bg.png`);
@@ -53,7 +55,7 @@ export default class menuLayer extends Laya.Scene {
             // text.dropShadow = true,
             // text.dropShadowColor = 0xd98a0b,
             // text.dropShadowDistance = 2
-            text.pivot(0.5, 0);
+            text.pivot(0, 0);
             text.x = 355;
             text.y = 6;
             this.addChild(text);
@@ -75,7 +77,6 @@ export default class menuLayer extends Laya.Scene {
         anime22.pos(-87, -70);
         anime22.interval = 200;
         this._radio22 = new GrilRadio(anime22, true);
-        this._radio22.pivot(0.5);
         this._radio22.pos(240, 736);
         this._radio22.tap = (event) => {
             event.data.originalEvent.preventDefault();
@@ -91,7 +92,7 @@ export default class menuLayer extends Laya.Scene {
         anime33.pos(-67, -70);
         anime33.interval = 200;
         this._radio33 = new GrilRadio(anime33, false);
-        this._radio33.pos(340, 736);
+        this._radio33.pos(440, 736);
         this._radio33.tap = (event) => {
             event.data.originalEvent.preventDefault();
             if (!GLOBAL.CONF.PREVENT) {
@@ -117,21 +118,21 @@ export default class menuLayer extends Laya.Scene {
         this.addChild(this._storySetting);
         // this.startStoryScroll();
         const menuBg = new Laya.Sprite(resource['menuBg'].url);
-        menuBg.pivot(0);
+        menuBg.pivot(0, 0);
         menuBg.pos(20, 192);
         this.addChild(menuBg);
     }
     drawFrame () {
-        // let logo = new Laya.Animation();
-        // logo.loadImages(this.aniUrls("logo/logo_", 27));
-        // logo.interval = 160;
-        // logo.pivot(0.5, 0);
-        // logo.pos(375, 277);
-        // logo.play();
-        // this.addChild(logo);
+        let logo = new Laya.Animation();
+        logo.loadImages(this.aniUrls("logo/logo_", 27));
+        logo.interval = 160;
+        logo.pivot(0.5, 0);
+        logo.pos(375, 277);
+        logo.play();
+        this.addChild(logo);
         const frame = new Laya.Sprite(resource['frame'].url);
-        frame.pivot(0);
-        frame.pos(0);
+        frame.pivot(0, 0);
+        frame.pos(0, 0);
         this.addChild(frame);
     }
     drawBtns () {
@@ -152,13 +153,13 @@ export default class menuLayer extends Laya.Scene {
             anime.pivot(0.5, 0);
             this.addChild(anime);
         }
-        this._btnStart.pivot(0);
+        this._btnStart.pivot(0, 0);
         this._btnStart.pos(94, 867);
         // this._btnStart.setEventEnabled(true);
         // this._btnStart.tap = this.onReady.bind(this);
         this.addChild(this._btnStart);
         this._btnRule = new Laya.Sprite(`${alias}btn_rule.png`);
-        this._btnRule.pivot(0);
+        this._btnRule.pivot(0, 0);
         this._btnRule.pos(94, 1003);
         // this._btnRule.setEventEnabled(true);
         this._btnRule.tap = (event) => {
@@ -175,7 +176,7 @@ export default class menuLayer extends Laya.Scene {
             Sound.playBg();
         }
         this._btnMuse = new Laya.Sprite(GLOBAL.CONF.SOUND_ON ? soundTexture : museTexture);
-        this._btnMuse.pivot(0);
+        this._btnMuse.pivot(0, 0);
         this._btnMuse.pos(650, 766);
         // this._btnMuse.setEventEnabled(true);
         this._btnMuse.tap = (event) => {
@@ -196,6 +197,8 @@ export default class menuLayer extends Laya.Scene {
 class GrilRadio extends Laya.Sprite {
     constructor(animateSprite, checked = false) {
         super();
+        this.width = 120;
+        this.height = 120;
         this._checked = checked;
         this._selectBg = new Laya.Sprite(`${alias}select_bg.png`);
         this._selectFront = new Laya.Sprite(`${alias}select_front.png`);
@@ -203,20 +206,20 @@ class GrilRadio extends Laya.Sprite {
         this._selectedFront = new Laya.Sprite(`${alias}selected_front.png`);
         this._selectedIcon = new Laya.Sprite(`${alias}selected_icon.png`);
         this._bgSprite = this._checked ? this._selectedBg : this._selectBg;
-        this._bgSprite.pos(-79, -82);
+        this._bgSprite.pos(79, 82);
         this.addChild(this._bgSprite);
         if (animateSprite) {
             animateSprite.play();
             this.addChild(animateSprite);
         }
         this._frontSprite = this._checked ? this._selectedFront : this._selectFront;
-        this._frontSprite.pos(-93, -96);
+        this._frontSprite.pos(93, 96);
         this.addChild(this._frontSprite);
-        this._iconSprite = new Laya.Sprite(this._selectedIcon);
+        this._iconSprite = this._selectedIcon;
         if (!this._checked) {
             this._iconSprite.visible = false;
         } else {
-            this.scale(1.1);
+            this.scale(1.1, 1.1);
         }
         this._iconSprite.pos(51, 40);
         this.addChild(this._iconSprite);

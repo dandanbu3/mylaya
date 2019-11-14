@@ -1,7 +1,7 @@
-import RESOURCES from './resources';
+import resource from './resource';
 import GLOBAL from './Global';
 const SceneArr = ['forest', 'water', 'city'];
-class BackgroundScene extends Tiny.Container {
+class BackgroundScene extends Laya.Sprite {
     constructor () {
         super();
         this._bgCache = [];
@@ -11,92 +11,86 @@ class BackgroundScene extends Tiny.Container {
         this._groundCache = [];
         this._newGroundIndex = 1;
 
-        const bgLeft = Tiny.Texture.fromImage(RESOURCES['bgLeft']);
-        const bgRight = Tiny.Texture.fromImage(RESOURCES['bgRight']);
+        const bgLeft = Laya.Sprite(resource['bgLeft'].url);
+        const bgRight = Laya.Sprite(resource['bgRight'].url);
         
         this._bgWidth = 2180;
         for (let i = 0; i < 4; i++) {
             const mode = i % 2;
-            const sprite = new Tiny.Sprite(mode === 0 ? bgLeft : bgRight);
-            sprite.setAnchor(0);
-            sprite.setPosition(this._bgWidth * i, 190);
+            const sprite = new Laya.Sprite(mode === 0 ? bgLeft : bgRight);
+            sprite.pivot(0);
+            sprite.pos(this._bgWidth * i, 190);
             this.addChild(sprite);
             this._bgCache.push(sprite);
         }
         
-        const cloudSmallLeft = Tiny.Texture.fromImage(RESOURCES['cloudSmallLeft']);
-        const cloudSmallRight = Tiny.Texture.fromImage(RESOURCES['cloudSmallRight']);
-        const cloudLargeLeft = Tiny.Texture.fromImage(RESOURCES['cloudLargeLeft']);
-        const cloudLargeRight = Tiny.Texture.fromImage(RESOURCES['cloudLargeRight']);
+        const cloudSmallLeft = Laya.Sprite(resource['cloudSmallLeft'].url);
+        const cloudSmallRight = Laya.Sprite(resource['cloudSmallRight'].url);
+        const cloudLargeLeft = Laya.Sprite(resource['cloudLargeLeft'].url);
+        const cloudLargeRight = Laya.Sprite(resource['cloudLargeRight'].url);
         this._cloudList = [cloudSmallLeft, cloudSmallRight, cloudLargeLeft, cloudLargeRight, cloudSmallLeft, cloudSmallRight];
         let cloudPosX = 0;
         for (let i = 0; i < 2; i++) {
-            const sprite = new Tiny.Sprite(this._cloudList[i]);
-            sprite.setAnchor(0);
-            sprite.setPosition(cloudPosX, 293);
+            const sprite = new Laya.Sprite(this._cloudList[i]);
+            sprite.pivot(0);
+            sprite.pos(cloudPosX, 293);
             this.addChild(sprite);
             this._cloudCache.push(sprite);
             cloudPosX += sprite.width;
         }
 
         this._mgList = [
-            Tiny.Texture.fromImage(RESOURCES['mgForestLeft']),
-            Tiny.Texture.fromImage(RESOURCES['mgForestRight']),
-            Tiny.Texture.fromImage(RESOURCES['mgWaterLeft']),
-            Tiny.Texture.fromImage(RESOURCES['mgWaterRight']),
-            Tiny.Texture.fromImage(RESOURCES['mgCityLeft']),
-            Tiny.Texture.fromImage(RESOURCES['mgCityRight'])
+            resource['mgForestLeft'].url,
+            resource['mgForestRight'].url,
+            resource['mgWaterLeft'].url,
+            resource['mgWaterRight'].url,
+            resource['mgCityLeft'].url,
+            resource['mgCityRight'].url
         ];
         let mgPosX = 0;
         for (let i = 0; i < 2; i++) {
-            const sprite = new Tiny.Sprite(this._mgList[i]);
-            sprite.setAnchor(0);
-            sprite.setPosition(mgPosX, 60);
+            const sprite = new Laya.Sprite(this._mgList[i]);
+            sprite.pivot(0);
+            sprite.pos(mgPosX, 60);
             this.addChild(sprite);
             this._mgCache.push(sprite);
             mgPosX += sprite.width;
         }
 
         this._fgList = [
-            Tiny.Texture.fromImage(RESOURCES['fgForestLeft']),
-            Tiny.Texture.fromImage(RESOURCES['fgForestRight']),
-            Tiny.Texture.fromImage(RESOURCES['fgWaterLeft']),
-            Tiny.Texture.fromImage(RESOURCES['fgWaterRight']),
-            Tiny.Texture.fromImage(RESOURCES['fgCityLeft']),
-            Tiny.Texture.fromImage(RESOURCES['fgCityRight'])
+            resource['fgForestLeft'].url,
+            resource['fgForestRight'].url,
+            resource['fgWaterLeft'].url,
+            resource['fgWaterRight'].url,
+            resource['fgCityLeft'].url,
+            resource['fgCityRight'].url
         ];
         let fgPosX = 50;
         for (let i = 0; i < 2; i++) {
-            const sprite = new Tiny.Sprite(this._fgList[i]);
-            sprite.setAnchor(0);
-            sprite.setPosition(fgPosX, 60);
+            const sprite = new Laya.Sprite(this._fgList[i]);
+            sprite.pivot(0);
+            sprite.pos(fgPosX, 60);
             this.addChild(sprite);
             this._fgCache.push(sprite);
             fgPosX += sprite.width;
         }
 
         // 2233广告牌
-        const ad22Textures = [];
-        for (let i = 0; i < 43; i++) {
-            ad22Textures.push(Tiny.Texture.fromFrame(`ad_22_${i}.png`));
-        }
-        this._fgCache[0]._adAnime = new Tiny.AnimatedSprite(ad22Textures);
-        this._fgCache[0]._adAnime.animationSpeed = 0.5;
-        this._fgCache[0]._adAnime.setAnchor(0, 1);
-        this._fgCache[0]._adAnime.setPosition(408, 756);
+        this._fgCache[0]._adAnime = new Laya.Animation();
+        this._fgCache[0]._adAnime.loadImages(this.aniUrls("bg/ad_22_",43));
+        this._fgCache[0]._adAnime.interval = 33;
+        this._fgCache[0]._adAnime.pivot(0, 1);
+        this._fgCache[0]._adAnime.pos(408, 756);
         this._fgCache[0]._adAnime.play();
-        this._fgCache[0]._adAnime.setVisible(false);
+        this._fgCache[0]._adAnime.visible = (false);
         this._fgCache[0].addChild(this._fgCache[0]._adAnime);
-        const ad33Textures = [];
-        for (let i = 0; i < 21; i++) {
-            ad33Textures.push(Tiny.Texture.fromFrame(`ad_33_${i}.png`));
-        }
-        this._fgCache[1]._adAnime = new Tiny.AnimatedSprite(ad33Textures);
-        this._fgCache[1]._adAnime.animationSpeed = 0.5;
-        this._fgCache[1]._adAnime.setAnchor(0, 1);
-        this._fgCache[1]._adAnime.setPosition(1060, 764);
+        this._fgCache[1]._adAnime = new Laya.Animation();
+        this._fgCache[1]._adAnime.loadImages(this.aniUrls("bg/ad_33_",32));
+        this._fgCache[1]._adAnime.interval = 33;
+        this._fgCache[1]._adAnime.pivot(0, 1);
+        this._fgCache[1]._adAnime.pos(1060, 764);
         this._fgCache[1]._adAnime.play();
-        this._fgCache[1]._adAnime.setVisible(false);
+        this._fgCache[1]._adAnime.visible = (false);
         this._fgCache[1].addChild(this._fgCache[1]._adAnime);
 
         // 便利店招牌
@@ -123,15 +117,12 @@ class BackgroundScene extends Tiny.Container {
         // this._fgCache[1].addChild(this._fgCache[1]._shop);
 
         // 大楼银幕
-        const buildTextures = [];
-        for (let i = 0; i < 10; i++) {
-            buildTextures.push(Tiny.Texture.fromFrame(`build_${i}.png`));
-        }
-        this._fgCache[0]._build = new Tiny.AnimatedSprite(buildTextures);
-        this._fgCache[0]._build.animationSpeed = 0.4;
-        this._fgCache[0]._build.setPosition(777, 160);
+        this._fgCache[0]._build = new Laya.Animation();
+        this._fgCache[0]._build.loadImages("bg/uild_", 10);
+        this._fgCache[0]._build.interval = 40;
+        this._fgCache[0]._build.pos(777, 160);
         this._fgCache[0]._build.play();
-        this._fgCache[0]._build.setVisible(false);
+        this._fgCache[0]._build.visible = (false);
         this._fgCache[0].addChild(this._fgCache[0]._build);
 
         // 咖啡厅招牌
@@ -171,12 +162,12 @@ class BackgroundScene extends Tiny.Container {
         }
         
         this._groundList = [
-            Tiny.Texture.fromImage(RESOURCES['grassLeft']),
-            Tiny.Texture.fromImage(RESOURCES['grassRight']),
-            Tiny.Texture.fromImage(RESOURCES['bridgeLeft']),
-            Tiny.Texture.fromImage(RESOURCES['bridgeRight']),
-            Tiny.Texture.fromImage(RESOURCES['roadLeft']),
-            Tiny.Texture.fromImage(RESOURCES['roadRight'])
+            Tiny.Texture.fromImage(resource['grassLeft']),
+            Tiny.Texture.fromImage(resource['grassRight']),
+            Tiny.Texture.fromImage(resource['bridgeLeft']),
+            Tiny.Texture.fromImage(resource['bridgeRight']),
+            Tiny.Texture.fromImage(resource['roadLeft']),
+            Tiny.Texture.fromImage(resource['roadRight'])
         ];
         let groundPosX = 0;
         for (let i = 0; i < 2; i++) {
