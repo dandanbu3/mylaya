@@ -1,7 +1,7 @@
 import GLOBAL from './Global';
 import Sound from './Sound';
 
-class Girl extends Tiny.AnimatedSprite {
+class Girl extends Laya.Animation {
     constructor (who) {
         const preRun = [Tiny.Texture.fromFrame(`tileset-${who}-run_0.png`)];
         super(preRun);
@@ -9,12 +9,12 @@ class Girl extends Tiny.AnimatedSprite {
         this._runTextures = this.createTextures(who, 'run', 0, 4);
         this._jumpTextures = this.createTextures(who, 'jump', 0, 1);
         this._fallTextures = this.createTextures(who, 'jump', 1, 4);
-        this._dieTextures = [Tiny.Texture.fromFrame(`tileset-${who}-die.png`)];
-        this._dieGrayTextures = [Tiny.Texture.fromFrame(`tileset-${who}-die_gray.png`)];
-        this.textures = this._preTextures;
-        this.animationSpeed = 0.1;
-        this.setAnchor(0, 1);
-        this.setPosition(56, GLOBAL.CONF.GROUND_POS_Y);
+        this._dieTextures = [`${who}/die.png`];
+        this._dieGrayTextures = [`${who}/die_gray.png`];
+        this.loadImages(this._preTextures);
+        this.interval = 160;
+        this.pivot(0, 1);
+        this.pos(56, GLOBAL.CONF.GROUND_POS_Y);
         this._girlHeight = this._runTextures[0].height;
         // TODO 优化耦合性
         GLOBAL.CONF.PRIZE_POS_Y = GLOBAL.CONF.GROUND_POS_Y - this._girlHeight * (GLOBAL.CONF.GIRL_JUMP_TIMES + 1) + 30;
@@ -35,7 +35,7 @@ class Girl extends Tiny.AnimatedSprite {
         this._fallAction.onComplete = () => {
             this._timer = Date.now();
             GLOBAL.CONF.GIRL_STAT = 3;
-            this.textures = this._fallTextures;
+            this.loadImages(this._fallTextures);
         };
     }
     changeJumpDuration () { // 调整跳起下落的速度
@@ -57,23 +57,29 @@ class Girl extends Tiny.AnimatedSprite {
         };
     }
     createTextures (who, action, start, length) {
-        const textures = [];
-        for (let i = start; i < length; i++) {
-            textures.push(Tiny.Texture.fromFrame(`tileset-${who}-${action}_${i}.png`));
-        }
+        const textures = new Laya.Animation();
+        textures.loadImages(this.aniUrls(`${who}/${action}_`, start, length));
         return textures;
+    }
+    aniUrls(name, start, num) {
+        var urls = [];
+        for(var i = start;i < num;i++){
+            //动画资源路径要和动画图集打包前的资源命名对应起来
+            urls.push(name + i + ".png");
+        }
+        return urls;
     }
     readyStart () { // 预备开始，主要是倒计时开始的时候用
         this.emit('notRun');
-        this.setPosition(56, GLOBAL.CONF.GROUND_POS_Y);
+        this.pos(56, GLOBAL.CONF.GROUND_POS_Y);
         GLOBAL.CONF.GIRL_STAT = -1;
-        this.textures = this._preTextures;
-        this.animationSpeed = 0.1;
+        this.loadImages(this._preTextures);
+        this.interval = 160;
     }
     startRun () {
         GLOBAL.CONF.GIRL_STAT = 0;
-        this.textures = this._runTextures;
-        this.animationSpeed = 0.18;
+        this.loadImages(this._runTextures);
+        this.interval = 100;
         this.emit('run');
     }
     doJump () {
@@ -81,7 +87,7 @@ class Girl extends Tiny.AnimatedSprite {
             GLOBAL.CONF.GIRL_STAT = 1;
             this.emit('notRun');
             Sound.playJump();
-            this.textures = this._jumpTextures;
+            this.loadImages(this._jumpTextures);
             this.runAction(this._jumpAction);
         }
     }
@@ -89,7 +95,7 @@ class Girl extends Tiny.AnimatedSprite {
         GLOBAL.CONF.GIRL_STAT = -1;
         this.emit('notRun');
         Sound.playGameOver();
-        this.textures = [this._runTextures[0]];
+        this.loadImage([this._runTextures[0]]);
         this.removeActionsTrace();
         this.runAction(Tiny.Repeat(3, this._dieBlink));
         this.runAction(this._dieMoveStart);
@@ -112,7 +118,7 @@ class Girl extends Tiny.AnimatedSprite {
             };
             this.runAction(moveAction);
         } else if (GLOBAL.CONF.GIRL_STAT === 1) {
-            const currentDis = this.getPositionY() - (GLOBAL.CONF.GROUND_POS_Y - this._jumpHeight);
+            const currentDis = this.y - (GLOBAL.CONF.GROUND_POS_Y - this._jumpHeight);
             const speed = (this._jumpSpeed - 100) * currentDis / this._jumpHeight;
             const jumpAction = Tiny.MoveTo(speed, Tiny.point(56, GLOBAL.CONF.GROUND_POS_Y - this._jumpHeight));
             jumpAction.setEasing(Tiny.TWEEN.Easing.Quadratic.Out);
@@ -125,9 +131,9 @@ class Girl extends Tiny.AnimatedSprite {
     }
     updateTransform () {
         if (GLOBAL.CONF.MODE === GLOBAL.MODES.PLAYING && GLOBAL.CONF.GIRL_STAT === 3) {
-            if (Date.now() - this._timer >= this.animationSpeed * 1000) {
+            if (Date.now() - this._timer >= 100000 / 6 / this.interval ) {
                 this.emit('run');
-                this.textures = this._runTextures;
+                this.loadImages(this._runTextures);
                 GLOBAL.CONF.GIRL_STAT = 0;
             }
         }
