@@ -3,21 +3,12 @@ import resource from './resource';
 import HeaderScene from './HeaderScene';
 import GLOBAL from './Global';
 import Util from './utils';
-// import Sound from './Sound';
+import Sound from './Sound';
 
 const alias = 'icons/';
 export default class menuLayer extends Laya.Scene {
     constructor() {
         super();
-        this.test = new Laya.Sprite();
-        this.test.loadImage(`${alias}select_bg.png`);
-        // this.test.autoSize = true;
-        // this.test.width = 160;
-        // this.test.height = 160;
-        this.test.name = 'test';
-        this.test.pivot(0, 0);
-        this.test.pos(160, 160);
-        this.addChild(this.test);
         this._choosen = 'girl22';
         this.height = 1144;
         this.width = 750;
@@ -35,7 +26,7 @@ export default class menuLayer extends Laya.Scene {
             ani.interval = 30;			// 设置播放间隔（单位：毫秒）
             ani.index = 1;				// 当前播放索引	
             ani.pivot(0.5, 0);
-            ani.pos(534, 1004);
+            ani.pos(534, 904);
             ani.loadImages(this.aniUrls("other/hand_", 12));
             ani.play();
         }
@@ -88,29 +79,31 @@ export default class menuLayer extends Laya.Scene {
         anime22.interval = 200;
         this._radio22 = new GrilRadio(anime22, true);
         this._radio22.pos(240, 736);
-        this._radio22.tap = (event) => {
-            event.data.originalEvent.preventDefault();
+        this._radio22.mouseEnabled = true;
+        this._radio22.on(Laya.Event.CLICK, this, (event) => {
+            // event.data.originalEvent.preventDefault();
             if (!GLOBAL.CONF.PREVENT) {
                 this._choosen = 'girl22';
                 this._radio33.click(false);
                 this._radio22.click(true);
             }
-        };
+        });
         this.addChild(this._radio22);
         const anime33 = new Laya.Animation();
         anime33.loadImages(this.aniUrls("girl33/choose_", 5));
         anime33.pos(-67, -70);
         anime33.interval = 200;
         this._radio33 = new GrilRadio(anime33, false);
-        this._radio33.pos(440, 736);
-        this._radio33.tap = (event) => {
-            event.data.originalEvent.preventDefault();
+        this._radio33.pos(507, 736);
+        this._radio33.mouseEnabled = true;
+        this._radio33.on(Laya.Event.CLICK, this, (event) => {
+            // event.data.originalEvent.preventDefault();
             if (!GLOBAL.CONF.PREVENT) {
                 this._choosen = 'girl33';
                 this._radio22.click(false);
                 this._radio33.click(true);
             }
-        };
+        });
         this.addChild(this._radio33);
     }
 
@@ -132,12 +125,28 @@ export default class menuLayer extends Laya.Scene {
         copy.pos(-239.5, 308);
         this.addChild(copy);
         this.addChild(this._storySetting);
-        // this.startStoryScroll();
+        this.startStoryScroll();
         const menuBg = new Laya.Sprite();
         menuBg.loadImage(resource['menuBg'].url);
         menuBg.pivot(0, 0);
         menuBg.pos(20, 192);
         this.addChild(menuBg);
+    }
+    startStoryScroll () {
+        const currentPos = this._storySetting.y;
+        const posY = currentPos - 44;
+        // const stopAction = Tiny.MoveTo(1000, Tiny.point(375, currentPos));
+        // const moveAction = Tiny.MoveTo(800, Tiny.point(375, posY));
+        // stopAction.onComplete = () => {
+        //     this._storySetting.runAction(moveAction);
+        // };
+        // moveAction.onComplete = () => {
+        //     if (currentPos <= 284) {
+        //         this._storySetting.setPositionY(548);
+        //     }
+        //     this.startStoryScroll();
+        // };
+        // this._storySetting.runAction(stopAction);
     }
     drawFrame () {
         let logo = new Laya.Animation();
@@ -175,20 +184,20 @@ export default class menuLayer extends Laya.Scene {
         }
         this._btnStart.pivot(0, 0);
         this._btnStart.pos(94, 867);
-        // this._btnStart.setEventEnabled(true);
-        // this._btnStart.tap = this.onReady.bind(this);
+        this._btnStart.mouseEnabled = true;
+        this._btnStart.on(Laya.Event.CLICK, this, this.onReady);
         this.addChild(this._btnStart);
         this._btnRule = new Laya.Sprite();
         this._btnRule.loadImage(`${alias}btn_rule.png`);
         this._btnRule.pivot(0, 0);
         this._btnRule.pos(94, 1003);
-        // this._btnRule.setEventEnabled(true);
-        this._btnRule.tap = (event) => {
-            event.data.originalEvent.preventDefault();
+        this._btnRule.mouseEnabled = (true);
+        this._btnRule.on(Laya.Event.CLICK, this, (event) => {
+            // event.data.originalEvent.preventDefault();
             if (!GLOBAL.CONF.PREVENT) {
                 window.kfcMario.showRules && window.kfcMario.showRules();
             }
-        };
+        });
         this.addChild(this._btnRule);
 
         const museTexture = new Laya.Sprite();
@@ -201,8 +210,8 @@ export default class menuLayer extends Laya.Scene {
         this._btnMuse = new Laya.Sprite(GLOBAL.CONF.SOUND_ON ? soundTexture : museTexture);
         this._btnMuse.pivot(0, 0);
         this._btnMuse.pos(650, 766);
-        // this._btnMuse.setEventEnabled(true);
-        this._btnMuse.tap = (event) => {
+        this._btnMuse.mouseEnabled = true;
+        this._btnMuse.on(Laya.Event.CLICK, this,(event) => {
             event.data.originalEvent.preventDefault();
             if (!GLOBAL.CONF.PREVENT) {
                 GLOBAL.CONF.SOUND_ON = !GLOBAL.CONF.SOUND_ON;
@@ -213,8 +222,34 @@ export default class menuLayer extends Laya.Scene {
                     Sound.stopBg(true);
                 }
             }
-        };
+        });
         this.addChild(this._btnMuse);
+    }
+    onReady (event) {
+        // event.data.originalEvent.preventDefault();
+        if (!GLOBAL.CONF.PREVENT) {
+            if (GLOBAL.DATA.STATUS !== 1) {
+                if (GLOBAL.DATA.IS_LOGIN) {
+                    Util.jumpToTop();
+                    Util.storage.set('bili_mario_visited', 'visited');
+                    Sound.stopBg();
+                    window.kfcMario.logger && window.kfcMario.logger('click', {
+                        key: 'start',
+                        score: GLOBAL.DATA.OPEN_CHANCE,
+                        mid: GLOBAL.DATA.MID
+                    });
+                    // const startLayer = new MainLayer(this._choosen);
+                    // startLayer.on('transitionend', () => {
+                    //     startLayer.startRunAction();
+                    // });
+                    // Tiny.app.replaceScene(startLayer);
+                    // startLayer.emit('transitionend');
+                    GLOBAL.CONF.MODE = GLOBAL.MODES.PRE;
+                } else {
+                    window.kfcMario.goToLogin && window.kfcMario.goToLogin();
+                }
+            }
+        }
     }
 }
 class GrilRadio extends Laya.Sprite {
@@ -244,11 +279,11 @@ class GrilRadio extends Laya.Sprite {
         this._selectedIcon.width = 56;
         this._selectedIcon.height = 56;
         this._bgSprite = this._checked ? this._selectedBg : this._selectBg;
-        this._bgSprite.pos(0, 0);
+        this._bgSprite.pos(-79, -82);
         this.addChild(this._bgSprite);
         
         this._frontSprite = this._checked ? this._selectedFront : this._selectFront;
-        this._frontSprite.pos(0, 0);
+        this._frontSprite.pos(-93, -96);
         this.addChild(this._frontSprite);
         this._iconSprite = this._selectedIcon;
         if (!this._checked) {
@@ -256,11 +291,22 @@ class GrilRadio extends Laya.Sprite {
         } else {
             this.scale(1.1, 1.1);
         }
-        this._iconSprite.pos(0, 0);
+        this._iconSprite.pos(51, 40);
         this.addChild(this._iconSprite);
         if (animateSprite) {
             animateSprite.play();
             this.addChild(animateSprite);
+        }
+    }
+    click (isChecked) {
+        this._checked = isChecked;
+        this._bgSprite = this._checked ? this._selectedBg : this._selectBg;
+        this._frontSprite = this._checked ? this._selectedFront: this._selectFront;
+        this._iconSprite.visible = (this._checked);
+        if (this._checked) {
+            this.scale(1.1, 1.1);
+        } else {
+            this.scale(1, 1);
         }
     }
 }

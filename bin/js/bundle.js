@@ -539,7 +539,8 @@
                 numArr.reverse();
             }
             numArr.forEach((item, index) => {
-                const sprite = new Laya.Sprite(`num/${size}_${item}.png`);
+                const sprite = new Laya.Sprite();
+                sprite.loadImage(`num/${size}_${item}.png`);
                 // @ts-ignore
                 sprite._num = Number(item);
                 sprite.pivot(0.5, 1);
@@ -554,29 +555,37 @@
         }
         drawPrizeTotal () {
             if (!GLOBAL.DATA.IS_LOGIN) {
-                const avatar = new Laya.Sprite('other/noface.png');
+                const avatar = new Laya.Sprite();
+                avatar.loadImage('other/noface.png');
                 avatar.autoSize = true;
                 avatar.pivot(0, 0);
                 avatar.pos(60, 60);
-                // avatar.setEventEnabled(true);
+                avatar.mouseEnabled = true;
                 this.addChild(avatar);
-                const login = new Laya.Sprite(`other/login.png`);
+                const login = new Laya.Sprite();
+                login.loadImage(`other/login.png`);
                 login.autoSize = true;
                 login.pivot(0, 1);
                 login.pos(60, 146);
-                // login.setEventEnabled(true);
-                avatar.tap = login.tap = (event) => {
-                    event.data.originalEvent.preventDefault();
+                login.mouseEnabled = true;
+                avatar.on(Laya.Event.CLICK, this, (event) => {
+                    // event.data.originalEvent.preventDefault();
                     window.kfcMario.goToLogin && window.kfcMario.goToLogin();
-                };
+                });
+                login.on(Laya.Event.CLICK, this, (event) => {
+                    // event.data.originalEvent.preventDefault();
+                    window.kfcMario.goToLogin && window.kfcMario.goToLogin();
+                });
                 this.addChild(login);
             }
-            const bg = new Laya.Sprite(`icons/header_left.png`);
+            const bg = new Laya.Sprite();
+            bg.loadImage(`icons/header_left.png`);
             bg.autoSize = true;
             bg.pivot(0, 0);
             bg.pos(40, 44);
             this.addChild(bg);
-            const x = new Laya.Sprite(`num/lg_x.png`);
+            const x = new Laya.Sprite();
+            x.loadImage(`num/lg_x.png`);
             x.autoSize = true;
             x.pivot(0, 1);
             x.pos(175, 94);
@@ -584,21 +593,25 @@
             this.reset();
         }
         drawRank () {
-            const bgOne = new Laya.Sprite(`icons/best_global.png`);
+            const bgOne = new Laya.Sprite();
+            bgOne.loadImage(`icons/best_global.png`);
             bgOne.autoSize = true;
             bgOne.pivot(0, 0);
             bgOne.pos(366, 44);
             this.addChild(bgOne);
-            const bgTwo = new Laya.Sprite(`icons/best_personal.png`);
+            const bgTwo = new Laya.Sprite();
+            bgTwo.loadImage(`icons/best_personal.png`);
             bgTwo.autoSize = true;
             bgTwo.pivot(0, 0);
             bgTwo.pos(366, 116);
             this.addChild(bgTwo);
-            const m = new Laya.Sprite(`num/sm_m.png`);
+            const m = new Laya.Sprite();
+            m.loadImage(`num/sm_m.png`);
             m.pivot(0, 1);
             m.pos(678, 80);
             this.addChild(m);
-            const mPersonal = new Laya.Sprite(`tileset-num-sm_m.png`);
+            const mPersonal = new Laya.Sprite();
+            mPersonal.loadImage(`num/sm_m.png`);
             mPersonal.pivot(0, 1);
             mPersonal.pos(678, 153);
             this.addChild(mPersonal);
@@ -615,7 +628,8 @@
                     const oldArr = oldValue.split('');
                     newArr.forEach((item, index) => {
                         if (item !== oldArr[index]) {
-                            const newSprite = new Laya.Sprite(`num/lg_${item}.png`);
+                            const newSprite = new Laya.Sprite();
+                            newSprite.loadImage(`num/lg_${item}.png`);
                             newSprite.pivot(0.5, 1);
                             newSprite.pos(207 + index * 28, 44);
                             this.addChild(newSprite);
@@ -813,21 +827,85 @@
 
     Util.storage = storage;
 
-    // import Sound from './Sound';
+    const cache = {};
+
+    class Sound {
+        playSfx (sfx, loop = false) {
+            if (GLOBAL.CONF.SOUND_ON) {
+                // @ts-ignore
+                const audio = Laya.SoundManager.playSound(sfx, loop ? 0 : 1);
+                audio.autoReleaseSound = false;
+                return audio;
+            }
+        }
+        playBg () {
+            if (cache.bg) {
+                if (GLOBAL.CONF.SOUND_ON) {
+                    cache.bg.play();
+                }
+            } else {
+                cache.bg = this.playSfx(RESOURCES['bgOgg'].url, true);
+            }
+        }
+        stopBg (isPause = false) {
+            if (cache.bg) {
+                cache.bg[isPause ? 'pause' : 'stop']();
+            }
+        }
+        playHit () {
+            if (cache.hit) {
+                if (GLOBAL.CONF.SOUND_ON) {
+                    cache.hit.stop();
+                    cache.hit.play();
+                }
+            } else {
+                cache.hit = this.playSfx(RESOURCES['boxhitOgg'].url);
+            }
+        }
+        playHitEmpty () {
+            if (cache.hitEmpty) {
+                if (GLOBAL.CONF.SOUND_ON) {
+                    cache.hitEmpty.stop();
+                    cache.hitEmpty.play();
+                }
+            } else {
+                cache.hitEmpty = this.playSfx(RESOURCES['boxhitemptyOgg'].url);
+            }
+        }
+        playJump () {
+            if (cache.jump) {
+                if (GLOBAL.CONF.SOUND_ON) {
+                    cache.jump.stop();
+                    cache.jump.play();
+                }
+            } else {
+                cache.jump = this.playSfx(RESOURCES['jumpOgg'].url);
+            }
+        }
+        playGameOver () {
+            if (cache.gameOver) {
+                if (GLOBAL.CONF.SOUND_ON) {
+                    cache.gameOver.play();
+                }
+            } else {
+                cache.gameOver = this.playSfx(RESOURCES['gameoverOgg'].url);
+            }
+        }
+        playCountDown () {
+            if (cache.countdown) {
+                if (GLOBAL.CONF.SOUND_ON) {
+                    cache.countdown.play();
+                }
+            } else {
+                cache.countdown = this.playSfx(RESOURCES['countdownOgg'].url);
+            }
+        }
+    }
 
     const alias = 'icons/';
     class menuLayer extends Laya.Scene {
         constructor() {
             super();
-            this.test = new Laya.Sprite();
-            this.test.loadImage(`${alias}select_bg.png`);
-            // this.test.autoSize = true;
-            // this.test.width = 160;
-            // this.test.height = 160;
-            this.test.name = 'test';
-            this.test.pivot(0, 0);
-            this.test.pos(160, 160);
-            this.addChild(this.test);
             this._choosen = 'girl22';
             this.height = 1144;
             this.width = 750;
@@ -845,7 +923,7 @@
                 ani.interval = 30;			// 设置播放间隔（单位：毫秒）
                 ani.index = 1;				// 当前播放索引	
                 ani.pivot(0.5, 0);
-                ani.pos(534, 1004);
+                ani.pos(534, 904);
                 ani.loadImages(this.aniUrls("other/hand_", 12));
                 ani.play();
             }
@@ -898,29 +976,31 @@
             anime22.interval = 200;
             this._radio22 = new GrilRadio(anime22, true);
             this._radio22.pos(240, 736);
-            this._radio22.tap = (event) => {
-                event.data.originalEvent.preventDefault();
+            this._radio22.mouseEnabled = true;
+            this._radio22.on(Laya.Event.CLICK, this, (event) => {
+                // event.data.originalEvent.preventDefault();
                 if (!GLOBAL.CONF.PREVENT) {
                     this._choosen = 'girl22';
                     this._radio33.click(false);
                     this._radio22.click(true);
                 }
-            };
+            });
             this.addChild(this._radio22);
             const anime33 = new Laya.Animation();
             anime33.loadImages(this.aniUrls("girl33/choose_", 5));
             anime33.pos(-67, -70);
             anime33.interval = 200;
             this._radio33 = new GrilRadio(anime33, false);
-            this._radio33.pos(440, 736);
-            this._radio33.tap = (event) => {
-                event.data.originalEvent.preventDefault();
+            this._radio33.pos(507, 736);
+            this._radio33.mouseEnabled = true;
+            this._radio33.on(Laya.Event.CLICK, this, (event) => {
+                // event.data.originalEvent.preventDefault();
                 if (!GLOBAL.CONF.PREVENT) {
                     this._choosen = 'girl33';
                     this._radio22.click(false);
                     this._radio33.click(true);
                 }
-            };
+            });
             this.addChild(this._radio33);
         }
 
@@ -942,12 +1022,27 @@
             copy.pos(-239.5, 308);
             this.addChild(copy);
             this.addChild(this._storySetting);
-            // this.startStoryScroll();
+            this.startStoryScroll();
             const menuBg = new Laya.Sprite();
             menuBg.loadImage(RESOURCES['menuBg'].url);
             menuBg.pivot(0, 0);
             menuBg.pos(20, 192);
             this.addChild(menuBg);
+        }
+        startStoryScroll () {
+            const currentPos = this._storySetting.y;
+            // const stopAction = Tiny.MoveTo(1000, Tiny.point(375, currentPos));
+            // const moveAction = Tiny.MoveTo(800, Tiny.point(375, posY));
+            // stopAction.onComplete = () => {
+            //     this._storySetting.runAction(moveAction);
+            // };
+            // moveAction.onComplete = () => {
+            //     if (currentPos <= 284) {
+            //         this._storySetting.setPositionY(548);
+            //     }
+            //     this.startStoryScroll();
+            // };
+            // this._storySetting.runAction(stopAction);
         }
         drawFrame () {
             let logo = new Laya.Animation();
@@ -985,20 +1080,20 @@
             }
             this._btnStart.pivot(0, 0);
             this._btnStart.pos(94, 867);
-            // this._btnStart.setEventEnabled(true);
-            // this._btnStart.tap = this.onReady.bind(this);
+            this._btnStart.mouseEnabled = true;
+            this._btnStart.on(Laya.Event.CLICK, this, this.onReady);
             this.addChild(this._btnStart);
             this._btnRule = new Laya.Sprite();
             this._btnRule.loadImage(`${alias}btn_rule.png`);
             this._btnRule.pivot(0, 0);
             this._btnRule.pos(94, 1003);
-            // this._btnRule.setEventEnabled(true);
-            this._btnRule.tap = (event) => {
-                event.data.originalEvent.preventDefault();
+            this._btnRule.mouseEnabled = (true);
+            this._btnRule.on(Laya.Event.CLICK, this, (event) => {
+                // event.data.originalEvent.preventDefault();
                 if (!GLOBAL.CONF.PREVENT) {
                     window.kfcMario.showRules && window.kfcMario.showRules();
                 }
-            };
+            });
             this.addChild(this._btnRule);
 
             const museTexture = new Laya.Sprite();
@@ -1011,8 +1106,8 @@
             this._btnMuse = new Laya.Sprite(GLOBAL.CONF.SOUND_ON ? soundTexture : museTexture);
             this._btnMuse.pivot(0, 0);
             this._btnMuse.pos(650, 766);
-            // this._btnMuse.setEventEnabled(true);
-            this._btnMuse.tap = (event) => {
+            this._btnMuse.mouseEnabled = true;
+            this._btnMuse.on(Laya.Event.CLICK, this,(event) => {
                 event.data.originalEvent.preventDefault();
                 if (!GLOBAL.CONF.PREVENT) {
                     GLOBAL.CONF.SOUND_ON = !GLOBAL.CONF.SOUND_ON;
@@ -1023,8 +1118,34 @@
                         Sound.stopBg(true);
                     }
                 }
-            };
+            });
             this.addChild(this._btnMuse);
+        }
+        onReady (event) {
+            // event.data.originalEvent.preventDefault();
+            if (!GLOBAL.CONF.PREVENT) {
+                if (GLOBAL.DATA.STATUS !== 1) {
+                    if (GLOBAL.DATA.IS_LOGIN) {
+                        Util.jumpToTop();
+                        Util.storage.set('bili_mario_visited', 'visited');
+                        Sound.stopBg();
+                        window.kfcMario.logger && window.kfcMario.logger('click', {
+                            key: 'start',
+                            score: GLOBAL.DATA.OPEN_CHANCE,
+                            mid: GLOBAL.DATA.MID
+                        });
+                        // const startLayer = new MainLayer(this._choosen);
+                        // startLayer.on('transitionend', () => {
+                        //     startLayer.startRunAction();
+                        // });
+                        // Tiny.app.replaceScene(startLayer);
+                        // startLayer.emit('transitionend');
+                        GLOBAL.CONF.MODE = GLOBAL.MODES.PRE;
+                    } else {
+                        window.kfcMario.goToLogin && window.kfcMario.goToLogin();
+                    }
+                }
+            }
         }
     }
     class GrilRadio extends Laya.Sprite {
@@ -1054,11 +1175,11 @@
             this._selectedIcon.width = 56;
             this._selectedIcon.height = 56;
             this._bgSprite = this._checked ? this._selectedBg : this._selectBg;
-            this._bgSprite.pos(0, 0);
+            this._bgSprite.pos(-79, -82);
             this.addChild(this._bgSprite);
             
             this._frontSprite = this._checked ? this._selectedFront : this._selectFront;
-            this._frontSprite.pos(0, 0);
+            this._frontSprite.pos(-93, -96);
             this.addChild(this._frontSprite);
             this._iconSprite = this._selectedIcon;
             if (!this._checked) {
@@ -1066,11 +1187,22 @@
             } else {
                 this.scale(1.1, 1.1);
             }
-            this._iconSprite.pos(0, 0);
+            this._iconSprite.pos(51, 40);
             this.addChild(this._iconSprite);
             if (animateSprite) {
                 animateSprite.play();
                 this.addChild(animateSprite);
+            }
+        }
+        click (isChecked) {
+            this._checked = isChecked;
+            this._bgSprite = this._checked ? this._selectedBg : this._selectBg;
+            this._frontSprite = this._checked ? this._selectedFront: this._selectFront;
+            this._iconSprite.visible = (this._checked);
+            if (this._checked) {
+                this.scale(1.1, 1.1);
+            } else {
+                this.scale(1, 1);
             }
         }
     }

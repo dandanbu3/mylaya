@@ -20,7 +20,8 @@ class HeaderScene extends Laya.Scene {
             numArr.reverse();
         }
         numArr.forEach((item, index) => {
-            const sprite = new Laya.Sprite(`num/${size}_${item}.png`);
+            const sprite = new Laya.Sprite();
+            sprite.loadImage(`num/${size}_${item}.png`);
             // @ts-ignore
             sprite._num = Number(item);
             sprite.pivot(0.5, 1);
@@ -35,29 +36,37 @@ class HeaderScene extends Laya.Scene {
     }
     drawPrizeTotal () {
         if (!GLOBAL.DATA.IS_LOGIN) {
-            const avatar = new Laya.Sprite('other/noface.png');
+            const avatar = new Laya.Sprite();
+            avatar.loadImage('other/noface.png');
             avatar.autoSize = true;
             avatar.pivot(0, 0);
             avatar.pos(60, 60);
-            // avatar.setEventEnabled(true);
+            avatar.mouseEnabled = true;
             this.addChild(avatar);
-            const login = new Laya.Sprite(`other/login.png`);
+            const login = new Laya.Sprite();
+            login.loadImage(`other/login.png`);
             login.autoSize = true;
             login.pivot(0, 1);
             login.pos(60, 146);
-            // login.setEventEnabled(true);
-            avatar.tap = login.tap = (event) => {
-                event.data.originalEvent.preventDefault();
+            login.mouseEnabled = true;
+            avatar.on(Laya.Event.CLICK, this, (event) => {
+                // event.data.originalEvent.preventDefault();
                 window.kfcMario.goToLogin && window.kfcMario.goToLogin();
-            };
+            });
+            login.on(Laya.Event.CLICK, this, (event) => {
+                // event.data.originalEvent.preventDefault();
+                window.kfcMario.goToLogin && window.kfcMario.goToLogin();
+            });
             this.addChild(login);
         }
-        const bg = new Laya.Sprite(`icons/header_left.png`);
+        const bg = new Laya.Sprite();
+        bg.loadImage(`icons/header_left.png`);
         bg.autoSize = true;
         bg.pivot(0, 0);
         bg.pos(40, 44);
         this.addChild(bg);
-        const x = new Laya.Sprite(`num/lg_x.png`);
+        const x = new Laya.Sprite();
+        x.loadImage(`num/lg_x.png`);
         x.autoSize = true;
         x.pivot(0, 1);
         x.pos(175, 94);
@@ -65,21 +74,25 @@ class HeaderScene extends Laya.Scene {
         this.reset();
     }
     drawRank () {
-        const bgOne = new Laya.Sprite(`icons/best_global.png`);
+        const bgOne = new Laya.Sprite();
+        bgOne.loadImage(`icons/best_global.png`);
         bgOne.autoSize = true;
         bgOne.pivot(0, 0);
         bgOne.pos(366, 44);
         this.addChild(bgOne);
-        const bgTwo = new Laya.Sprite(`icons/best_personal.png`);
+        const bgTwo = new Laya.Sprite();
+        bgTwo.loadImage(`icons/best_personal.png`);
         bgTwo.autoSize = true;
         bgTwo.pivot(0, 0);
         bgTwo.pos(366, 116);
         this.addChild(bgTwo);
-        const m = new Laya.Sprite(`num/sm_m.png`);
+        const m = new Laya.Sprite();
+        m.loadImage(`num/sm_m.png`);
         m.pivot(0, 1);
         m.pos(678, 80);
         this.addChild(m);
-        const mPersonal = new Laya.Sprite(`tileset-num-sm_m.png`);
+        const mPersonal = new Laya.Sprite();
+        mPersonal.loadImage(`num/sm_m.png`);
         mPersonal.pivot(0, 1);
         mPersonal.pos(678, 153);
         this.addChild(mPersonal);
@@ -96,7 +109,8 @@ class HeaderScene extends Laya.Scene {
                 const oldArr = oldValue.split('');
                 newArr.forEach((item, index) => {
                     if (item !== oldArr[index]) {
-                        const newSprite = new Laya.Sprite(`num/lg_${item}.png`);
+                        const newSprite = new Laya.Sprite();
+                        newSprite.loadImage(`num/lg_${item}.png`);
                         newSprite.pivot(0.5, 1);
                         newSprite.pos(207 + index * 28, 44);
                         this.addChild(newSprite);

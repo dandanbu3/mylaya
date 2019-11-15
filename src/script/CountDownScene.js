@@ -1,4 +1,4 @@
-class CountDownScene extends Tiny.Container {
+class CountDownScene extends Laya.Scene {
     constructor () {
         super();
         this._initScale = 2.5;
@@ -13,80 +13,57 @@ class CountDownScene extends Tiny.Container {
         this._countDown.start();
     }
     drawSprite (key, name) {
-        this[key] = new Laya.Sprite(`icons/${name}.png`);
+        this[key] = new Laya.Sprite();
+        this[key].loadImage(`icons/${name}.png`);
         this[key].pivot(0.5);
         this[key].scale(this._initScale, this._initScale);
         this[key].pos(375, 600);
-        this[key].visible = (false);
+        this[key].visible = false;
         this.addChild(this[key]);
     }
     initAnime () {
         const that = this;
-        this._goAnime = new Tiny.TWEEN.Tween({
-            scale: this._initScale
-        }).to({
+        this['_go'].scale(this._initScale);
+        that['_go'].visible = true;
+        this._goAnime = Laya.Tween.to(that['_go'], {
             scale: 1
-        }, 1000).easing(Tiny.TWEEN.Easing.Quartic.Out).onStart(function () {
-            that['_go'].setVisible(true);
-        }).onUpdate(function () {
-            that['_go'].setScale(this.scale);
-        }).onComplete(function () {
-            that['_go'].setVisible(false);
-            this.scale = that._initScale;
+        }, 1000, Laya.TWEEN.Ease.quintOut, function () {
+            that['_go'].visible = false;
+            this.scale(that._initScale);
             // 倒计时结束事件
             that.emit('done');
-        });
-        this._readyAnime = new Tiny.TWEEN.Tween({
-            scale: this._initScale
-        }).to({
+        }).pause();
+        this['_ready'].scale(this._initScale);
+        this._readyAnime = Laya.Tween.to(that['_ready'], {
             scale: 1
-        }, 1000).easing(Tiny.TWEEN.Easing.Quartic.Out).onStart(function () {
-            that['_ready'].setVisible(true);
-        }).onUpdate(function () {
-            that['_ready'].setScale(this.scale);
-        }).onComplete(function () {
-            that['_ready'].setVisible(false);
+        }, 1000, Laya.TWEEN.Ease.quintOut, function () {
+            that['_ready'].visible = false;
             this.scale = that._initScale;
-            that._goAnime.start();
-        });
-        this._oneAnime = new Tiny.TWEEN.Tween({
-            scale: this._initScale
-        }).to({
+            that._goAnime.restart();
+        }).pause();
+        that['_one'].visible = true;
+        this._oneAnime = Laya.Tween.to(that['_one'], {
             scale: 1
-        }, 1000).easing(Tiny.TWEEN.Easing.Quartic.Out).onStart(function () {
-            that['_one'].setVisible(true);
-        }).onUpdate(function () {
-            that['_one'].setScale(this.scale);
-        }).onComplete(function () {
-            that['_one'].setVisible(false);
-            this.scale = that._initScale;
-            that._readyAnime.start();
+        }, 1000, Laya.TWEEN.Ease.quintOut, function () {
+            that['_one'].visible = false;
+            this.scale(that._initScale);
+            that._readyAnime.restart();
         });
-        this._twoAnime = new Tiny.TWEEN.Tween({
-            scale: this._initScale
-        }).to({
+        that['_two'].visible = true;
+        this._twoAnime = Laya.Tween.to(that['_two'], {
             scale: 1
-        }, 1000).easing(Tiny.TWEEN.Easing.Quartic.Out).onStart(function () {
-            that['_two'].setVisible(true);
-        }).onUpdate(function () {
-            that['_two'].setScale(this.scale);
-        }).onComplete(function () {
-            that['_two'].setVisible(false);
+        }, 1000, Laya.TWEEN.Ease.quintOut, function () {
+            that['_two'].visible = false;
             this.scale = that._initScale;
-            that._oneAnime.start();
+            that._oneAnime.restart();
         });
-        this._countDown = new Tiny.TWEEN.Tween({
-            scale: this._initScale
-        }).to({
+        that['_three'].visible = true;
+        this._countDown = Laya.Tween.to(that['_three'], {
             scale: 1
-        }, 1000).easing(Tiny.TWEEN.Easing.Quartic.Out).onStart(function () {
-            that['_three'].setVisible(true);
-        }).onUpdate(function () {
-            that['_three'].setScale(this.scale);
-        }).onComplete(function () {
-            that['_three'].setVisible(false);
+        }, 1000, Laya.TWEEN.Ease.quintOut, function () {
+            that['_three'].visible = false;
             this.scale = that._initScale;
-            that._twoAnime.start();
+            that._twoAnime.restart();
         });
     }
 }
