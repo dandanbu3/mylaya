@@ -1,66 +1,74 @@
-import RESOURCES from './resources';
+import resource from './resource';
 import FinishLayer from './FinishLayer';
 import GLOBAL from './Global';
 
-const alias = 'tileset-dialog-';
-class GameOverScene extends Tiny.Container {
+const alias = 'dialog/';
+class GameOverScene extends Laya.Scene {
     constructor () {
         super();
         this._numCache = [];
-        this._bg = new Tiny.Sprite(Tiny.Texture.fromImage(RESOURCES['dialogBg']));
-        this._bg.setAnchor(0);
-        this._bg.setPosition(20, 192);
+        this._bg = new Laya.Sprite();
+        this._bg.loadImage(resource['dialogBg'].url);
+        this._bg.pivot(0);
+        this._bg.pos(20, 192);
         this.addChild(this._bg);
-        this._titleGameOver = new Tiny.Sprite(Tiny.Texture.fromFrame(`${alias}gameover.png`));
-        this._titleGameOver.setAnchor(0.5, 0);
-        this._titleGameOver.setPosition(375, 264);
-        this._titleGameOver.setVisible(false);
+        this._titleGameOver = new Laya.Sprite();
+        this._titleGameOver.loadImage(`${alias}gameover.png`);
+        this._titleGameOver.pivot(0.5, 0);
+        this._titleGameOver.pos(375, 264);
+        this._titleGameOver.visible = false;
         this.addChild(this._titleGameOver);
-        this._titleGameFinish = new Tiny.Sprite(Tiny.Texture.fromFrame(`${alias}game_finish_title.png`));
-        this._titleGameFinish.setAnchor(0.5, 0);
-        this._titleGameFinish.setPosition(375, 265);
-        this._titleGameFinish.setVisible(false);
+        this._titleGameFinish = new Laya.Sprite();
+        this._titleGameFinish.loadImage(`${alias}game_finish_title.png`);
+        this._titleGameFinish.pivot(0.5, 0);
+        this._titleGameFinish.pos(375, 265);
+        this._titleGameFinish.visible = false;
         this.addChild(this._titleGameFinish);
-        this._mileage = new Tiny.Sprite(Tiny.Texture.fromFrame(`${alias}text_bg.png`));
-        this._mileage.setAnchor(0.5, 0);
-        this._mileage.setPosition(375, 372);
-        const mileageTitle = new Tiny.Text('本次里程数', {
-            fontSize: 24,
-            fontWeight: 'bold',
-            fill: 'white'
-        });
-        mileageTitle.setPosition(-160, 14);
+        this._mileage = new Laya.Sprite();
+        this._mileage.loadImage(`${alias}text_bg.png`);
+        this._mileage.pivot(0.5, 0);
+        this._mileage.pos(375, 372);
+        const mileageTitle = new Laya.Text();
+        mileageTitle.text = '本次里程数';
+        mileageTitle.fontSize = 24;
+        mileageTitle.bold = true;
+        mileageTitle.color = '#fff';
+        mileageTitle.pos(-160, 14);
         this._mileage.addChild(mileageTitle);
         this.addChild(this._mileage);
-        this._breakSelf = new Tiny.Sprite(Tiny.Texture.fromFrame(`${alias}break.png`));
-        this._breakSelf.setAnchor(0);
-        this._breakSelf.setPosition(526, 320);
-        this._breakSelf.setVisible(false);
+        this._breakSelf = new Laya.Sprite();
+        this._breakSelf.loadImage(`${alias}break.png`);
+        this._breakSelf.pivot(0, 0);
+        this._breakSelf.pos(526, 320);
+        this._breakSelf.visible = false;
         this.addChild(this._breakSelf);
-        this._breakAll = new Tiny.Sprite(Tiny.Texture.fromFrame(`${alias}break_all.png`));
-        this._breakAll.setAnchor(0);
-        this._breakAll.setPosition(526, 320);
-        this._breakAll.setVisible(false);
+        this._breakAll = new Laya.Sprite();
+        this._breakAll.loadImage(`${alias}break_all.png`);
+        this._breakAll.pivot(0, 0);
+        this._breakAll.pos(526, 320);
+        this._breakAll.visible = false;
         this.addChild(this._breakAll);
-        this._stop = new Tiny.Sprite(Tiny.Texture.fromFrame(`${alias}btn_stop.png`));
-        this._stop.setAnchor(0);
-        this._stop.setPosition(204, 791);
-        this._stop.setEventEnabled(true);
-        this._stop.tap = (event) => {
-            event.data.originalEvent.preventDefault();
+        this._stop = new Laya.Sprite();
+        this._stop.loadImage(`${alias}btn_stop.png`);
+        this._stop.pivot(0, 0);
+        this._stop.pos(204, 791);
+        this._stop.mouseEnabled = true;
+        this._stop.on(Laya.Event.CLICK, this, (event) => {
+            // event.data.originalEvent.preventDefault();
             if (!GLOBAL.CONF.PREVENT) {
                 this.close();
                 this.emit('stop');
             }
-        };
-        this._stop.setVisible(false);
+        });
+        this._stop.visible = false;
         this.addChild(this._stop);
-        this._restart = new Tiny.Sprite(Tiny.Texture.fromFrame(`${alias}btn_restart.png`));
-        this._restart.setAnchor(0);
-        this._restart.setPosition(439, 791);
-        this._restart.setEventEnabled(true);
-        this._restart.tap = (event) => {
-            event.data.originalEvent.preventDefault();
+        this._restart = new Laya.Sprite();
+        this._restart.loadImage(`${alias}btn_restart.png`/);
+        this._restart.pivot(0, 0);
+        this._restart.pos(439, 791);
+        this._restart.mouseEnabled(true);
+        this._restart.on(Laya.Event.CLICK, this, (event) => {
+            // event.data.originalEvent.preventDefault();
             if (!GLOBAL.CONF.PREVENT) {
                 window.kfcMario.logger && window.kfcMario.logger('click', {
                     key: 'restart'
@@ -68,14 +76,15 @@ class GameOverScene extends Tiny.Container {
                 this.close();
                 this.emit('restart');
             }
-        };
-        this._restart.setVisible(false);
+        });
+        this._restart.visible = false;
         this.addChild(this._restart);
-        this._rank = new Tiny.Sprite(Tiny.Texture.fromFrame(`${alias}btn_view_rank.png`));
-        this._rank.setAnchor(0.5, 0);
-        this._rank.setPosition(375, 791);
-        this._rank.setEventEnabled(true);
-        this._rank.tap = (event) => {
+        this._rank = new Laya.Sprite();
+        this._rank.loadImage(`${alias}btn_view_rank.png`);
+        this._rank.pivot(0.5, 0);
+        this._rank.pos(375, 791);
+        this._rank.mouseEnabled = true;
+        this._rank.on() = (event) => {
             event.data.originalEvent.preventDefault();
             if (!GLOBAL.CONF.PREVENT) {
                 this.close();

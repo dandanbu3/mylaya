@@ -1,58 +1,54 @@
 import GLOBAL from './Global';
 import Sound from './Sound';
 
-class PrizeBox extends Tiny.Sprite {
+class PrizeBox extends Laya.Sprite {
     constructor () {
-        const defaultTexture = Tiny.Texture.fromFrame('tileset-other-tv.png');
-        super(defaultTexture);
+        const defaultTexture = 'other/tv.png';
+        super();
+        this.loadImage(defaultTexture);
         this._tv = defaultTexture;
-        this._heart = Tiny.Texture.fromFrame('tileset-other-heart.png');
+        this._heart = 'other/heart.png';
         this._empty = false;
-        this.setAnchor(0, 1);
+        this.pivot(0, 1);
         const that = this;
-        this._moveUp = new Tiny.TWEEN.Tween({y: 0}).to({y: 10}, 80).onUpdate(function () {
-            that.setPositionY(GLOBAL.CONF.PRIZE_POS_Y - this.y);
-        }).onComplete(function () {
+        this.y = 0;
+        this._moveUp = Laya.Tween.to(this, {y: 10}, 80, null, () => {
             this.y = 0;
-            that._moveDown.start();
         });
-        this._moveDown = new Tiny.TWEEN.Tween({y: 10}).to({y: 0}, 80).onUpdate(function () {
-            that.setPositionY(GLOBAL.CONF.PRIZE_POS_Y - this.y);
-        }).onComplete(function () {
+        this._moveDown = Laya.Tween.to(this, {y: 10}, 80, () => {
             this.y = 10;
-        });
+        }, 80);
     }
     playAnime () {
-        this._moveUp.start();
+        this._moveUp.resume();
     }
     stopAnime () {
-        this._moveUp.stop();
-        this._moveDown.stop();
+        this._moveUp.pause();
+        this._moveDown.pause();
     }
 }
 
 // 顶中空气屁的动画
-class EmptyFart extends Tiny.Sprite {
+class EmptyFart extends Laya.Sprite {
     constructor() {
-        super(Tiny.Texture.fromFrame(`tileset-other-tvempty.png`));
-        this.setAnchor(0.5, 1);
-        this.setPosition(200, GLOBAL.CONF.PRIZE_POS_Y - 140);
-        this._fadeAction = Tiny.FadeOut(500);
-        this._fadeAction.onComplete = () => {
-            this.setOpacity(1);
-        };
-        this._moveAction = Tiny.MoveTo(500, Tiny.point(200, GLOBAL.CONF.PRIZE_POS_Y - 190));
-        this._moveAction.onComplete = () => {
-            this.setPositionY(GLOBAL.CONF.PRIZE_POS_Y - 140);
-            this.setVisible(false);
-        };
-        this.setScale(1.5);
-        this.setVisible(false);
+        super();
+        this.loadImage(`other/tvempty.png`);
+        this.pivot(0.5, 1);
+        this.pos(200, GLOBAL.CONF.PRIZE_POS_Y - 140);
+        this._fadeAction = Laya.Tween.to(this, {alpha: 0}, 500, null, () => {
+            this.alpha = 1;
+        }).pause();
+        this._moveAction =  Laya.Tween.to(this, {x: 200, y: GLOBAL.CONF.PRIZE_POS_Y - 190}, 500, null, () => {
+            this.y = GLOBAL.CONF.PRIZE_POS_Y - 140;
+            this.visible = false;
+        }).pause();
+        this.scale(1.5, 1.5);
+        this.visible = false;
     }
     playAnime () {
-        this.setVisible(true);
-        this.runAction(this._moveAction);
-        this.runAction(this._fadeAction);
+        this.visible = true;
+        this._moveAction.resume();
+        this._fadeAction.resume();
     }
 }
 
