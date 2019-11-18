@@ -51,11 +51,11 @@ class HeaderScene extends Laya.Scene {
             login.mouseEnabled = true;
             avatar.on(Laya.Event.CLICK, this, (event) => {
                 // event.data.originalEvent.preventDefault();
-                window.kfcMario.goToLogin && window.kfcMario.goToLogin();
+                window.kfcMario && window.kfcMario.goToLogin && window.kfcMario.goToLogin();
             });
             login.on(Laya.Event.CLICK, this, (event) => {
                 // event.data.originalEvent.preventDefault();
-                window.kfcMario.goToLogin && window.kfcMario.goToLogin();
+                window.kfcMario && window.kfcMario.goToLogin && window.kfcMario.goToLogin();
             });
             this.addChild(login);
         }
@@ -116,6 +116,7 @@ class HeaderScene extends Laya.Scene {
                         this.addChild(newSprite);
                         const oldSprite = this._prizeNumCache[index];
                         this._prizeNumCache.splice(index, 1, newSprite);
+                        console.log(444);
                         Laya.Tween.to(newSprite, {
                             x: 207 + index * 28,
                             y: 94
@@ -123,10 +124,11 @@ class HeaderScene extends Laya.Scene {
                         Laya.Tween.to(oldSprite, {
                             x: oldSprite.x,
                             y: oldSprite.y + 50
-                        }, 500, () => {
+                        }, 500, null, () => {
                             console.log(this);
                             this.removeChild(oldSprite);
                         });
+                        console.log(444);
                     }
                 });
             }

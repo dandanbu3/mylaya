@@ -19,8 +19,9 @@ class BackgroundScene extends Laya.Sprite {
         this._bgWidth = 2180;
         for (let i = 0; i < 4; i++) {
             const mode = i % 2;
-            const sprite = new Laya.Sprite(mode === 0 ? bgLeft : bgRight);
-            sprite.pivot(0);
+            const sprite = new Laya.Sprite();
+            sprite.loadImage(mode === 0 ? bgLeft : bgRight);
+            sprite.pivot(0, 0);
             sprite.pos(this._bgWidth * i, 190);
             this.addChild(sprite);
             this._bgCache.push(sprite);
@@ -37,8 +38,9 @@ class BackgroundScene extends Laya.Sprite {
         this._cloudList = [cloudSmallLeft, cloudSmallRight, cloudLargeLeft, cloudLargeRight, cloudSmallLeft, cloudSmallRight];
         let cloudPosX = 0;
         for (let i = 0; i < 2; i++) {
-            const sprite = new Laya.Sprite(this._cloudList[i]);
-            sprite.pivot(0);
+            const sprite = new Laya.Sprite();
+            sprite.loadImage(this._cloudList[i]);
+            sprite.pivot(0, 0);
             sprite.pos(cloudPosX, 293);
             this.addChild(sprite);
             this._cloudCache.push(sprite);
@@ -55,8 +57,9 @@ class BackgroundScene extends Laya.Sprite {
         ];
         let mgPosX = 0;
         for (let i = 0; i < 2; i++) {
-            const sprite = new Laya.Sprite(this._mgList[i]);
-            sprite.pivot(0);
+            const sprite = new Laya.Sprite();
+            sprite.loadImage(this._mgList[i]);
+            sprite.pivot(0, 0);
             sprite.pos(mgPosX, 60);
             this.addChild(sprite);
             this._mgCache.push(sprite);
@@ -73,8 +76,9 @@ class BackgroundScene extends Laya.Sprite {
         ];
         let fgPosX = 50;
         for (let i = 0; i < 2; i++) {
-            const sprite = new Laya.Sprite(this._fgList[i]);
-            sprite.pivot(0);
+            const sprite = new Laya.Sprite();
+            sprite.loadImage(this._fgList[i]);
+            sprite.pivot(0, 0);
             sprite.pos(fgPosX, 60);
             this.addChild(sprite);
             this._fgCache.push(sprite);

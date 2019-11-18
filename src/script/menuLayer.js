@@ -1,5 +1,5 @@
 import resource from './resource';
-// import MainLayer from './MainLayer';
+import MainLayer from './MainLayer';
 import HeaderScene from './HeaderScene';
 import GLOBAL from './Global';
 import Util from './utils';
@@ -21,14 +21,14 @@ export default class menuLayer extends Laya.Scene {
         this.addChild(this._header);
         const isFrist = Util.storage.get('bili_mario_visited') !== 'visited';
         if (isFrist) { // 第一次进入页面，加手提示
-            let ani = new Laya.Animation();
-            this.addChild(ani);
+            var ani = new Laya.Animation();
             ani.interval = 30;			// 设置播放间隔（单位：毫秒）
-            ani.index = 1;				// 当前播放索引	
+            // ani.index = 1;				// 当前播放索引	
             ani.pivot(0.5, 0);
             ani.pos(534, 904);
             ani.loadImages(this.aniUrls("other/hand_", 12));
             ani.play();
+            this.addChild(ani);
         }
     }
 
@@ -135,24 +135,33 @@ export default class menuLayer extends Laya.Scene {
     startStoryScroll () {
         const currentPos = this._storySetting.y;
         const posY = currentPos - 44;
-        // const stopAction = Tiny.MoveTo(1000, Tiny.point(375, currentPos));
-        // const moveAction = Tiny.MoveTo(800, Tiny.point(375, posY));
-        // stopAction.onComplete = () => {
-        //     this._storySetting.runAction(moveAction);
-        // };
-        // moveAction.onComplete = () => {
-        //     if (currentPos <= 284) {
-        //         this._storySetting.setPositionY(548);
-        //     }
-        //     this.startStoryScroll();
-        // };
-        // this._storySetting.runAction(stopAction);
+        console.log(444);
+        const stopAction = Laya.Tween.to(
+            this._storySetting,
+            {x: 375, y: currentPos},
+            1000,
+            null,
+            () => {
+                moveAction.resume();
+            });
+        window.stopAction = stopAction;
+        console.log(stopAction, 'stopAction');
+        const moveAction = Laya.Tween.to(
+            this._storySetting,
+            {x: 375, y: posY},
+            800,
+            null,
+            () => {
+                if (currentPos <= 284) {
+                    this._storySetting.y = 548;
+                }
+                this.startStoryScroll();
+            }).pause();
+        console.log(444);
     }
     drawFrame () {
         let logo = new Laya.Animation();
-        logo.width = 240;
-        logo.height = 120;
-        logo.loadImages(this.aniUrls("logo/logo_", 27));
+        logo.loadImages(this.aniUrls('logo/logo_', 26));
         logo.interval = 160;
         logo.pivot(0, 0);
         logo.pos(55, 277);
@@ -195,7 +204,7 @@ export default class menuLayer extends Laya.Scene {
         this._btnRule.on(Laya.Event.CLICK, this, (event) => {
             // event.data.originalEvent.preventDefault();
             if (!GLOBAL.CONF.PREVENT) {
-                window.kfcMario.showRules && window.kfcMario.showRules();
+                window.kfcMario && window.kfcMario.showRules && window.kfcMario.showRules();
             }
         });
         this.addChild(this._btnRule);
@@ -233,20 +242,21 @@ export default class menuLayer extends Laya.Scene {
                     Util.jumpToTop();
                     Util.storage.set('bili_mario_visited', 'visited');
                     Sound.stopBg();
-                    window.kfcMario.logger && window.kfcMario.logger('click', {
+                    window.kfcMario && window.kfcMario.logger && window.kfcMario.logger('click', {
                         key: 'start',
                         score: GLOBAL.DATA.OPEN_CHANCE,
                         mid: GLOBAL.DATA.MID
                     });
-                    // const startLayer = new MainLayer(this._choosen);
-                    // startLayer.on('transitionend', () => {
-                    //     startLayer.startRunAction();
-                    // });
-                    // Tiny.app.replaceScene(startLayer);
-                    // startLayer.emit('transitionend');
+                    const startLayer = new MainLayer(this._choosen);
+                    startLayer.on('transitionend', () => {
+                        startLayer.startRunAction();
+                    });
+                    Laya.stage.addChild(startLayer);
+                    this.removeSelf();
+                    startLayer.emit('transitionend');
                     GLOBAL.CONF.MODE = GLOBAL.MODES.PRE;
                 } else {
-                    window.kfcMario.goToLogin && window.kfcMario.goToLogin();
+                    window.kfcMario && window.kfcMario.goToLogin && window.kfcMario.goToLogin();
                 }
             }
         }

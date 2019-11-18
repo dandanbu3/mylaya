@@ -37,12 +37,12 @@ class FinishLayer extends Laya.Scene {
 
         const frame = new Laya.Sprite();
         frame(resource['frame'].url);
-        frame.pivot(0);
+        frame.pivot(0, 0);
         frame.pos(0, 0);
         this.addChild(frame);
         this._header = new HeaderScene();
         this.addChild(this._header);
-        window.kfcMario.showRank && window.kfcMario.showRank();
+        window.kfcMario && window.kfcMario.showRank && window.kfcMario.showRank();
     }
     drawNum (wrapper, num, size = 'sm', pos, interval = 28, reverse = false) {
         const numArr = num.toString().split('');

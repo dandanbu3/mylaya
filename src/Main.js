@@ -23,7 +23,7 @@ class Main {
 		if (GameConfig.stat) Laya.Stat.show();
 		Laya.alertGlobalError = true;
 
-		
+		window.kfcMario  = {};
 		this.GLOBAL = GLOBAL;
 		if (this.GLOBAL.CONF.DEGRADE) {
 			delete resource.cloudSmallLeft;

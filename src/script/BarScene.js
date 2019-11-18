@@ -34,7 +34,7 @@ class BarScene extends Laya.Sprite {
     createPrizeCount () {
         this._prizeIcon = new Laya.Sprite();
         this._prizeIcon.loadImage('icons/gift_bg.png');
-        this._prizeIcon.pivot(0);
+        this._prizeIcon.pivot(0, 0);
         this._prizeIcon.pos(30, 200);
         this.addChild(this._prizeIcon);
         const x = new Laya.Sprite();
@@ -50,7 +50,7 @@ class BarScene extends Laya.Sprite {
     createMileage () {
         this._mileageIcon = new Laya.Sprite();
         this._mileageIcon.loadImage('icons/mileage_bg.png');
-        this._mileageIcon.pivot(0);
+        this._mileageIcon.pivot(0, 0);
         this._mileageIcon.pos(284, 200);
         this.addChild(this._mileageIcon);
         const m = new Laya.Sprite(`tileset-num-sm_m.png`);
@@ -114,16 +114,18 @@ class BarScene extends Laya.Sprite {
                     //     this.removeChild(oldSprite);
                     // };
                     // oldSprite.runAction(oldAction);
+                    console.log(444);
                     const moveAction = Laya.Tween.to(newSprite, {
                         x: 133 + index * 20,
                         y: 242
                     }, 500);
-                    const moveAction = Laya.Tween.to(newSprite, {
+                    const oldAction = Laya.Tween.to(newSprite, {
                         x: oldSprite.x,
                         y: oldSprite.y + 40
-                    }, 500, undefined, () => {
+                    }, 500, null, () => {
                         this.removeChild(oldSprite);
                     });
+                    console.log(444);
                 }
             });
         }

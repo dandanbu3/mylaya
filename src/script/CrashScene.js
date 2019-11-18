@@ -12,12 +12,14 @@ class PrizeBox extends Laya.Sprite {
         this.pivot(0, 1);
         const that = this;
         this.y = 0;
+        console.log(444);
         this._moveUp = Laya.Tween.to(this, {y: 10}, 80, null, () => {
             this.y = 0;
         });
-        this._moveDown = Laya.Tween.to(this, {y: 10}, 80, () => {
+        this._moveDown = Laya.Tween.to(this, {y: 10}, 80, null, () => {
             this.y = 10;
         }, 80);
+        console.log(444);
     }
     playAnime () {
         this._moveUp.resume();
@@ -190,7 +192,7 @@ class CrashScene extends Laya.Scene {
             }
             callback && callback();
         } else {
-            window.kfcMario.drawLottery && window.kfcMario.drawLottery(drawed => {
+            window.kfcMario && window.kfcMario.drawLottery && window.kfcMario.drawLottery(drawed => {
                 if (drawed) {
                     Sound.playHit();
                     GLOBAL.CONF.HIT++;

@@ -9,9 +9,9 @@ import Sound from './Sound';
 import HeaderScene from './HeaderScene';
 import CountDownScene from './CountDownScene';
 import PauseScene from './PauseScene';
-import MenuLayer from './MenuLayer';
+import MenuLayer from './menuLayer';
 import GameOverScene from './GameOverScene';
-import Util from '../utils';
+import Util from './utils';
 
 class MainLayer extends Laya.Scene {
     constructor (who) {
@@ -175,7 +175,7 @@ class MainLayer extends Laya.Scene {
             Laya.stage.addChild(menuLayer);
         });
         this._gameoverDialog.on('share', () => {
-            window.kfcMario.showShare && window.kfcMario.showShare();
+            window.kfcMario && window.kfcMario.showShare && window.kfcMario.showShare();
         });
         this._gameoverDialog.on('break', type => {
             this._header.syncRecord();

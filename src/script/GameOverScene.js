@@ -1,5 +1,5 @@
 import resource from './resource';
-import FinishLayer from './FinishLayer';
+import FinishLayer from './finisherLayer';
 import GLOBAL from './Global';
 
 const alias = 'dialog/';
@@ -9,7 +9,7 @@ class GameOverScene extends Laya.Scene {
         this._numCache = [];
         this._bg = new Laya.Sprite();
         this._bg.loadImage(resource['dialogBg'].url);
-        this._bg.pivot(0);
+        this._bg.pivot(0, 0);
         this._bg.pos(20, 192);
         this.addChild(this._bg);
         this._titleGameOver = new Laya.Sprite();
@@ -70,7 +70,7 @@ class GameOverScene extends Laya.Scene {
         this._restart.on(Laya.Event.CLICK, this, (event) => {
             // event.data.originalEvent.preventDefault();
             if (!GLOBAL.CONF.PREVENT) {
-                window.kfcMario.logger && window.kfcMario.logger('click', {
+                window.kfcMario && window.kfcMario.logger && window.kfcMario.logger('click', {
                     key: 'restart'
                 });
                 this.removeSelf();
@@ -88,7 +88,7 @@ class GameOverScene extends Laya.Scene {
             // event.data.originalEvent.preventDefault();
             if (!GLOBAL.CONF.PREVENT) {
                 this.removeSelf();
-                window.kfcMario.refreshRank && window.kfcMario.refreshRank(() => {
+                window.kfcMario && window.kfcMario.refreshRank && window.kfcMario.refreshRank(() => {
                     const finishLayer = new FinishLayer();
                     // @ts-ignore
                     Laya.stage.addChild(finishLayer);
@@ -119,7 +119,7 @@ class GameOverScene extends Laya.Scene {
         this._share.on(Laya.Event.CLICK, this, (event) => {
             // event.data.originalEvent.preventDefault();
             if (!GLOBAL.CONF.PREVENT) {
-                window.kfcMario.logger && window.kfcMario.logger('click', {
+                window.kfcMario && window.kfcMario.logger && window.kfcMario.logger('click', {
                     key: 'share'
                 });
                 this.emit('share');
@@ -189,7 +189,7 @@ class GameOverScene extends Laya.Scene {
     show (info = {}) {
         // Tiny.app.view.style['touch-action'] = 'initial';
         // Tiny.app.renderer.plugins.interaction.autoPreventDefault = false;
-        window.kfcMario.updateRecord && window.kfcMario.updateRecord(GLOBAL.CONF.MILEAGE);
+        window.kfcMario && window.kfcMario.updateRecord && window.kfcMario.updateRecord(GLOBAL.CONF.MILEAGE);
         if (GLOBAL.CONF.MILEAGE > GLOBAL.DATA.ALL_RECORD) {
             GLOBAL.DATA.ALL_RECORD = GLOBAL.CONF.MILEAGE;
             GLOBAL.DATA.SELF_RECORD = GLOBAL.CONF.MILEAGE;
@@ -218,7 +218,7 @@ class GameOverScene extends Laya.Scene {
         if (GLOBAL.CONF.HIT === 0) {
             this.setCenter();
         }
-        window.kfcMario.showLottery && window.kfcMario.showLottery(true);
+        window.kfcMario && window.kfcMario.showLottery && window.kfcMario.showLottery(true);
         this.visible = true;
     }
     close () {
@@ -237,7 +237,7 @@ class GameOverScene extends Laya.Scene {
         if (GLOBAL.CONF.HIT === 0) {
             this.setDefault();
         } else {
-            window.kfcMario.showLottery && window.kfcMario.showLottery(false);
+            window.kfcMario && window.kfcMario.showLottery && window.kfcMario.showLottery(false);
         }
         this._numCache.forEach(item => {
             this._mileage.removeChild(item);

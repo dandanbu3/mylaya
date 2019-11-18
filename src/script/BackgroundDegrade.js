@@ -1,4 +1,4 @@
-import resource from './resources';
+import resource from './resource';
 import GLOBAL from './Global';
 const SceneArr = ['forest', 'water', 'city'];
 class BackgroundDegrade extends Laya.Sprite {

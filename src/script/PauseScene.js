@@ -1,6 +1,6 @@
 import resource from './resource';
 import GLOBAL from './Global';
-import Util from '../utils';
+import Util from './utils';
 import Sound from './Sound';
 
 const alias = 'dialog/';
@@ -71,7 +71,7 @@ class PauseScene extends Laya.Scene {
         this._help.on(Laya.Event.CLICK, this, (event) => {
             // event.data.originalEvent.preventDefault();
             if (!GLOBAL.CONF.PREVENT) {
-                window.kfcMario.showRules && window.kfcMario.showRules();
+                window.kfcMario && window.kfcMario.showRules && window.kfcMario.showRules();
             }
         });
         this.addChild(this._help);
