@@ -1152,7 +1152,8 @@
                 () => {
                     GLOBAL.CONF.GIRL_STAT = 2;
                     this._fallAction.resume();
-                }).pause();
+                });
+            this._jumpAction.pause();
             this._fallAction = Laya.Tween.to(
                 this,
                 {x: 56, y: GLOBAL.CONF.GROUND_POS_Y},
@@ -1162,7 +1163,8 @@
                     this._timer = Date.now();
                     GLOBAL.CONF.GIRL_STAT = 3;
                     this.loadImages(this._fallTextures);
-                }).pause();
+                });
+            this._fallAction.pause();
             console.log(444);
         }
         changeJumpDuration () { // 调整跳起下落的速度
@@ -1188,11 +1190,13 @@
                 null,
                 () => {
                     this._dieMoveEnd.resume();
-                }).pause();
+                });
+            this._dieMoveStart.pause();
             this._dieMoveEnd = Laya.Tween.to(
                 this,
                 {x: 36, y: GLOBAL.CONF.GROUND_POS_Y}, 
-                150).pause();
+                150);
+            this._dieMoveEnd.pause();
             console.log(444);
         }
         createTextures (who, action, start, length) {
@@ -1327,11 +1331,13 @@
             this.pos(200, GLOBAL.CONF.PRIZE_POS_Y - 140);
             this._fadeAction = Laya.Tween.to(this, {alpha: 0}, 500, null, () => {
                 this.alpha = 1;
-            }).pause();
-            this._moveAction =  Laya.Tween.to(this, {x: 200, y: GLOBAL.CONF.PRIZE_POS_Y - 190}, 500, null, () => {
+            });
+            this._fadeAction.pause();
+            this._moveAction = Laya.Tween.to(this, {x: 200, y: GLOBAL.CONF.PRIZE_POS_Y - 190}, 500, null, () => {
                 this.y = GLOBAL.CONF.PRIZE_POS_Y - 140;
                 this.visible = false;
-            }).pause();
+            });
+            this._moveAction.pause();
             this.scale(1.5, 1.5);
             this.visible = false;
         }
@@ -2731,6 +2737,18 @@
     class menuLayer extends Laya.Scene {
         constructor() {
             super();
+            var moveAction = Laya.Tween.to(
+                this,
+                {x: 375, y: 375},
+                800,
+                null,
+                () => {
+                    this.startStoryScroll();
+                });
+            moveAction.pause();
+            window.moveAction = moveAction;
+            // moveAction.resume();
+            console.log(moveAction, 'moveAction');
             this._choosen = 'girl22';
             this.height = 1144;
             this.width = 750;
@@ -2863,9 +2881,9 @@
                 {x: 375, y: currentPos},
                 1000,
                 null,
-                () => {
+                Laya.Handler.create(() => {
                     moveAction.resume();
-                });
+                }));
             window.stopAction = stopAction;
             console.log(stopAction, 'stopAction');
             const moveAction = Laya.Tween.to(
@@ -2878,7 +2896,8 @@
                         this._storySetting.y = 548;
                     }
                     this.startStoryScroll();
-                }).pause();
+                });
+            moveAction.pause();
             console.log(444);
         }
         drawFrame () {

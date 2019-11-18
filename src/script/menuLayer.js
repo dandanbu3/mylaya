@@ -135,15 +135,14 @@ export default class menuLayer extends Laya.Scene {
     startStoryScroll () {
         const currentPos = this._storySetting.y;
         const posY = currentPos - 44;
-        console.log(444);
         const stopAction = Laya.Tween.to(
             this._storySetting,
             {x: 375, y: currentPos},
             1000,
             null,
-            () => {
+            Laya.Handler.create(() => {
                 moveAction.resume();
-            });
+            }));
         window.stopAction = stopAction;
         console.log(stopAction, 'stopAction');
         const moveAction = Laya.Tween.to(
@@ -156,8 +155,8 @@ export default class menuLayer extends Laya.Scene {
                     this._storySetting.y = 548;
                 }
                 this.startStoryScroll();
-            }).pause();
-        console.log(444);
+            });
+        moveAction.pause();
     }
     drawFrame () {
         let logo = new Laya.Animation();

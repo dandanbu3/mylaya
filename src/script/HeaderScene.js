@@ -116,7 +116,6 @@ class HeaderScene extends Laya.Scene {
                         this.addChild(newSprite);
                         const oldSprite = this._prizeNumCache[index];
                         this._prizeNumCache.splice(index, 1, newSprite);
-                        console.log(444);
                         Laya.Tween.to(newSprite, {
                             x: 207 + index * 28,
                             y: 94
@@ -128,7 +127,6 @@ class HeaderScene extends Laya.Scene {
                             console.log(this);
                             this.removeChild(oldSprite);
                         });
-                        console.log(444);
                     }
                 });
             }

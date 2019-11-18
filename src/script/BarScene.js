@@ -114,7 +114,6 @@ class BarScene extends Laya.Sprite {
                     //     this.removeChild(oldSprite);
                     // };
                     // oldSprite.runAction(oldAction);
-                    console.log(444);
                     const moveAction = Laya.Tween.to(newSprite, {
                         x: 133 + index * 20,
                         y: 242
@@ -125,7 +124,6 @@ class BarScene extends Laya.Sprite {
                     }, 500, null, () => {
                         this.removeChild(oldSprite);
                     });
-                    console.log(444);
                 }
             });
         }

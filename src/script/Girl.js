@@ -24,7 +24,6 @@ class Girl extends Laya.Animation {
         this.createDieAction();
     }
     createJumpAction () {
-        console.log(444);
         this._jumpAction = Laya.Tween.to(
             this,
             {x: 56, y: GLOBAL.CONF.GROUND_POS_Y - this._jumpHeight},
@@ -33,7 +32,8 @@ class Girl extends Laya.Animation {
             () => {
                 GLOBAL.CONF.GIRL_STAT = 2;
                 this._fallAction.resume();
-            }).pause();
+            });
+        this._jumpAction.pause();
         this._fallAction = Laya.Tween.to(
             this,
             {x: 56, y: GLOBAL.CONF.GROUND_POS_Y},
@@ -43,8 +43,8 @@ class Girl extends Laya.Animation {
                 this._timer = Date.now();
                 GLOBAL.CONF.GIRL_STAT = 3;
                 this.loadImages(this._fallTextures);
-            }).pause();
-        console.log(444);
+            });
+        this._fallAction.pause();
     }
     changeJumpDuration () { // 调整跳起下落的速度
         const conf = GLOBAL.CONF;
@@ -61,7 +61,6 @@ class Girl extends Laya.Animation {
             this.emit('die');
         });
         this._dieBlink.play();
-        console.log(444);
         this._dieMoveStart = Laya.Tween.to(
             this,
             {x: 46, y: GLOBAL.CONF.GROUND_POS_Y - 30}, 
@@ -69,12 +68,13 @@ class Girl extends Laya.Animation {
             null,
             () => {
                 this._dieMoveEnd.resume();
-            }).pause();
+            });
+        this._dieMoveStart.pause();
         this._dieMoveEnd = Laya.Tween.to(
             this,
             {x: 36, y: GLOBAL.CONF.GROUND_POS_Y}, 
-            150).pause();
-        console.log(444);
+            150);
+        this._dieMoveEnd.pause();
     }
     createTextures (who, action, start, length) {
         const textures = new Laya.Animation();

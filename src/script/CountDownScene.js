@@ -25,7 +25,6 @@ class CountDownScene extends Laya.Scene {
         const that = this;
         this['_go'].scale(this._initScale, this._initScale);
         that['_go'].visible = true;
-        console.log(444);
         this._goAnime = Laya.Tween.to(that['_go'], {
             scaleX: 1,
             scaleY: 1
@@ -70,7 +69,6 @@ class CountDownScene extends Laya.Scene {
             that['_three'].visible = false;
             this.scale(that._initScale, that._initScale);
         });
-        console.log(444);
     }
 }
 
