@@ -501,9 +501,9 @@
             GAME_OVER: 2
         },
         DATA: { // 接口数据
-            IS_LOGIN: false, // 登录状态
+            IS_LOGIN: true, // 登录状态
             MID: 0,
-            STATUS: 1, // 活动状态
+            STATUS: 2, // 活动状态
             ACT_START_TIME: '', // 活动开始时间
             DISPLAY_CHANCE: 0, // 总的开箱机会
             OPEN_CHANCE: 0, // 当天的开箱机会
@@ -530,10 +530,10 @@
             this._groundCache = [];
             this._newGroundIndex = 1;
 
-            const bgLeft = Laya.Sprite();
-            bgLeft.loadImage(RESOURCES['bgLeft'].url);
-            const bgRight = Laya.Sprite();
-            bgRight.loadImage(RESOURCES['bgRight'].url);
+            const bgLeft = RESOURCES['bgLeft'].url;
+            // bgLeft.loadImage(resource['bgLeft'].url);
+            const bgRight = RESOURCES['bgRight'].url;
+            // bgRight.loadImage(resource['bgRight'].url);
             
             this._bgWidth = 2180;
             for (let i = 0; i < 4; i++) {
@@ -546,14 +546,10 @@
                 this._bgCache.push(sprite);
             }
             
-            const cloudSmallLeft = Laya.Sprite();
-            cloudSmallLeft.loadImage(RESOURCES['cloudSmallLeft'].url);
-            const cloudSmallRight = Laya.Sprite();
-            cloudSmallRight.loadImage(RESOURCES['cloudSmallRight'].url);
-            const cloudLargeLeft = Laya.Sprite();
-            cloudLargeLeft.loadImage(RESOURCES['cloudLargeLeft'].url);
-            const cloudLargeRight = Laya.Sprite();
-            cloudLargeRight.loadImage(RESOURCES['cloudLargeRight'].url);
+            const cloudSmallLeft = RESOURCES['cloudSmallLeft'].url;
+            const cloudSmallRight = RESOURCES['cloudSmallRight'].url;
+            const cloudLargeLeft = RESOURCES['cloudLargeLeft'].url;
+            const cloudLargeRight = RESOURCES['cloudLargeRight'].url;
             this._cloudList = [cloudSmallLeft, cloudSmallRight, cloudLargeLeft, cloudLargeRight, cloudSmallLeft, cloudSmallRight];
             let cloudPosX = 0;
             for (let i = 0; i < 2; i++) {
@@ -836,6 +832,14 @@
             }
             this.containerUpdateTransform();
         }
+        aniUrls(name, num) {
+            var urls = [];
+            for(var i = 0;i < num;i++){
+                //动画资源路径要和动画图集打包前的资源命名对应起来
+                urls.push(name + i + ".png");
+            }
+            return urls;
+        }
     }
 
     const SceneArr$1 = ['forest', 'water', 'city'];
@@ -1045,78 +1049,78 @@
 
     const cache = {};
 
-    class Sound {
-        playSfx (sfx, loop = false) {
-            if (GLOBAL.CONF.SOUND_ON) {
-                // @ts-ignore
-                const audio = Laya.SoundManager.playSound(sfx, loop ? 0 : 1);
-                audio.autoReleaseSound = false;
-                return audio;
-            }
-        }
-        playBg () {
-            if (cache.bg) {
-                if (GLOBAL.CONF.SOUND_ON) {
-                    cache.bg.play();
-                }
-            } else {
-                cache.bg = this.playSfx(RESOURCES['bgOgg'].url, true);
-            }
-        }
-        stopBg (isPause = false) {
-            if (cache.bg) {
-                cache.bg[isPause ? 'pause' : 'stop']();
-            }
-        }
-        playHit () {
-            if (cache.hit) {
-                if (GLOBAL.CONF.SOUND_ON) {
-                    cache.hit.stop();
-                    cache.hit.play();
-                }
-            } else {
-                cache.hit = this.playSfx(RESOURCES['boxhitOgg'].url);
-            }
-        }
-        playHitEmpty () {
-            if (cache.hitEmpty) {
-                if (GLOBAL.CONF.SOUND_ON) {
-                    cache.hitEmpty.stop();
-                    cache.hitEmpty.play();
-                }
-            } else {
-                cache.hitEmpty = this.playSfx(RESOURCES['boxhitemptyOgg'].url);
-            }
-        }
-        playJump () {
-            if (cache.jump) {
-                if (GLOBAL.CONF.SOUND_ON) {
-                    cache.jump.stop();
-                    cache.jump.play();
-                }
-            } else {
-                cache.jump = this.playSfx(RESOURCES['jumpOgg'].url);
-            }
-        }
-        playGameOver () {
-            if (cache.gameOver) {
-                if (GLOBAL.CONF.SOUND_ON) {
-                    cache.gameOver.play();
-                }
-            } else {
-                cache.gameOver = this.playSfx(RESOURCES['gameoverOgg'].url);
-            }
-        }
-        playCountDown () {
-            if (cache.countdown) {
-                if (GLOBAL.CONF.SOUND_ON) {
-                    cache.countdown.play();
-                }
-            } else {
-                cache.countdown = this.playSfx(RESOURCES['countdownOgg'].url);
-            }
+    function playSfx (sfx, loop = false) {
+        if (GLOBAL.CONF.SOUND_ON) {
+            // @ts-ignore
+            const audio = Laya.SoundManager.playSound(sfx, loop ? 0 : 1);
+            audio.autoReleaseSound = false;
+            return audio;
         }
     }
+    function playBg () {
+        if (cache.bg) {
+            if (GLOBAL.CONF.SOUND_ON) {
+                cache.bg.play();
+            }
+        } else {
+            cache.bg = this.playSfx(RESOURCES['bgOgg'].url, true);
+        }
+    }
+    function stopBg (isPause = false) {
+        if (cache.bg) {
+            cache.bg[isPause ? 'pause' : 'stop']();
+        }
+    }
+    function playHit () {
+        if (cache.hit) {
+            if (GLOBAL.CONF.SOUND_ON) {
+                cache.hit.stop();
+                cache.hit.play();
+            }
+        } else {
+            cache.hit = this.playSfx(RESOURCES['boxhitOgg'].url);
+        }
+    }
+    function playHitEmpty () {
+        if (cache.hitEmpty) {
+            if (GLOBAL.CONF.SOUND_ON) {
+                cache.hitEmpty.stop();
+                cache.hitEmpty.play();
+            }
+        } else {
+            cache.hitEmpty = this.playSfx(RESOURCES['boxhitemptyOgg'].url);
+        }
+    }
+    function playJump () {
+        if (cache.jump) {
+            if (GLOBAL.CONF.SOUND_ON) {
+                cache.jump.stop();
+                cache.jump.play();
+            }
+        } else {
+            cache.jump = this.playSfx(RESOURCES['jumpOgg'].url);
+        }
+    }
+    function playGameOver () {
+        if (cache.gameOver) {
+            if (GLOBAL.CONF.SOUND_ON) {
+                cache.gameOver.play();
+            }
+        } else {
+            cache.gameOver = this.playSfx(RESOURCES['gameoverOgg'].url);
+        }
+    }
+    function playCountDown () {
+        if (cache.countdown) {
+            if (GLOBAL.CONF.SOUND_ON) {
+                cache.countdown.play();
+            }
+        } else {
+            cache.countdown = this.playSfx(RESOURCES['countdownOgg'].url);
+        }
+    }
+
+    var Sound = { playSfx, playBg, stopBg, playHit, playHitEmpty, playJump, playGameOver, playCountDown };
 
     class Girl extends Laya.Animation {
         constructor (who) {
@@ -2725,6 +2729,7 @@
     class menuLayer extends Laya.Scene {
         constructor() {
             super();
+            console.log(Sound, 'Sound');
             this._choosen = 'girl22';
             this.height = 1144;
             this.width = 750;
@@ -2754,7 +2759,6 @@
                 //动画资源路径要和动画图集打包前的资源命名对应起来
                 urls.push(name + i + ".png");
             }
-            console.log(urls, 'urls');
             return urls;
         }
         drawTips () {
@@ -2889,7 +2893,6 @@
         }
         drawBtns () {
             this._btnStart = new Laya.Sprite();
-            console.log(GLOBAL.DATA.STATUS, 'GLOBAL.DATA.STATUS');
             if (GLOBAL.DATA.STATUS === 1) {
                 this._btnStart.loadImage(`${alias$3}btn_start_gray.png`);
             } else if (GLOBAL.DATA.NO_INVENTORY) {
@@ -2916,6 +2919,7 @@
             this._btnRule.pos(94, 1003);
             this._btnRule.mouseEnabled = (true);
             this._btnRule.on(Laya.Event.CLICK, this, (event) => {
+                console.log('test');
                 // event.data.originalEvent.preventDefault();
                 if (!GLOBAL.CONF.PREVENT) {
                     window.kfcMario && window.kfcMario.showRules && window.kfcMario.showRules();
@@ -2949,6 +2953,7 @@
             this.addChild(this._btnMuse);
         }
         onReady (event) {
+            console.log('test22');
             // event.data.originalEvent.preventDefault();
             if (!GLOBAL.CONF.PREVENT) {
                 if (GLOBAL.DATA.STATUS !== 1) {
@@ -3113,7 +3118,6 @@
     	}
     	/** 资源加载完成时回调*/
     	loadComplete(isSuccess) {
-    		console.log(666);
     		const progressTip = document.getElementById('progress_tip');
     		const progress = document.getElementById('progress');
     		const percent = document.getElementById('percent');

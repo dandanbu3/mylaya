@@ -146,9 +146,9 @@ export default {
         GAME_OVER: 2
     },
     DATA: { // 接口数据
-        IS_LOGIN: false, // 登录状态
+        IS_LOGIN: true, // 登录状态
         MID: 0,
-        STATUS: 1, // 活动状态
+        STATUS: 2, // 活动状态
         ACT_START_TIME: '', // 活动开始时间
         DISPLAY_CHANCE: 0, // 总的开箱机会
         OPEN_CHANCE: 0, // 当天的开箱机会

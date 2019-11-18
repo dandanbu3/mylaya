@@ -11,10 +11,10 @@ class BackgroundScene extends Laya.Sprite {
         this._groundCache = [];
         this._newGroundIndex = 1;
 
-        const bgLeft = Laya.Sprite();
-        bgLeft.loadImage(resource['bgLeft'].url);
-        const bgRight = Laya.Sprite();
-        bgRight.loadImage(resource['bgRight'].url);
+        const bgLeft = resource['bgLeft'].url;
+        // bgLeft.loadImage(resource['bgLeft'].url);
+        const bgRight = resource['bgRight'].url;
+        // bgRight.loadImage(resource['bgRight'].url);
         
         this._bgWidth = 2180;
         for (let i = 0; i < 4; i++) {
@@ -27,14 +27,10 @@ class BackgroundScene extends Laya.Sprite {
             this._bgCache.push(sprite);
         }
         
-        const cloudSmallLeft = Laya.Sprite();
-        cloudSmallLeft.loadImage(resource['cloudSmallLeft'].url);
-        const cloudSmallRight = Laya.Sprite();
-        cloudSmallRight.loadImage(resource['cloudSmallRight'].url);
-        const cloudLargeLeft = Laya.Sprite();
-        cloudLargeLeft.loadImage(resource['cloudLargeLeft'].url);
-        const cloudLargeRight = Laya.Sprite();
-        cloudLargeRight.loadImage(resource['cloudLargeRight'].url);
+        const cloudSmallLeft = resource['cloudSmallLeft'].url;
+        const cloudSmallRight = resource['cloudSmallRight'].url;
+        const cloudLargeLeft = resource['cloudLargeLeft'].url;
+        const cloudLargeRight = resource['cloudLargeRight'].url;
         this._cloudList = [cloudSmallLeft, cloudSmallRight, cloudLargeLeft, cloudLargeRight, cloudSmallLeft, cloudSmallRight];
         let cloudPosX = 0;
         for (let i = 0; i < 2; i++) {
@@ -151,7 +147,7 @@ class BackgroundScene extends Laya.Sprite {
         for (let i  = 0; i < 3; i ++) {
             const birdTextures = [];
             for (let j = 0; j < 6; j++) {
-                birdTextures.push(Tiny.Texture.fromFrame(`bird_${i}_${j}.png`));
+                birdTextures.push(`bird_${i}_${j}.png`);
             }
             const flyAction = Tiny.MoveBy(500, Tiny.point(0, 50));
             if (i === 0) {
@@ -172,29 +168,30 @@ class BackgroundScene extends Laya.Sprite {
         }
         
         this._groundList = [
-            Tiny.Texture.fromImage(resource['grassLeft']),
-            Tiny.Texture.fromImage(resource['grassRight']),
-            Tiny.Texture.fromImage(resource['bridgeLeft']),
-            Tiny.Texture.fromImage(resource['bridgeRight']),
-            Tiny.Texture.fromImage(resource['roadLeft']),
-            Tiny.Texture.fromImage(resource['roadRight'])
+            resource['grassLeft'].url,
+            resource['grassRight'].url,
+            resource['bridgeLeft'].url,
+            resource['bridgeRight'].url,
+            resource['roadLeft'].url,
+            resource['roadRight'].url
         ];
         let groundPosX = 0;
         for (let i = 0; i < 2; i++) {
-            const ground = new Tiny.Sprite(this._groundList[i]);
+            const ground = new Laya.Sprite();
+            ground.loadImage(this._groundList[i]);
             // @ts-ignore
             ground._inview = true;
             // @ts-ignore
             ground._allinview = true;
-            ground.setAnchor(0);
-            ground.setPosition(groundPosX, GLOBAL.CONF.GROUND_POS_Y - 20);
+            ground.pivot(0, 0);
+            ground.pos(groundPosX, GLOBAL.CONF.GROUND_POS_Y - 20);
             this.addChild(ground);
             this._groundCache.push(ground);
             groundPosX += ground.width;
         }
     }
     checkPosPlace (posX) {
-        let posRange = this._groundList[this._newGroundIndex].width - (Tiny.WIN_SIZE.width - this._groundCache[this._newGroundIndex % 2].getPositionX()); // 边界
+        let posRange = this._groundList[this._newGroundIndex].width - (Laya.stage.width - this._groundCache[this._newGroundIndex % 2].getPositionX()); // 边界
         let index = this._newGroundIndex;
         const checkRange = () => {
             if (posX > posRange) {
@@ -316,6 +313,14 @@ class BackgroundScene extends Laya.Sprite {
             }
         }
         this.containerUpdateTransform();
+    }
+    aniUrls(name, num) {
+        var urls = [];
+        for(var i = 0;i < num;i++){
+            //动画资源路径要和动画图集打包前的资源命名对应起来
+            urls.push(name + i + ".png");
+        }
+        return urls;
     }
 }
 
