@@ -1021,7 +1021,6 @@
                         //     this.removeChild(oldSprite);
                         // };
                         // oldSprite.runAction(oldAction);
-                        console.log(444);
                         const moveAction = Laya.Tween.to(newSprite, {
                             x: 133 + index * 20,
                             y: 242
@@ -1032,7 +1031,6 @@
                         }, 500, null, () => {
                             this.removeChild(oldSprite);
                         });
-                        console.log(444);
                     }
                 });
             }
@@ -1143,7 +1141,6 @@
             this.createDieAction();
         }
         createJumpAction () {
-            console.log(444);
             this._jumpAction = Laya.Tween.to(
                 this,
                 {x: 56, y: GLOBAL.CONF.GROUND_POS_Y - this._jumpHeight},
@@ -1165,7 +1162,6 @@
                     this.loadImages(this._fallTextures);
                 });
             this._fallAction.pause();
-            console.log(444);
         }
         changeJumpDuration () { // 调整跳起下落的速度
             const conf = GLOBAL.CONF;
@@ -1182,7 +1178,6 @@
                 this.emit('die');
             });
             this._dieBlink.play();
-            console.log(444);
             this._dieMoveStart = Laya.Tween.to(
                 this,
                 {x: 46, y: GLOBAL.CONF.GROUND_POS_Y - 30}, 
@@ -1197,7 +1192,6 @@
                 {x: 36, y: GLOBAL.CONF.GROUND_POS_Y}, 
                 150);
             this._dieMoveEnd.pause();
-            console.log(444);
         }
         createTextures (who, action, start, length) {
             const textures = new Laya.Animation();
@@ -1304,14 +1298,12 @@
             this._empty = false;
             this.pivot(0, 1);
             this.y = 0;
-            console.log(444);
             this._moveUp = Laya.Tween.to(this, {y: 10}, 80, null, () => {
                 this.y = 0;
             });
             this._moveDown = Laya.Tween.to(this, {y: 10}, 80, null, () => {
                 this.y = 10;
             }, 80);
-            console.log(444);
         }
         playAnime () {
             this._moveUp.resume();
@@ -1620,7 +1612,6 @@
                             this.addChild(newSprite);
                             const oldSprite = this._prizeNumCache[index];
                             this._prizeNumCache.splice(index, 1, newSprite);
-                            console.log(444);
                             Laya.Tween.to(newSprite, {
                                 x: 207 + index * 28,
                                 y: 94
@@ -1632,7 +1623,6 @@
                                 console.log(this);
                                 this.removeChild(oldSprite);
                             });
-                            console.log(444);
                         }
                     });
                 }
@@ -1675,7 +1665,6 @@
             const that = this;
             this['_go'].scale(this._initScale, this._initScale);
             that['_go'].visible = true;
-            console.log(444);
             this._goAnime = Laya.Tween.to(that['_go'], {
                 scaleX: 1,
                 scaleY: 1
@@ -1720,7 +1709,6 @@
                 that['_three'].visible = false;
                 this.scale(that._initScale, that._initScale);
             });
-            console.log(444);
         }
     }
 
@@ -2737,18 +2725,6 @@
     class menuLayer extends Laya.Scene {
         constructor() {
             super();
-            var moveAction = Laya.Tween.to(
-                this,
-                {x: 375, y: 375},
-                800,
-                null,
-                () => {
-                    this.startStoryScroll();
-                });
-            moveAction.pause();
-            window.moveAction = moveAction;
-            // moveAction.resume();
-            console.log(moveAction, 'moveAction');
             this._choosen = 'girl22';
             this.height = 1144;
             this.width = 750;
@@ -2875,17 +2851,7 @@
         startStoryScroll () {
             const currentPos = this._storySetting.y;
             const posY = currentPos - 44;
-            console.log(444);
-            const stopAction = Laya.Tween.to(
-                this._storySetting,
-                {x: 375, y: currentPos},
-                1000,
-                null,
-                Laya.Handler.create(() => {
-                    moveAction.resume();
-                }));
-            window.stopAction = stopAction;
-            console.log(stopAction, 'stopAction');
+            console.log(posY, posY);
             const moveAction = Laya.Tween.to(
                 this._storySetting,
                 {x: 375, y: posY},
@@ -2898,7 +2864,14 @@
                     this.startStoryScroll();
                 });
             moveAction.pause();
-            console.log(444);
+            const stopAction = Laya.Tween.to(
+                this._storySetting,
+                {x: 375, y: currentPos},
+                1000,
+                null,
+                Laya.Handler.create(() => {
+                    moveAction.resume();
+                }));
         }
         drawFrame () {
             let logo = new Laya.Animation();

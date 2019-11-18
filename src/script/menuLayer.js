@@ -38,7 +38,6 @@ export default class menuLayer extends Laya.Scene {
             //动画资源路径要和动画图集打包前的资源命名对应起来
             urls.push(name + i + ".png");
         }
-        console.log(urls, 'urls');
         return urls;
     }
     drawTips () {
@@ -135,16 +134,7 @@ export default class menuLayer extends Laya.Scene {
     startStoryScroll () {
         const currentPos = this._storySetting.y;
         const posY = currentPos - 44;
-        const stopAction = Laya.Tween.to(
-            this._storySetting,
-            {x: 375, y: currentPos},
-            1000,
-            null,
-            Laya.Handler.create(() => {
-                moveAction.resume();
-            }));
-        window.stopAction = stopAction;
-        console.log(stopAction, 'stopAction');
+        console.log(posY, posY);
         const moveAction = Laya.Tween.to(
             this._storySetting,
             {x: 375, y: posY},
@@ -157,6 +147,14 @@ export default class menuLayer extends Laya.Scene {
                 this.startStoryScroll();
             });
         moveAction.pause();
+        const stopAction = Laya.Tween.to(
+            this._storySetting,
+            {x: 375, y: currentPos},
+            1000,
+            null,
+            Laya.Handler.create(() => {
+                moveAction.resume();
+            }));
     }
     drawFrame () {
         let logo = new Laya.Animation();
@@ -174,7 +172,6 @@ export default class menuLayer extends Laya.Scene {
     }
     drawBtns () {
         this._btnStart = new Laya.Sprite();
-        console.log(GLOBAL.DATA.STATUS, 'GLOBAL.DATA.STATUS');
         if (GLOBAL.DATA.STATUS === 1) {
             this._btnStart.loadImage(`${alias}btn_start_gray.png`);
         } else if (GLOBAL.DATA.NO_INVENTORY) {

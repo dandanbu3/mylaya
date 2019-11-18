@@ -80,7 +80,6 @@ class Main {
 	}
 	/** 资源加载完成时回调*/
 	loadComplete(isSuccess) {
-		console.log(666);
 		const progressTip = document.getElementById('progress_tip');
 		const progress = document.getElementById('progress');
 		const percent = document.getElementById('percent');
