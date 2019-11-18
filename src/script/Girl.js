@@ -24,19 +24,25 @@ class Girl extends Laya.Animation {
         this.createDieAction();
     }
     createJumpAction () {
-        this._jumpAction = Tiny.MoveTo(this._jumpSpeed, Tiny.point(56, GLOBAL.CONF.GROUND_POS_Y - this._jumpHeight));
-        this._jumpAction.setEasing(Tiny.TWEEN.Easing.Quadratic.Out);
-        this._fallAction = Tiny.MoveTo(this._jumpSpeed, Tiny.point(56, GLOBAL.CONF.GROUND_POS_Y));
-        this._fallAction.setEasing(Tiny.TWEEN.Easing.Quadratic.In);
-        this._jumpAction.onComplete = () => {
-            GLOBAL.CONF.GIRL_STAT = 2;
-            this.runAction(this._fallAction);
-        };
-        this._fallAction.onComplete = () => {
-            this._timer = Date.now();
-            GLOBAL.CONF.GIRL_STAT = 3;
-            this.loadImages(this._fallTextures);
-        };
+        this._jumpAction = Laya.Tween.to(
+            this,
+            {x: 56, y: GLOBAL.CONF.GROUND_POS_Y - this._jumpHeight},
+            this._jumpSpeed,
+            Laya.Ease.Quadratic.Out,
+            () => {
+                GLOBAL.CONF.GIRL_STAT = 2;
+                this._fallAction.resume();
+            }).pause();
+        this._fallAction = Laya.Tween.to(
+            this,
+            {x: 56, y: GLOBAL.CONF.GROUND_POS_Y},
+            this._jumpSpeed,
+            Laya.Ease.Quadratic.In,
+            () => {
+                this._timer = Date.now();
+                GLOBAL.CONF.GIRL_STAT = 3;
+                this.loadImages(this._fallTextures);
+            }).pause();
     }
     changeJumpDuration () { // 调整跳起下落的速度
         const conf = GLOBAL.CONF;
@@ -45,16 +51,24 @@ class Girl extends Laya.Animation {
         this._fallAction.duration = this._jumpSpeed / ratio;
     }
     createDieAction () {
-        this._dieBlink = Tiny.Blink(50, 50);
-        this._dieBlink.onComplete = () => {
-            this.textures = this._dieGrayTextures;
+        this._dieBlink = new Laya.TimeLine();
+        this._dieBlink.addLabel('hide').to(this, {visible: false}, 50)
+            .addLabel('show').to(this, {visible: true}, 50);
+        this._dieBlink.on(Laya.Event.COMPLETE, this, () => {
+            this.loadImages(this._dieGrayTextures);
             this.emit('die');
-        };
-        this._dieMoveStart = Tiny.MoveTo(150, Tiny.point(46, GLOBAL.CONF.GROUND_POS_Y - 30));
-        this._dieMoveEnd = Tiny.MoveTo(150, Tiny.point(36, GLOBAL.CONF.GROUND_POS_Y));
-        this._dieMoveStart.onComplete = () => {
-            this.runAction(this._dieMoveEnd);
-        };
+        });
+        this._dieBlink.play();
+        this._dieMoveStart = Laya.Tween.to(
+            this,
+            {x: 46, y: GLOBAL.CONF.GROUND_POS_Y - 30}, 
+            150, null, () => {
+                this._dieMoveEnd.resume();
+            }).pause();
+        this._dieMoveEnd = Laya.Tween.to(
+            this,
+            {x: 36, y: GLOBAL.CONF.GROUND_POS_Y}, 
+            150).pause();
     }
     createTextures (who, action, start, length) {
         const textures = new Laya.Animation();
@@ -98,7 +112,7 @@ class Girl extends Laya.Animation {
         this.loadImage([this._runTextures[0]]);
         this.removeActionsTrace();
         this.runAction(Tiny.Repeat(3, this._dieBlink));
-        this.runAction(this._dieMoveStart);
+        this._dieMoveStart.resume();
     }
     freeze () {
         this.removeActionsTrace();
@@ -109,24 +123,27 @@ class Girl extends Laya.Animation {
         if (GLOBAL.CONF.GIRL_STAT === 2) {
             const currentDis = GLOBAL.CONF.GROUND_POS_Y - this.getPositionY();
             const speed = this._jumpSpeed * currentDis / this._jumpHeight;
-            const moveAction = Tiny.MoveTo(speed, Tiny.point(56, GLOBAL.CONF.GROUND_POS_Y));
-            moveAction.setEasing(Tiny.TWEEN.Easing.Quadratic.In);
-            moveAction.onComplete = () => {
+            const moveAction = new Laya.Tween.to(this, {
+                x: 56,
+                y: GLOBAL.CONF.GROUND_POS_Y
+            }, speed, Laya.Ease.QuadIn, () => {
                 this._timer = Date.now();
                 GLOBAL.CONF.GIRL_STAT = 3;
-                this.textures = this._fallTextures;
-            };
-            this.runAction(moveAction);
+                this.loadImages(this._fallTextures);
+            });
+            // this.runAction(moveAction);
         } else if (GLOBAL.CONF.GIRL_STAT === 1) {
             const currentDis = this.y - (GLOBAL.CONF.GROUND_POS_Y - this._jumpHeight);
             const speed = (this._jumpSpeed - 100) * currentDis / this._jumpHeight;
-            const jumpAction = Tiny.MoveTo(speed, Tiny.point(56, GLOBAL.CONF.GROUND_POS_Y - this._jumpHeight));
-            jumpAction.setEasing(Tiny.TWEEN.Easing.Quadratic.Out);
-            jumpAction.onComplete = () => {
+            const jumpAction = new Laya.Tween.to(this, {
+                x: 56,
+                y: GLOBAL.CONF.GROUND_POS_Y - this._jumpHeight
+            }, speed, Laya.Ease.QuadOut, () => {
                 GLOBAL.CONF.GIRL_STAT = 2;
-                this.runAction(this._fallAction);
-            };
-            this.runAction(jumpAction);
+                this._fallAction.resume;
+            })
+            
+            // this.runAction(jumpAction);
         }
     }
     updateTransform () {

@@ -52,24 +52,25 @@ class EmptyFart extends Laya.Sprite {
     }
 }
 
-class EnemyBox extends Tiny.AnimatedSprite {
+class EnemyBox extends Laya.Animation {
     constructor (item) {
         const textures = [];
         for (let i = 0; i < item.frames; i++) {
-            textures.push(Tiny.Texture.fromFrame(`tileset-barrier-${item.name}_${i}.png`));
+            textures.push(`barrier/${item.name}_${i}.png`);
         }
-        super(textures);
-        this.setAnchor(0, 1);
+        super();
+        this.loadImages(textures);
+        this.pivot(0, 1);
         this._inview = false;
         this._name = item.name;
         if (item.points) {
             this._points = item.points;
         }
-        this.animationSpeed = item.speed;
+        this.interval = item.interval;
     }
 }
 
-class CrashScene extends Tiny.Container {
+class CrashScene extends Laya.Scene {
     constructor () {
         super();
         this._isFirstEmpty = GLOBAL.DATA.OPEN_CHANCE !== 0;
@@ -84,21 +85,22 @@ class CrashScene extends Tiny.Container {
         const randomItem = this.randomEnemyItem();
         const enemy = new EnemyBox(randomItem);
         enemy.play();
-        enemy.setAnchor(0, 1);
-        enemy.setPosition(Tiny.WIN_SIZE.width * 3, GLOBAL.CONF.GROUND_POS_Y);
+        enemy.pivot(0, 1);
+        enemy.pos(Tiny.WIN_SIZE.width * 3, GLOBAL.CONF.GROUND_POS_Y);
         this.addChild(enemy);
         this._enemyCache.push(enemy);
 
         const animeTextures = [];
         for (let i = 1; i < 29; i++) {
-            animeTextures.push(Tiny.Texture.fromFrame(`tileset-hit-hit_${i}.png`));
+            animeTextures.push(`hit/hit_${i}.png`);
         }
-        this._prizeAnime = new Tiny.AnimatedSprite(animeTextures);
+        this._prizeAnime = new Laya.Animation();
+        this._prizeAnime.loadImages(animeTextures);
         this._prizeAnime.onLoop = () => {
             this._prizeAnime.stop();
         };
-        this._prizeAnime.animationSpeed = 0.4;
-        this._prizeAnime.setPosition(14, 186);
+        this._prizeAnime.interval = 42;
+        this._prizeAnime.pos(14, 186);
         this.addChild(this._prizeAnime);
         this._emptyFart = new EmptyFart();
         this.addChild(this._emptyFart);
@@ -110,14 +112,14 @@ class CrashScene extends Tiny.Container {
         }
     }
     addNext () { // 当有障碍进入可视区域时，提前添加下一个障碍
-        const randomInterval = Tiny.random(Tiny.WIN_SIZE.width * 1.5, Tiny.WIN_SIZE.width * 2.5); // 每个障碍物之间的间隔，一屏到三屏之间随机
+        const randomInterval = this.getRandom(Tiny.WIN_SIZE.width * 1.5, Tiny.WIN_SIZE.width * 2.5); // 每个障碍物之间的间隔，一屏到三屏之间随机
         // @ts-ignore
         const checkPlace = this.parent._background.checkPosPlace(randomInterval);
         this.changePlace(checkPlace);
         const randomItem = this.randomEnemyItem();
         const enemy = new EnemyBox(randomItem);
         enemy.play();
-        enemy.setPosition(Tiny.WIN_SIZE.width + randomInterval, GLOBAL.CONF.GROUND_POS_Y);
+        enemy.pos(Laya.stage.width + randomInterval, GLOBAL.CONF.GROUND_POS_Y);
         this._enemyCache.push(enemy);
         this.addChild(enemy);
         this.addRandomPrize(enemy);
@@ -145,20 +147,26 @@ class CrashScene extends Tiny.Container {
     }
     randomEnemyItem () {
         this._enemyItems = this._enemyItems.length === 0 ? GLOBAL.ENEMY_CONF[this._place].items.slice() : this._enemyItems;
-        const index = Tiny.random(0, this._enemyItems.length - 1);
+        const index = this.getRandom(0, this._enemyItems.length - 1);
         const item = this._enemyItems.splice(index, 1);
         return item[0];
     }
+    getRandom(val1, val2) {
+        var random = Math.random();
+        return val1 + Math.floor((val2 - val1 + 1) * random);
+
+    }
     addRandomPrize (enemy) {
-        const needAdd = Tiny.randomFromArray([1, 1, 0, 1]);
+        const arr = [1, 1, 0, 1];
+        const needAdd = arr[this.getRandom(0, 3)];
         if (needAdd) {
             // 限制奖品箱子出现的范围
             const prevEnemy = this._enemyCache[this._enemyCache.length - 2];
-            const startPos = prevEnemy.getPositionX();
-            const randomPos = Tiny.random(startPos, enemy.getPositionX() - 500);
+            const startPos = prevEnemy.x;
+            const randomPos = this.getRandom(startPos, enemy.getPositionX() - 500);
             const prizeBox = new PrizeBox();
             if (GLOBAL.DATA.OPEN_CHANCE > 0) { // 有奖品的箱子
-                prizeBox.setPosition(randomPos, GLOBAL.CONF.PRIZE_POS_Y);
+                prizeBox.pos(randomPos, GLOBAL.CONF.PRIZE_POS_Y);
                 this.addChild(prizeBox);
                 this._prizeCache.push(prizeBox);
             } else { // 空气屁箱子
@@ -171,7 +179,7 @@ class CrashScene extends Tiny.Container {
     }
     hitPrize (prize, callback) {
         prize.destroyed = true;
-        prize.texture = prize._heart;
+        prize.loadImage(prize._heart);
         prize.playAnime();
         if (prize._empty) {
             Sound.playHitEmpty();

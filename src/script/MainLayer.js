@@ -4,7 +4,7 @@ import BarScene from './BarScene';
 import Girl from './Girl';
 import CrashScene from './CrashScene';
 import GLOBAL from './Global';
-import RESOURCES from './resources';
+import resource from './resource';
 import Sound from './Sound';
 import HeaderScene from './HeaderScene';
 import CountDownScene from './CountDownScene';
@@ -13,26 +13,27 @@ import MenuLayer from './MenuLayer';
 import GameOverScene from './GameOverScene';
 import Util from '../utils';
 
-class MainLayer extends Tiny.Container {
+class MainLayer extends Laya.Scene {
     constructor (who) {
         super();
-        Tiny.app.view.style['touch-action'] = 'none';
-        Tiny.app.renderer.plugins.interaction.autoPreventDefault = true;
+        // Tiny.app.view.style['touch-action'] = 'none';
+        // Tiny.app.renderer.plugins.interaction.autoPreventDefault = true;
         this._defaultTickerDuration = 500;
         // 全局的定时器
         // @ts-ignore
-        this._ticker = new Tiny.ticker.CountDown({
-            duration: this._defaultTickerDuration
-        });
-        this._ticker.on('update', () => {
-            GLOBAL.CONF.MILEAGE++;
-            this._statusBar.syncMileage();
-            if (GLOBAL.CONF.MILEAGE % 50 === 0) {
-                this._ticker.duration--;
-                GLOBAL.CONF.SPEED += 0.4;
-                this._girl.changeJumpDuration();
+        this._ticker = Laya.timer.loop(
+            this._defaultTickerDuration,
+            this,
+            () => {
+                GLOBAL.CONF.MILEAGE++;
+                this._statusBar.syncMileage();
+                if (GLOBAL.CONF.MILEAGE % 50 === 0) {
+                    this._defaultTickerDuration--;
+                    GLOBAL.CONF.SPEED += 0.4;
+                    this._girl.changeJumpDuration();
+                }
             }
-        });
+        );
         this.init(who);
     }
     startRunAction() {
@@ -54,27 +55,24 @@ class MainLayer extends Tiny.Container {
         });
         this.addChild(this._statusBar);
         // 灰尘
-        const dustTextures = [];
-        for (let i = 0; i < 13; i++) {
-            dustTextures.push(Tiny.Texture.fromFrame(`tileset-other-dust_${i}.png`));
-        }
-        this._dust = new Tiny.AnimatedSprite(dustTextures);
-        this._dust.animationSpeed = 0.4;
-        this._dust.setAnchor(1);
-        this._dust.setPosition(120, GLOBAL.CONF.GROUND_POS_Y);
+        this._dust = new Laya.Animation();
+        this._dust.loadImages(this.aniUrls("other/dust_", 13));
+        this._dust.interval = 44;
+        this._dust.pivot(1, 1);
+        this._dust.pos(120, GLOBAL.CONF.GROUND_POS_Y);
         this._dust.play();
-        this._dust.setVisible(false);
+        this._dust.visible = false;
         this.addChild(this._dust);
         // 2233
         this._girl = new Girl(who);
         this._girl.on('notRun', () => {
-            this._dust.setVisible(false);
+            this._dust.visible = false;
         });
         this._girl.on('run', () => {
-            this._dust.setVisible(true);
+            this._dust.visible = true;
         });
         this._girl.on('die', () => {
-            this._dieAnime.setVisible(true);
+            this._dieAnime.visible = true;
             this._dieAnime.play();
         });
         this.addChild(this._girl);
@@ -86,26 +84,23 @@ class MainLayer extends Tiny.Container {
         });
         this.addChild(this._crash);
         // 死亡特效
-        const dieTextures = [];
-        for (let i = 0; i < 18; i++) {
-            dieTextures.push(Tiny.Texture.fromFrame(`tileset-${who}-die_${i}.png`));
-        }
-        this._dieAnime = new Tiny.AnimatedSprite(dieTextures);
-        this._dieAnime.animationSpeed = 0.2;
-        this._dieAnime.setAnchor(0, 1);
+        this._dieAnime = new Laya.Animation();
+        this._dieAnime.loadImages(this.aniUrls(`${who}-die_`, 18));
+        this._dieAnime.interval = 83;
+        this._dieAnime.pivot(0, 1);
         if (who === 'girl22') {
-            this._dieAnime.setPosition(32, GLOBAL.CONF.GROUND_POS_Y + 1);
+            this._dieAnime.pos(32, GLOBAL.CONF.GROUND_POS_Y + 1);
         } else {
-            this._dieAnime.setPosition(16, GLOBAL.CONF.GROUND_POS_Y + 3);
+            this._dieAnime.pos(16, GLOBAL.CONF.GROUND_POS_Y + 3);
         }
         this._dieAnime.onLoop = () => {
             this._dieAnime.stop();
-            this._dieAnime.setVisible(false);
+            this._dieAnime.visible = false;
             this._gameoverDialog.show({
                 type: 'gameover'
             });
         };
-        this._dieAnime.setVisible(false);
+        this._dieAnime.visible = false;
         this.addChild(this._dieAnime);
 
         // 跳跃按钮
@@ -113,14 +108,11 @@ class MainLayer extends Tiny.Container {
         this.addChild(this._jumpBtn);
         const isFrist = Util.storage.get('bili_mario_gamed') !== 'gamed';
         if (isFrist) { // 加手提示
-            const textures = [];
-            for (let i = 0; i < 12; i++) {
-                textures.push(Tiny.Texture.fromFrame(`tileset-other-hand_${i}.png`));
-            }
-            const hand = new Tiny.AnimatedSprite(textures);
-            hand.setAnchor(0);
-            hand.setPosition(534, 1050);
-            hand.animationSpeed = 0.2;
+            const hand = new Laya.Animation();
+            hand.loadImages(this.aniUrls('other/hand_', 12));
+            hand.pivot(0, 0);
+            hand.pos(534, 1050);
+            hand.interval = 83;
             hand.play();
             this.addChild(hand);
             this._hand = hand;
@@ -140,9 +132,10 @@ class MainLayer extends Tiny.Container {
         });
         this.addChild(this._countDown);
         // 外框架
-        const frame = new Tiny.Sprite(Tiny.Texture.fromImage(RESOURCES['frame']));
-        frame.setAnchor(0);
-        frame.setPosition(0);
+        const frame = new Laya.Sprite();
+        frame.loadImage(resource['frame'].url);
+        frame.pivot(0, 0);
+        frame.pos(0);
         this.addChild(frame);
         this._header = new HeaderScene();
         this.addChild(this._header);
@@ -152,7 +145,7 @@ class MainLayer extends Tiny.Container {
         this._pauseDialog.on('resume', () => {
             if (GLOBAL.CONF.MODE === GLOBAL.MODES.PAUSED) {
                 GLOBAL.CONF.MODE = GLOBAL.MODES.PLAYING;
-                this._dust.setVisible(false);
+                this._dust.visible = false;
                 this._girl.resume();
                 this._crash.startAnime();
                 this._ticker.start();
@@ -163,7 +156,7 @@ class MainLayer extends Tiny.Container {
             if (GLOBAL.DATA.LOTTERY_LIST.length === 0) {
                 const menuLayer = new MenuLayer();
                 // @ts-ignore
-                Tiny.app.replaceScene(menuLayer);
+                Laya.stage.addChild(menuLayer);
             } else {
                 this._gameoverDialog.show({
                     type: 'userexit'
@@ -179,7 +172,7 @@ class MainLayer extends Tiny.Container {
             GLOBAL.CONF.MODE = GLOBAL.MODES.MENU;
             const menuLayer = new MenuLayer();
             // @ts-ignore
-            Tiny.app.replaceScene(menuLayer);
+            Laya.stage.addChild(menuLayer);
         });
         this._gameoverDialog.on('share', () => {
             window.kfcMario.showShare && window.kfcMario.showShare();
@@ -198,6 +191,14 @@ class MainLayer extends Tiny.Container {
             this._gameoverDialog.show(info);
         };
     }
+    aniUrls(name, num) {
+        var urls = [];
+        for(var i = 0;i < num;i++){
+            //动画资源路径要和动画图集打包前的资源命名对应起来
+            urls.push(name + i + ".png");
+        }
+        return urls;
+    }
     startCountDown () {
         window.kfcMario.resetLottery && window.kfcMario.resetLottery();
         GLOBAL.CONF.SPEED = GLOBAL.CONF.DEFAULT_SPEED;
@@ -214,14 +215,15 @@ class MainLayer extends Tiny.Container {
         this._countDown.start();
     }
     createJumpBtn () {
-        const btnJump = new Tiny.Sprite(Tiny.Texture.fromFrame('tileset-icons-btn_jump.png'));
+        const btnJump = new Laya.Sprite();
+        btnJump.loadImage('icons/btn_jump.png');
         // @ts-ignore
         btnJump._clicked = false;
-        btnJump.setAnchor(0);
-        btnJump.setPosition(94, 1012);
-        btnJump.setEventEnabled(true);
-        btnJump.pointerdown = (event) => {
-            event.data.originalEvent.preventDefault();
+        btnJump.pivot(0, 0);
+        btnJump.pos(94, 1012);
+        btnJump.mouseEnabled = true;
+        btnJump.on(Laya.Event.CLICK, this, (event) => {
+            // event.data.originalEvent.preventDefault();
             // @ts-ignore
             if (!btnJump._clicked) {
                 // @ts-ignore
@@ -235,12 +237,12 @@ class MainLayer extends Tiny.Container {
             if (GLOBAL.CONF.MODE === GLOBAL.MODES.PLAYING) {
                 this._girl.doJump();
             }
-        };
+        });
         return btnJump;
     }
     gamePause () {
         GLOBAL.CONF.MODE = GLOBAL.MODES.PAUSED;
-        this._dust.setVisible(false);
+        this._dust.visible = false;
         this._girl.freeze();
         this._crash.stopAnime();
         this._ticker.pause();
@@ -273,16 +275,16 @@ class MainLayer extends Tiny.Container {
             const enemyCache = this._crash._enemyCache;
             const prizeCache = this._crash._prizeCache;
             enemyCache.forEach(enemy => {
-                const enemyPos = enemy.getPositionX();
+                const enemyPos = enemy.x;
                 const enemyWidth = enemy.getBounds().width;
                 if (!enemy._destroyed && enemyPos <= -enemyWidth * 2) {
                     enemy._destroyed = true;
                     this._crash.removeEnemy();
-                } else if (!enemy._inview && enemyPos < Tiny.WIN_SIZE.width) {
+                } else if (!enemy._inview && enemyPos < Laya.stage.width) {
                     enemy._inview = true;
                     this._crash.addNext();
                 } else if (!enemy._destroyed) {
-                    enemy.setPositionX(enemyPos - speed);
+                    enemy.x = enemyPos - speed;
                 }
                 if (!enemy._destroyed && GLOBAL.CONF.GIRL_STAT !== -1 && this.collide(this._girl, enemy)) {
                     GLOBAL.CONF.MODE = GLOBAL.MODES.GAME_OVER;

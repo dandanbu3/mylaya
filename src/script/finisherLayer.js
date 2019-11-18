@@ -147,7 +147,7 @@ class FinishLayer extends Laya.Scene {
                 name.bold = true;
                 name.color = '#fff';
                 name.miterLimit = 50;
-                name.setPosition(-60, 28);
+                name.pos(-60, 28);
                 rankItem.addChild(name);
             }
             if (data.score && data.score >= 0) {

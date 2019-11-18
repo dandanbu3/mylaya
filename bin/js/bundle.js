@@ -635,13 +635,17 @@
                             this.addChild(newSprite);
                             const oldSprite = this._prizeNumCache[index];
                             this._prizeNumCache.splice(index, 1, newSprite);
-                            // const moveAction = Tiny.MoveTo(500, Tiny.point(207 + index * 28, 94));
-                            // newSprite.runAction(moveAction);
-                            // const oldAction = Tiny.MoveTo(500, Tiny.point(oldSprite.getPositionX(), oldSprite.getPositionY() + 50));
-                            // oldAction.onComplete = () => {
-                            //     this.removeChild(oldSprite);
-                            // };
-                            // oldSprite.runAction(oldAction);
+                            Laya.Tween.to(newSprite, {
+                                x: 207 + index * 28,
+                                y: 94
+                            }, 500);
+                            Laya.Tween.to(oldSprite, {
+                                x: oldSprite.x,
+                                y: oldSprite.y + 50
+                            }, 500, () => {
+                                console.log(this);
+                                this.removeChild(oldSprite);
+                            });
                         }
                     });
                 }

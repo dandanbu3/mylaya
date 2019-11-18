@@ -63,7 +63,7 @@ class GameOverScene extends Laya.Scene {
         this._stop.visible = false;
         this.addChild(this._stop);
         this._restart = new Laya.Sprite();
-        this._restart.loadImage(`${alias}btn_restart.png`/);
+        this._restart.loadImage(`${alias}btn_restart.png`);
         this._restart.pivot(0, 0);
         this._restart.pos(439, 791);
         this._restart.mouseEnabled(true);
@@ -73,7 +73,7 @@ class GameOverScene extends Laya.Scene {
                 window.kfcMario.logger && window.kfcMario.logger('click', {
                     key: 'restart'
                 });
-                this.close();
+                this.removeSelf();
                 this.emit('restart');
             }
         });
@@ -84,78 +84,81 @@ class GameOverScene extends Laya.Scene {
         this._rank.pivot(0.5, 0);
         this._rank.pos(375, 791);
         this._rank.mouseEnabled = true;
-        this._rank.on() = (event) => {
-            event.data.originalEvent.preventDefault();
+        this._rank.on(Laya.Event.CLICK, this, (event) => {
+            // event.data.originalEvent.preventDefault();
             if (!GLOBAL.CONF.PREVENT) {
-                this.close();
+                this.removeSelf();
                 window.kfcMario.refreshRank && window.kfcMario.refreshRank(() => {
                     const finishLayer = new FinishLayer();
                     // @ts-ignore
-                    Tiny.app.replaceScene(finishLayer);
+                    Laya.stage.addChild(finishLayer);
                 });
             }
-        };
-        this._rank.setVisible(false);
+        });
+        this._rank.visible = false;
         this.addChild(this._rank);
-        this._submit = new Tiny.Sprite(Tiny.Texture.fromFrame(`${alias}btn_submit.png`));
-        this._submit.setAnchor(0.5, 0);
-        this._submit.setPosition(375, 822);
-        this._submit.setEventEnabled(true);
-        this._submit.tap = (event) => {
-            event.data.originalEvent.preventDefault();
+        this._submit = new Laya.Sprite();
+        this._submit.loadImage(`${alias}btn_submit.png`);
+        this._submit.pivot(0.5, 0);
+        this._submit.pos(375, 822);
+        this._submit.mouseEnabled = true;
+        this._submit.on(Laya.Event.CLICK, this, (event) => {
+            // event.data.originalEvent.preventDefault();
             if (!GLOBAL.CONF.PREVENT) {
                 this.close();
                 this.emit('stop');
             }
-        };
-        this._submit.setVisible(false);
+        });
+        this._submit.visible = false;
         this.addChild(this._submit);
-        this._share = new Tiny.Sprite(Tiny.Texture.fromFrame(`${alias}btn_share.png`));
-        this._share.setAnchor(0);
-        this._share.setPosition(270, 959);
-        this._share.setEventEnabled(true);
-        this._share.tap = (event) => {
-            event.data.originalEvent.preventDefault();
+        this._share = new Laya.Sprite();
+        this._share.loadImage(`${alias}btn_share.png`);
+        this._share.pivot(0);
+        this._share.pos(270, 959);
+        this._share.mouseEnabled = true;
+        this._share.on(Laya.Event.CLICK, this, (event) => {
+            // event.data.originalEvent.preventDefault();
             if (!GLOBAL.CONF.PREVENT) {
                 window.kfcMario.logger && window.kfcMario.logger('click', {
                     key: 'share'
                 });
                 this.emit('share');
             }
-        };
+        });
         this.addChild(this._share);
-        this._tip = new Tiny.Sprite(Tiny.Texture.fromFrame(`tileset-other-low_battery_tip.png`));
-        this._tip.setAnchor(0.5, 0);
-        this._tip.setPosition(375, 1100);
-        this._tip.setVisible(false);
+        this._tip = new Laya.Sprite();
+        this._tip.loadImage(`other/low_battery_tip.png`);
+        this._tip.pivot(0.5, 0);
+        this._tip.pos(375, 1100);
+        this._tip.visible = false;
         this.addChild(this._tip);
-        this.setVisible(false);
+        this.visible = false;
     }
     setCenter () {
-        this._titleGameOver.setPositionY(464);
-        this._titleGameFinish.setPositionY(465);
-        this._mileage.setPositionY(572);
-        this._breakSelf.setPositionY(520);
-        this._breakAll.setPositionY(520);
+        this._titleGameOver.y = 464;
+        this._titleGameFinish.y = 465;
+        this._mileage.y = (572);
+        this._breakSelf.y = 520;
+        this._breakAll.y = 520;
 
-        this._stop.setPositionY(691);
-        this._restart.setPositionY(691);
-        this._rank.setPositionY(691);
-        this._submit.setPositionY(722);
-        this._share.setPositionY(859);
+        this._stop.y = 691;
+        this._restart.y = 691;
+        this._rank.y = 691;
+        this._submit.y = 722;
+        this._share.y = 859;
     }
     setDefault () {
-        this._titleGameOver.setPositionY(264);
-        this._titleGameFinish.setPositionY(265);
-        this._mileage.setPositionY(372);
-        this._breakSelf.setPositionY(320);
-        this._breakAll.setPositionY(320);
+        this._titleGameOver.y = 264;
+        this._titleGameFinish.y = 265;
+        this._mileage.y = 372;
+        this._breakSelf.y = 320;
+        this._breakAll.y = 320;
 
-        this._stop.setPositionY(791);
-        this._restart.setPositionY(791);
-        this._rank.setPositionY(791);
-        this._submit.setPositionY(822);
-        this._share.setPositionY(959);
+        this._stop.y = 791;
+        this._restart.y = 791;
+        this._rank.y = 791;
+        this._submit.y = 822;
+        this._share.y = 959;
     }
     drawNum (wrapper, num, size = 'lg', pos, interval = 28, reverse = false) {
         const numArr = num.toString().split('');
@@ -163,48 +166,50 @@ class GameOverScene extends Laya.Scene {
             numArr.reverse();
         }
         numArr.forEach((item, index) => {
-            const sprite = new Tiny.Sprite(Tiny.Texture.fromFrame(`tileset-num-${size}_${item}.png`));
-            sprite.setAnchor(0.5, 1);
+            const sprite = new Laya.Sprite();
+            sprite.loadImage(`num/${size}_${item}.png`);
+            sprite.pivot(0.5, 1);
             if (reverse) {
-                sprite.setPosition(pos.x - index * (interval), pos.y);
+                sprite.pos(pos.x - index * (interval), pos.y);
             } else {
-                sprite.setPosition(pos.x + index * (interval), pos.y);
+                sprite.pos(pos.x + index * (interval), pos.y);
                 this._numCache.push(sprite);
             }
             wrapper.addChild(sprite);
         });
         if (!reverse) {
-            const m = new Tiny.Sprite(Tiny.Texture.fromFrame(`tileset-num-${size}_m.png`));
-            m.setAnchor(0, 1);
-            m.setPosition(pos.x + (numArr.length - 1) * interval + 13, pos.y);
+            const m = new Laya.Sprite();
+            m.loadImage(`num/${size}_m.png`);
+            m.pivot(0, 1);
+            m.pos(pos.x + (numArr.length - 1) * interval + 13, pos.y);
             wrapper.addChild(m);
             this._numCache.push(m);
         }
     }
     show (info = {}) {
-        Tiny.app.view.style['touch-action'] = 'initial';
-        Tiny.app.renderer.plugins.interaction.autoPreventDefault = false;
+        // Tiny.app.view.style['touch-action'] = 'initial';
+        // Tiny.app.renderer.plugins.interaction.autoPreventDefault = false;
         window.kfcMario.updateRecord && window.kfcMario.updateRecord(GLOBAL.CONF.MILEAGE);
         if (GLOBAL.CONF.MILEAGE > GLOBAL.DATA.ALL_RECORD) {
             GLOBAL.DATA.ALL_RECORD = GLOBAL.CONF.MILEAGE;
             GLOBAL.DATA.SELF_RECORD = GLOBAL.CONF.MILEAGE;
-            this._breakAll.setVisible(true);
+            this._breakAll.visible = true;
             this.emit('break', 1);
         } else if (GLOBAL.CONF.MILEAGE > GLOBAL.DATA.SELF_RECORD) {
             GLOBAL.DATA.SELF_RECORD = GLOBAL.CONF.MILEAGE;
-            this._breakSelf.setVisible(true);
+            this._breakSelf.visible = true;
             this.emit('break', 0);
         }
         if (info.type === 'gameover') {
-            this._tip.setVisible(true);
-            this._titleGameOver.setVisible(true);
-            this._stop.setVisible(true);
-            this._restart.setVisible(true);
+            this._tip.visible = true;
+            this._titleGameOver.visible = true;
+            this._stop.visible = true;
+            this._restart.visible = true;
         } else if (info.type === 'gamefinish') {
-            this._titleGameFinish.setVisible(true);
-            this._rank.setVisible(true);
+            this._titleGameFinish.visible = true;
+            this._rank.visible = true;
         } else if (info.type === 'userexit') {
-            this._submit.setVisible(true);
+            this._submit.visible = true;
         }
         this.drawNum(this._mileage, GLOBAL.CONF.MILEAGE, 'sm', {
             x: 0,
@@ -214,21 +219,21 @@ class GameOverScene extends Laya.Scene {
             this.setCenter();
         }
         window.kfcMario.showLottery && window.kfcMario.showLottery(true);
-        this.setVisible(true);
+        this.visible = true;
     }
     close () {
-        Tiny.app.view.style['touch-action'] = 'none';
-        Tiny.app.renderer.plugins.interaction.autoPreventDefault = true;
-        this.setVisible(false);
-        this._tip.setVisible(false);
-        this._titleGameOver.setVisible(false);
-        this._titleGameFinish.setVisible(false);
-        this._breakSelf.setVisible(false);
-        this._breakAll.setVisible(false);
-        this._stop.setVisible(false);
-        this._restart.setVisible(false);
-        this._rank.setVisible(false);
-        this._submit.setVisible(false);
+        // Tiny.app.view.style['touch-action'] = 'none';
+        // Tiny.app.renderer.plugins.interaction.autoPreventDefault = true;
+        this.visible = false;
+        this._tip.visible = false;
+        this._titleGameOver.visible = false;
+        this._titleGameFinish.visible = false;
+        this._breakSelf.visible = false;
+        this._breakAll.visible = false;
+        this._stop.visible = false;
+        this._restart.visible = false;
+        this._rank.visible = false;
+        this._submit.visible = false;
         if (GLOBAL.CONF.HIT === 0) {
             this.setDefault();
         } else {
