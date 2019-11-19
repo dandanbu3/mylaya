@@ -22,7 +22,7 @@ class PauseScene extends Laya.Scene {
             // event.data.originalEvent.preventDefault();
             if (!GLOBAL.CONF.PREVENT) {
                 this.close();
-                this.emit('stop');
+                this.event('stop');
             }
         });
         this.addChild(this._stop);
@@ -35,7 +35,7 @@ class PauseScene extends Laya.Scene {
             // event.data.originalEvent.preventDefault();
             if (!GLOBAL.CONF.PREVENT) {
                 this.close();
-                this.emit('resume');
+                this.event('resume');
             }
         });
         this.addChild(this._resume);

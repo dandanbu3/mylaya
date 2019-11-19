@@ -88,7 +88,7 @@ class CrashScene extends Laya.Scene {
         const enemy = new EnemyBox(randomItem);
         enemy.play();
         enemy.pivot(0, 1);
-        enemy.pos(Tiny.WIN_SIZE.width * 3, GLOBAL.CONF.GROUND_POS_Y);
+        enemy.pos(Laya.stage.width * 3, GLOBAL.CONF.GROUND_POS_Y);
         this.addChild(enemy);
         this._enemyCache.push(enemy);
 
@@ -114,7 +114,7 @@ class CrashScene extends Laya.Scene {
         }
     }
     addNext () { // 当有障碍进入可视区域时，提前添加下一个障碍
-        const randomInterval = this.getRandom(Tiny.WIN_SIZE.width * 1.5, Tiny.WIN_SIZE.width * 2.5); // 每个障碍物之间的间隔，一屏到三屏之间随机
+        const randomInterval = this.getRandom(Laya.stage.width * 1.5, Laya.stage.width * 2.5); // 每个障碍物之间的间隔，一屏到三屏之间随机
         // @ts-ignore
         const checkPlace = this.parent._background.checkPosPlace(randomInterval);
         this.changePlace(checkPlace);
@@ -188,7 +188,7 @@ class CrashScene extends Laya.Scene {
             this._emptyFart.playAnime();
             if (this._isFirstEmpty && !GLOBAL.DATA.NO_INVENTORY && !GLOBAL.DATA.OPEN_CHANCE && GLOBAL.DATA.STATUS === 2) {
                 this._isFirstEmpty = false;
-                this.emit('noChance');
+                this.event('noChance');
             }
             callback && callback();
         } else {

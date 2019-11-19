@@ -145,24 +145,25 @@ class BackgroundScene extends Laya.Sprite {
 
         // 海鸥
         for (let i  = 0; i < 3; i ++) {
-            const birdTextures = [];
-            for (let j = 0; j < 6; j++) {
-                birdTextures.push(`bird_${i}_${j}.png`);
-            }
-            const flyAction = Tiny.MoveBy(500, Tiny.point(0, 50));
             if (i === 0) {
-                this._fgCache[0]._bird0 = new Tiny.AnimatedSprite(birdTextures);
-                this._fgCache[0]._bird0.animationSpeed = 0.2;
-                this._fgCache[0]._bird0.setPosition(1160, -580);
+                this._fgCache[0]._bird0 = new Laya.Animation(this.aniUrls(`bird_${i}_`, 6));
+                this._fgCache[0]._bird0.interval = 83;
+                this._fgCache[0]._bird0.pos(1160, -580);
                 this._fgCache[0]._bird0.play();
-                this._fgCache[0]._bird0.runAction(Tiny.RepeatForever(Tiny.Back(flyAction)));
+                this.timeLine = new Laya.TimeLine();
+                this.timeLine.addLabel("go", 0).to(this._fgCache[0]._bird0, {x:0, y:50}, 500, null, 0)
+                    .addLabel("come", 0).to(this._fgCache[0]._bird0, {x:0, y:0}, 500, null, 0);
+                this.timeLine.play(0, true);
                 this._fgCache[0].addChild(this._fgCache[0]._bird0);
             } else {
-                this._fgCache[1][`_bird${i}`] = new Tiny.AnimatedSprite(birdTextures);
-                this._fgCache[1][`_bird${i}`].animationSpeed = 0.2;
-                this._fgCache[1][`_bird${i}`].setPosition(i === 1 ? 340 : 580, -780);
+                this._fgCache[1][`_bird${i}`] = new Laya.Animation(this.aniUrls(`bird_${i}_`, 6));
+                this._fgCache[1][`_bird${i}`].interval = 83;
+                this._fgCache[1][`_bird${i}`].pos(i === 1 ? 340 : 580, -780);
                 this._fgCache[1][`_bird${i}`].play();
-                this._fgCache[1][`_bird${i}`].runAction(Tiny.RepeatForever(Tiny.Back(flyAction)));
+                this.timeLine = new Laya.TimeLine();
+                this.timeLine.addLabel("go", 0).to(this._fgCache[1][`_bird${i}`], {x:0, y:50}, 500, null, 0)
+                    .addLabel("come", 0).to(this._fgCache[1][`_bird${i}`], {x:0, y:0}, 500, null, 0);
+                this.timeLine.play(0, true);
                 this._fgCache[1].addChild(this._fgCache[1][`_bird${i}`]);
             }
         }
@@ -207,108 +208,108 @@ class BackgroundScene extends Laya.Sprite {
         const speed = GLOBAL.CONF.SPEED;
         if (GLOBAL.CONF.MODE === GLOBAL.MODES.PLAYING) {
             for (let i = 0; i < 4; i++) {
-                let bgPos = this._bgCache[i].getPositionX();
+                let bgPos = this._bgCache[i].x;
                 const offsetBg = bgPos + this._bgWidth * 2;
                 if (offsetBg <= 0) {
                     bgPos = this._bgWidth * 2 + offsetBg;
                 }
-                this._bgCache[i].setPositionX(bgPos - 5);
+                this._bgCache[i].x = bgPos - 5;
                 if (i < 2) {
                     // 地板的处理
                     const piece = this._groundCache[i];
-                    let pos = piece.getPositionX();
+                    let pos = piece.x;
                     const pieceWidth = piece.width;
                     const offset = pos + pieceWidth;
-                    if (!piece._inview && pos - speed <= Tiny.WIN_SIZE.width) {
+                    if (!piece._inview && pos - speed <= Laya.stage.width) {
                         piece._inview = true;
                         this._newGroundIndex = (this._newGroundIndex + 1) % 6;
                         if (this._newGroundIndex === 4) {
-                            this._fgCache[0]._adAnime.setVisible(true);
-                            this._fgCache[0]._build.setVisible(true);
+                            this._fgCache[0]._adAnime.visible = true;
+                            this._fgCache[0]._build.visible = true;
                             // this._fgCache[0]._cof.setVisible(true);
                         }
                         if (this._newGroundIndex === 5) {
-                            this._fgCache[1]._adAnime.setVisible(true);
+                            this._fgCache[1]._adAnime.visible = true;
                             // this._fgCache[1]._shopH.setVisible(true);
                             // this._fgCache[1]._shop.setVisible(true);
                         }
                         if (this._newGroundIndex % 2 === 0) {
-                            this._mgCache[0].texture = this._mgList[this._newGroundIndex];
-                            this._fgCache[0].texture = this._fgList[this._newGroundIndex];
+                            this._mgCache[0].loadImage(this._mgList[this._newGroundIndex]);
+                            this._fgCache[0].loadImage(this._fgList[this._newGroundIndex]);
                             const which = Math.floor(this._newGroundIndex / 2);
                             if (which === 1) {
-                                this._mgCache[0].setAnchor(0, 1);
-                                this._mgCache[0].setPositionY(GLOBAL.CONF.GROUND_POS_Y + 64);
-                                this._fgCache[0].setAnchor(0, 1);
-                                this._fgCache[0].setPositionY(1136);
+                                this._mgCache[0].pivot(0, 1);
+                                this._mgCache[0].y = GLOBAL.CONF.GROUND_POS_Y + 64;
+                                this._fgCache[0].pivot(0, 1);
+                                this._fgCache[0].y = 1136;
                             } else {
-                                this._mgCache[0].setAnchor(0);
-                                this._mgCache[0].setPositionY(60);
-                                this._fgCache[0].setAnchor(0);
-                                this._fgCache[0].setPositionY(60);
+                                this._mgCache[0].pivot(0, 0);
+                                this._mgCache[0].y = 60;
+                                this._fgCache[0].pivot(0, 0);
+                                this._fgCache[0].y = 60;
                             }
-                            this._cloudCache[0].texture = this._cloudList[this._newGroundIndex];
-                            this._cloudCache[0].setPositionX(Tiny.WIN_SIZE.width + 100);
-                            this._mgCache[0].setPositionX(Tiny.WIN_SIZE.width);
-                            this._fgCache[0].setPositionX(Tiny.WIN_SIZE.width + (which === 0 ? 50 : 0));
+                            this._cloudCache[0].loadImage(this._cloudList[this._newGroundIndex]);
+                            this._cloudCache[0].x = Laya.stage.width + 100;
+                            this._mgCache[0].x = Laya.stage.width;
+                            this._fgCache[0].x = Laya.stage.width + (which === 0 ? 50 : 0);
                         }
                     }
                     if (offset <= 0) {
                         piece._inview = false;
                         piece._allinview = false;
                         if (this._newGroundIndex === 5) {
-                            this._fgCache[0]._adAnime.setVisible(false);
-                            this._fgCache[0]._build.setVisible(false);
+                            this._fgCache[0]._adAnime.visible = false;
+                            this._fgCache[0]._build.visible = false;
                             // this._fgCache[0]._cof.setVisible(false);
                         }
                         if (this._newGroundIndex === 0) {
-                            this._fgCache[1]._adAnime.setVisible(false);
+                            this._fgCache[1]._adAnime.visible = false;
                             // this._fgCache[1]._shopH.setVisible(false);
                             // this._fgCache[1]._shop.setVisible(false);
                         }
                         const nextIndex = (this._newGroundIndex + 1) % 6;
-                        piece.texture = this._groundList[nextIndex];
+                        piece.loadImage(this._groundList[nextIndex]);
                         if (Math.floor(nextIndex / 2) === 1) {
-                            piece.setPositionY(GLOBAL.CONF.GROUND_POS_Y - 109);
+                            piece.y = GLOBAL.CONF.GROUND_POS_Y - 109;
                         } else {
-                            piece.setPositionY(GLOBAL.CONF.GROUND_POS_Y - 20);
+                            piece.y = GLOBAL.CONF.GROUND_POS_Y - 20;
                         }
                         pos = this._groundCache[(i + 1) % 2].width + offset;
                     }
-                    piece.setPositionX(pos - speed);
+                    piece.x = pos - speed;
 
                     // 云、中景、前景的处理
                     if (i === 0 && !piece._allinview && pos <= 0) {
                         piece._allinview = true;
                         const nextIndex = (this._newGroundIndex + 1) % 6;
-                        this._cloudCache[1].texture = this._cloudList[nextIndex];
-                        this._mgCache[1].texture = this._mgList[nextIndex];
-                        this._fgCache[1].texture = this._fgList[nextIndex];
+                        this._cloudCache[1].loadImage(this._cloudList[nextIndex]);
+                        this._mgCache[1].loadImage(this._mgList[nextIndex]);
+                        this._fgCache[1].loadImage(this._fgList[nextIndex]);
                         const which = Math.floor(nextIndex / 2);
                         if (which === 1) {
-                            this._mgCache[1].setAnchor(0, 1);
-                            this._mgCache[1].setPositionY(GLOBAL.CONF.GROUND_POS_Y + 64);
-                            this._fgCache[1].setAnchor(0, 1);
-                            this._fgCache[1].setPositionY(1136);
+                            this._mgCache[1].pivot(0, 1);
+                            this._mgCache[1].y = GLOBAL.CONF.GROUND_POS_Y + 64;
+                            this._fgCache[1].pivot(0, 1);
+                            this._fgCache[1].y = 1136;
                         } else {
-                            this._mgCache[1].setAnchor(0);
-                            this._mgCache[1].setPositionY(60);
-                            this._fgCache[1].setAnchor(0);
-                            this._fgCache[1].setPositionY(60);
+                            this._mgCache[1].pivot(0, 0);
+                            this._mgCache[1].y = 60;
+                            this._fgCache[1].pivot(0, 0);
+                            this._fgCache[1].y(60);
                         }
-                        this._cloudCache[1].setPositionX(this._cloudCache[0].width + this._cloudCache[0].getPositionX());
-                        this._mgCache[1].setPositionX(this._mgCache[0].width + this._mgCache[0].getPositionX());
-                        this._fgCache[1].setPositionX(this._fgCache[0].width + this._fgCache[0].getPositionX());
+                        this._cloudCache[1].x = this._cloudCache[0].width + this._cloudCache[0].x;
+                        this._mgCache[1].x = this._mgCache[0].width + this._mgCache[0].x;
+                        this._fgCache[1].x = this._fgCache[0].width + this._fgCache[0].x;
                     }
                     // 云
-                    const cloudPos = this._cloudCache[i].getPositionX();
-                    this._cloudCache[i].setPositionX(cloudPos - speed * 0.7);
+                    const cloudPos = this._cloudCache[i].x;
+                    this._cloudCache[i].x = cloudPos - speed * 0.7;
                     // 中景
-                    const mgPos = this._mgCache[i].getPositionX();
-                    this._mgCache[i].setPositionX(mgPos - (speed * 0.95));
+                    const mgPos = this._mgCache[i].x;
+                    this._mgCache[i].x = mgPos - (speed * 0.95);
                     // 前景
-                    const fgPos = this._fgCache[i].getPositionX();
-                    this._fgCache[i].setPositionX(fgPos - speed);
+                    const fgPos = this._fgCache[i].x;
+                    this._fgCache[i].x = fgPos - speed;
                 }
             }
         }

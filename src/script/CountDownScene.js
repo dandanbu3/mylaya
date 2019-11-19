@@ -32,7 +32,7 @@ class CountDownScene extends Laya.Scene {
             that['_go'].visible = false;
             this.scale(that._initScale, that._initScale);
             // 倒计时结束事件
-            that.emit('done');
+            that.event('done');
         }, 4000);
         this['_ready'].visible = true;
         this._readyAnime = Laya.Tween.to(that['_ready'], {

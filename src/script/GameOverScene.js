@@ -57,7 +57,7 @@ class GameOverScene extends Laya.Scene {
             // event.data.originalEvent.preventDefault();
             if (!GLOBAL.CONF.PREVENT) {
                 this.close();
-                this.emit('stop');
+                this.event('stop');
             }
         });
         this._stop.visible = false;
@@ -66,7 +66,7 @@ class GameOverScene extends Laya.Scene {
         this._restart.loadImage(`${alias}btn_restart.png`);
         this._restart.pivot(0, 0);
         this._restart.pos(439, 791);
-        this._restart.mouseEnabled(true);
+        this._restart.mouseEnabled = true;
         this._restart.on(Laya.Event.CLICK, this, (event) => {
             // event.data.originalEvent.preventDefault();
             if (!GLOBAL.CONF.PREVENT) {
@@ -74,7 +74,7 @@ class GameOverScene extends Laya.Scene {
                     key: 'restart'
                 });
                 this.removeSelf();
-                this.emit('restart');
+                this.event('restart');
             }
         });
         this._restart.visible = false;
@@ -106,7 +106,7 @@ class GameOverScene extends Laya.Scene {
             // event.data.originalEvent.preventDefault();
             if (!GLOBAL.CONF.PREVENT) {
                 this.close();
-                this.emit('stop');
+                this.event('stop');
             }
         });
         this._submit.visible = false;
@@ -122,7 +122,7 @@ class GameOverScene extends Laya.Scene {
                 window.kfcMario && window.kfcMario.logger && window.kfcMario.logger('click', {
                     key: 'share'
                 });
-                this.emit('share');
+                this.event('share');
             }
         });
         this.addChild(this._share);
@@ -194,11 +194,11 @@ class GameOverScene extends Laya.Scene {
             GLOBAL.DATA.ALL_RECORD = GLOBAL.CONF.MILEAGE;
             GLOBAL.DATA.SELF_RECORD = GLOBAL.CONF.MILEAGE;
             this._breakAll.visible = true;
-            this.emit('break', 1);
+            this.event('break', 1);
         } else if (GLOBAL.CONF.MILEAGE > GLOBAL.DATA.SELF_RECORD) {
             GLOBAL.DATA.SELF_RECORD = GLOBAL.CONF.MILEAGE;
             this._breakSelf.visible = true;
-            this.emit('break', 0);
+            this.event('break', 0);
         }
         if (info.type === 'gameover') {
             this._tip.visible = true;

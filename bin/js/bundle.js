@@ -664,52 +664,54 @@
 
             // 海鸥
             for (let i  = 0; i < 3; i ++) {
-                const birdTextures = [];
-                for (let j = 0; j < 6; j++) {
-                    birdTextures.push(Tiny.Texture.fromFrame(`bird_${i}_${j}.png`));
-                }
-                const flyAction = Tiny.MoveBy(500, Tiny.point(0, 50));
                 if (i === 0) {
-                    this._fgCache[0]._bird0 = new Tiny.AnimatedSprite(birdTextures);
-                    this._fgCache[0]._bird0.animationSpeed = 0.2;
-                    this._fgCache[0]._bird0.setPosition(1160, -580);
+                    this._fgCache[0]._bird0 = new Laya.Animation(this.aniUrls(`bird_${i}_`, 6));
+                    this._fgCache[0]._bird0.interval = 83;
+                    this._fgCache[0]._bird0.pos(1160, -580);
                     this._fgCache[0]._bird0.play();
-                    this._fgCache[0]._bird0.runAction(Tiny.RepeatForever(Tiny.Back(flyAction)));
+                    this.timeLine = new Laya.TimeLine();
+                    this.timeLine.addLabel("go", 0).to(this._fgCache[0]._bird0, {x:0, y:50}, 500, null, 0)
+                        .addLabel("come", 0).to(this._fgCache[0]._bird0, {x:0, y:0}, 500, null, 0);
+                    this.timeLine.play(0, true);
                     this._fgCache[0].addChild(this._fgCache[0]._bird0);
                 } else {
-                    this._fgCache[1][`_bird${i}`] = new Tiny.AnimatedSprite(birdTextures);
-                    this._fgCache[1][`_bird${i}`].animationSpeed = 0.2;
-                    this._fgCache[1][`_bird${i}`].setPosition(i === 1 ? 340 : 580, -780);
+                    this._fgCache[1][`_bird${i}`] = new Laya.Animation(this.aniUrls(`bird_${i}_`, 6));
+                    this._fgCache[1][`_bird${i}`].interval = 83;
+                    this._fgCache[1][`_bird${i}`].pos(i === 1 ? 340 : 580, -780);
                     this._fgCache[1][`_bird${i}`].play();
-                    this._fgCache[1][`_bird${i}`].runAction(Tiny.RepeatForever(Tiny.Back(flyAction)));
+                    this.timeLine = new Laya.TimeLine();
+                    this.timeLine.addLabel("go", 0).to(this._fgCache[1][`_bird${i}`], {x:0, y:50}, 500, null, 0)
+                        .addLabel("come", 0).to(this._fgCache[1][`_bird${i}`], {x:0, y:0}, 500, null, 0);
+                    this.timeLine.play(0, true);
                     this._fgCache[1].addChild(this._fgCache[1][`_bird${i}`]);
                 }
             }
             
             this._groundList = [
-                Tiny.Texture.fromImage(RESOURCES['grassLeft']),
-                Tiny.Texture.fromImage(RESOURCES['grassRight']),
-                Tiny.Texture.fromImage(RESOURCES['bridgeLeft']),
-                Tiny.Texture.fromImage(RESOURCES['bridgeRight']),
-                Tiny.Texture.fromImage(RESOURCES['roadLeft']),
-                Tiny.Texture.fromImage(RESOURCES['roadRight'])
+                RESOURCES['grassLeft'].url,
+                RESOURCES['grassRight'].url,
+                RESOURCES['bridgeLeft'].url,
+                RESOURCES['bridgeRight'].url,
+                RESOURCES['roadLeft'].url,
+                RESOURCES['roadRight'].url
             ];
             let groundPosX = 0;
             for (let i = 0; i < 2; i++) {
-                const ground = new Tiny.Sprite(this._groundList[i]);
+                const ground = new Laya.Sprite();
+                ground.loadImage(this._groundList[i]);
                 // @ts-ignore
                 ground._inview = true;
                 // @ts-ignore
                 ground._allinview = true;
-                ground.setAnchor(0);
-                ground.setPosition(groundPosX, GLOBAL.CONF.GROUND_POS_Y - 20);
+                ground.pivot(0, 0);
+                ground.pos(groundPosX, GLOBAL.CONF.GROUND_POS_Y - 20);
                 this.addChild(ground);
                 this._groundCache.push(ground);
                 groundPosX += ground.width;
             }
         }
         checkPosPlace (posX) {
-            let posRange = this._groundList[this._newGroundIndex].width - (Tiny.WIN_SIZE.width - this._groundCache[this._newGroundIndex % 2].getPositionX()); // 边界
+            let posRange = this._groundList[this._newGroundIndex].width - (Laya.stage.width - this._groundCache[this._newGroundIndex % 2].getPositionX()); // 边界
             let index = this._newGroundIndex;
             const checkRange = () => {
                 if (posX > posRange) {
@@ -725,108 +727,108 @@
             const speed = GLOBAL.CONF.SPEED;
             if (GLOBAL.CONF.MODE === GLOBAL.MODES.PLAYING) {
                 for (let i = 0; i < 4; i++) {
-                    let bgPos = this._bgCache[i].getPositionX();
+                    let bgPos = this._bgCache[i].x;
                     const offsetBg = bgPos + this._bgWidth * 2;
                     if (offsetBg <= 0) {
                         bgPos = this._bgWidth * 2 + offsetBg;
                     }
-                    this._bgCache[i].setPositionX(bgPos - 5);
+                    this._bgCache[i].x = bgPos - 5;
                     if (i < 2) {
                         // 地板的处理
                         const piece = this._groundCache[i];
-                        let pos = piece.getPositionX();
+                        let pos = piece.x;
                         const pieceWidth = piece.width;
                         const offset = pos + pieceWidth;
-                        if (!piece._inview && pos - speed <= Tiny.WIN_SIZE.width) {
+                        if (!piece._inview && pos - speed <= Laya.stage.width) {
                             piece._inview = true;
                             this._newGroundIndex = (this._newGroundIndex + 1) % 6;
                             if (this._newGroundIndex === 4) {
-                                this._fgCache[0]._adAnime.setVisible(true);
-                                this._fgCache[0]._build.setVisible(true);
+                                this._fgCache[0]._adAnime.visible = true;
+                                this._fgCache[0]._build.visible = true;
                                 // this._fgCache[0]._cof.setVisible(true);
                             }
                             if (this._newGroundIndex === 5) {
-                                this._fgCache[1]._adAnime.setVisible(true);
+                                this._fgCache[1]._adAnime.visible = true;
                                 // this._fgCache[1]._shopH.setVisible(true);
                                 // this._fgCache[1]._shop.setVisible(true);
                             }
                             if (this._newGroundIndex % 2 === 0) {
-                                this._mgCache[0].texture = this._mgList[this._newGroundIndex];
-                                this._fgCache[0].texture = this._fgList[this._newGroundIndex];
+                                this._mgCache[0].loadImage(this._mgList[this._newGroundIndex]);
+                                this._fgCache[0].loadImage(this._fgList[this._newGroundIndex]);
                                 const which = Math.floor(this._newGroundIndex / 2);
                                 if (which === 1) {
-                                    this._mgCache[0].setAnchor(0, 1);
-                                    this._mgCache[0].setPositionY(GLOBAL.CONF.GROUND_POS_Y + 64);
-                                    this._fgCache[0].setAnchor(0, 1);
-                                    this._fgCache[0].setPositionY(1136);
+                                    this._mgCache[0].pivot(0, 1);
+                                    this._mgCache[0].y = GLOBAL.CONF.GROUND_POS_Y + 64;
+                                    this._fgCache[0].pivot(0, 1);
+                                    this._fgCache[0].y = 1136;
                                 } else {
-                                    this._mgCache[0].setAnchor(0);
-                                    this._mgCache[0].setPositionY(60);
-                                    this._fgCache[0].setAnchor(0);
-                                    this._fgCache[0].setPositionY(60);
+                                    this._mgCache[0].pivot(0, 0);
+                                    this._mgCache[0].y = 60;
+                                    this._fgCache[0].pivot(0, 0);
+                                    this._fgCache[0].y = 60;
                                 }
-                                this._cloudCache[0].texture = this._cloudList[this._newGroundIndex];
-                                this._cloudCache[0].setPositionX(Tiny.WIN_SIZE.width + 100);
-                                this._mgCache[0].setPositionX(Tiny.WIN_SIZE.width);
-                                this._fgCache[0].setPositionX(Tiny.WIN_SIZE.width + (which === 0 ? 50 : 0));
+                                this._cloudCache[0].loadImage(this._cloudList[this._newGroundIndex]);
+                                this._cloudCache[0].x = Laya.stage.width + 100;
+                                this._mgCache[0].x = Laya.stage.width;
+                                this._fgCache[0].x = Laya.stage.width + (which === 0 ? 50 : 0);
                             }
                         }
                         if (offset <= 0) {
                             piece._inview = false;
                             piece._allinview = false;
                             if (this._newGroundIndex === 5) {
-                                this._fgCache[0]._adAnime.setVisible(false);
-                                this._fgCache[0]._build.setVisible(false);
+                                this._fgCache[0]._adAnime.visible = false;
+                                this._fgCache[0]._build.visible = false;
                                 // this._fgCache[0]._cof.setVisible(false);
                             }
                             if (this._newGroundIndex === 0) {
-                                this._fgCache[1]._adAnime.setVisible(false);
+                                this._fgCache[1]._adAnime.visible = false;
                                 // this._fgCache[1]._shopH.setVisible(false);
                                 // this._fgCache[1]._shop.setVisible(false);
                             }
                             const nextIndex = (this._newGroundIndex + 1) % 6;
-                            piece.texture = this._groundList[nextIndex];
+                            piece.loadImage(this._groundList[nextIndex]);
                             if (Math.floor(nextIndex / 2) === 1) {
-                                piece.setPositionY(GLOBAL.CONF.GROUND_POS_Y - 109);
+                                piece.y = GLOBAL.CONF.GROUND_POS_Y - 109;
                             } else {
-                                piece.setPositionY(GLOBAL.CONF.GROUND_POS_Y - 20);
+                                piece.y = GLOBAL.CONF.GROUND_POS_Y - 20;
                             }
                             pos = this._groundCache[(i + 1) % 2].width + offset;
                         }
-                        piece.setPositionX(pos - speed);
+                        piece.x = pos - speed;
 
                         // 云、中景、前景的处理
                         if (i === 0 && !piece._allinview && pos <= 0) {
                             piece._allinview = true;
                             const nextIndex = (this._newGroundIndex + 1) % 6;
-                            this._cloudCache[1].texture = this._cloudList[nextIndex];
-                            this._mgCache[1].texture = this._mgList[nextIndex];
-                            this._fgCache[1].texture = this._fgList[nextIndex];
+                            this._cloudCache[1].loadImage(this._cloudList[nextIndex]);
+                            this._mgCache[1].loadImage(this._mgList[nextIndex]);
+                            this._fgCache[1].loadImage(this._fgList[nextIndex]);
                             const which = Math.floor(nextIndex / 2);
                             if (which === 1) {
-                                this._mgCache[1].setAnchor(0, 1);
-                                this._mgCache[1].setPositionY(GLOBAL.CONF.GROUND_POS_Y + 64);
-                                this._fgCache[1].setAnchor(0, 1);
-                                this._fgCache[1].setPositionY(1136);
+                                this._mgCache[1].pivot(0, 1);
+                                this._mgCache[1].y = GLOBAL.CONF.GROUND_POS_Y + 64;
+                                this._fgCache[1].pivot(0, 1);
+                                this._fgCache[1].y = 1136;
                             } else {
-                                this._mgCache[1].setAnchor(0);
-                                this._mgCache[1].setPositionY(60);
-                                this._fgCache[1].setAnchor(0);
-                                this._fgCache[1].setPositionY(60);
+                                this._mgCache[1].pivot(0, 0);
+                                this._mgCache[1].y = 60;
+                                this._fgCache[1].pivot(0, 0);
+                                this._fgCache[1].y(60);
                             }
-                            this._cloudCache[1].setPositionX(this._cloudCache[0].width + this._cloudCache[0].getPositionX());
-                            this._mgCache[1].setPositionX(this._mgCache[0].width + this._mgCache[0].getPositionX());
-                            this._fgCache[1].setPositionX(this._fgCache[0].width + this._fgCache[0].getPositionX());
+                            this._cloudCache[1].x = this._cloudCache[0].width + this._cloudCache[0].x;
+                            this._mgCache[1].x = this._mgCache[0].width + this._mgCache[0].x;
+                            this._fgCache[1].x = this._fgCache[0].width + this._fgCache[0].x;
                         }
                         // 云
-                        const cloudPos = this._cloudCache[i].getPositionX();
-                        this._cloudCache[i].setPositionX(cloudPos - speed * 0.7);
+                        const cloudPos = this._cloudCache[i].x;
+                        this._cloudCache[i].x = cloudPos - speed * 0.7;
                         // 中景
-                        const mgPos = this._mgCache[i].getPositionX();
-                        this._mgCache[i].setPositionX(mgPos - (speed * 0.95));
+                        const mgPos = this._mgCache[i].x;
+                        this._mgCache[i].x = mgPos - (speed * 0.95);
                         // 前景
-                        const fgPos = this._fgCache[i].getPositionX();
-                        this._fgCache[i].setPositionX(fgPos - speed);
+                        const fgPos = this._fgCache[i].x;
+                        this._fgCache[i].x = fgPos - speed;
                     }
                 }
             }
@@ -983,7 +985,7 @@
             this._pause.on(Laya.Event.CLICK, this, (event) => {
                 // event.data.originalEvent.preventDefault();
                 if (GLOBAL.CONF.MODE === GLOBAL.MODES.PLAYING) {
-                    this.emit('pause');
+                    this.event('pause');
                 }
             });
             this.addChild(this._pause);
@@ -1124,8 +1126,9 @@
 
     class Girl extends Laya.Animation {
         constructor (who) {
-            const preRun = [Tiny.Texture.fromFrame(`tileset-${who}-run_0.png`)];
-            super(preRun);
+            const preRun = [`${who}/run_0.png`];
+            super();
+            this.loadImages(preRun);
             this._preTextures = this.createTextures(who, 'pre', 0, 2);
             this._runTextures = this.createTextures(who, 'run', 0, 4);
             this._jumpTextures = this.createTextures(who, 'jump', 0, 1);
@@ -1136,7 +1139,10 @@
             this.interval = 160;
             this.pivot(0, 1);
             this.pos(56, GLOBAL.CONF.GROUND_POS_Y);
-            this._girlHeight = this._runTextures[0].height;
+            const runrun = new Laya.Sprite();
+            runrun.loadImage(this._runTextures[0]);
+
+            this._girlHeight = runrun.height;
             // TODO 优化耦合性
             GLOBAL.CONF.PRIZE_POS_Y = GLOBAL.CONF.GROUND_POS_Y - this._girlHeight * (GLOBAL.CONF.GIRL_JUMP_TIMES + 1) + 30;
             this._jumpHeight = this._girlHeight * GLOBAL.CONF.GIRL_JUMP_TIMES; // 跳起的高度
@@ -1149,7 +1155,7 @@
                 this,
                 {x: 56, y: GLOBAL.CONF.GROUND_POS_Y - this._jumpHeight},
                 this._jumpSpeed,
-                Laya.Ease.Quadratic.Out,
+                Laya.Ease.quadOut,
                 () => {
                     GLOBAL.CONF.GIRL_STAT = 2;
                     this._fallAction.resume();
@@ -1159,7 +1165,7 @@
                 this,
                 {x: 56, y: GLOBAL.CONF.GROUND_POS_Y},
                 this._jumpSpeed,
-                Laya.Ease.Quadratic.In,
+                Laya.Ease.quadIn,
                 () => {
                     this._timer = Date.now();
                     GLOBAL.CONF.GIRL_STAT = 3;
@@ -1179,7 +1185,7 @@
                 .addLabel('show').to(this, {visible: true}, 50);
             this._dieBlink.on(Laya.Event.COMPLETE, this, () => {
                 this.loadImages(this._dieGrayTextures);
-                this.emit('die');
+                this.event('die');
             });
             this._dieBlink.play();
             this._dieMoveStart = Laya.Tween.to(
@@ -1198,8 +1204,7 @@
             this._dieMoveEnd.pause();
         }
         createTextures (who, action, start, length) {
-            const textures = new Laya.Animation();
-            textures.loadImages(this.aniUrls(`${who}/${action}_`, start, length));
+            const textures = this.aniUrls(`${who}/${action}_`, start, length);
             return textures;
         }
         aniUrls(name, start, num) {
@@ -1211,7 +1216,7 @@
             return urls;
         }
         readyStart () { // 预备开始，主要是倒计时开始的时候用
-            this.emit('notRun');
+            this.event('notRun');
             this.pos(56, GLOBAL.CONF.GROUND_POS_Y);
             GLOBAL.CONF.GIRL_STAT = -1;
             this.loadImages(this._preTextures);
@@ -1221,12 +1226,12 @@
             GLOBAL.CONF.GIRL_STAT = 0;
             this.loadImages(this._runTextures);
             this.interval = 100;
-            this.emit('run');
+            this.event('run');
         }
         doJump () {
             if (GLOBAL.CONF.GIRL_STAT !== 1 && GLOBAL.CONF.GIRL_STAT !== 2) {
                 GLOBAL.CONF.GIRL_STAT = 1;
-                this.emit('notRun');
+                this.event('notRun');
                 Sound.playJump();
                 this.loadImages(this._jumpTextures);
                 this.runAction(this._jumpAction);
@@ -1234,7 +1239,7 @@
         }
         beInjured () {
             GLOBAL.CONF.GIRL_STAT = -1;
-            this.emit('notRun');
+            this.event('notRun');
             Sound.playGameOver();
             this.loadImage([this._runTextures[0]]);
             this.removeActionsTrace();
@@ -1250,40 +1255,36 @@
             if (GLOBAL.CONF.GIRL_STAT === 2) {
                 const currentDis = GLOBAL.CONF.GROUND_POS_Y - this.getPositionY();
                 const speed = this._jumpSpeed * currentDis / this._jumpHeight;
-                console.log(444);
                 const moveAction = new Laya.Tween.to(
                     this,
                     {x: 56, y: GLOBAL.CONF.GROUND_POS_Y},
                     speed,
-                    Laya.Ease.QuadIn,
+                    Laya.Ease.quadIn,
                     () => {
                         this._timer = Date.now();
                         GLOBAL.CONF.GIRL_STAT = 3;
                         this.loadImages(this._fallTextures);
                     });
-                console.log(444);
                 // this.runAction(moveAction);
             } else if (GLOBAL.CONF.GIRL_STAT === 1) {
                 const currentDis = this.y - (GLOBAL.CONF.GROUND_POS_Y - this._jumpHeight);
                 const speed = (this._jumpSpeed - 100) * currentDis / this._jumpHeight;
-                console.log(444);
                 const jumpAction = new Laya.Tween.to(
                     this,
                     {x: 56, y: GLOBAL.CONF.GROUND_POS_Y - this._jumpHeight},
                     speed,
-                    Laya.Ease.QuadOut,
+                    Laya.Ease.quadOut,
                     () => {
                         GLOBAL.CONF.GIRL_STAT = 2;
                         this._fallAction.resume;
                     });
-                console.log(444);
                 // this.runAction(jumpAction);
             }
         }
         updateTransform () {
             if (GLOBAL.CONF.MODE === GLOBAL.MODES.PLAYING && GLOBAL.CONF.GIRL_STAT === 3) {
                 if (Date.now() - this._timer >= 100000 / 6 / this.interval ) {
-                    this.emit('run');
+                    this.event('run');
                     this.loadImages(this._runTextures);
                     GLOBAL.CONF.GIRL_STAT = 0;
                 }
@@ -1378,7 +1379,7 @@
             const enemy = new EnemyBox(randomItem);
             enemy.play();
             enemy.pivot(0, 1);
-            enemy.pos(Tiny.WIN_SIZE.width * 3, GLOBAL.CONF.GROUND_POS_Y);
+            enemy.pos(Laya.stage.width * 3, GLOBAL.CONF.GROUND_POS_Y);
             this.addChild(enemy);
             this._enemyCache.push(enemy);
 
@@ -1404,7 +1405,7 @@
             }
         }
         addNext () { // 当有障碍进入可视区域时，提前添加下一个障碍
-            const randomInterval = this.getRandom(Tiny.WIN_SIZE.width * 1.5, Tiny.WIN_SIZE.width * 2.5); // 每个障碍物之间的间隔，一屏到三屏之间随机
+            const randomInterval = this.getRandom(Laya.stage.width * 1.5, Laya.stage.width * 2.5); // 每个障碍物之间的间隔，一屏到三屏之间随机
             // @ts-ignore
             const checkPlace = this.parent._background.checkPosPlace(randomInterval);
             this.changePlace(checkPlace);
@@ -1478,7 +1479,7 @@
                 this._emptyFart.playAnime();
                 if (this._isFirstEmpty && !GLOBAL.DATA.NO_INVENTORY && !GLOBAL.DATA.OPEN_CHANCE && GLOBAL.DATA.STATUS === 2) {
                     this._isFirstEmpty = false;
-                    this.emit('noChance');
+                    this.event('noChance');
                 }
                 callback && callback();
             } else {
@@ -1676,7 +1677,7 @@
                 that['_go'].visible = false;
                 this.scale(that._initScale, that._initScale);
                 // 倒计时结束事件
-                that.emit('done');
+                that.event('done');
             }, 4000);
             this['_ready'].visible = true;
             this._readyAnime = Laya.Tween.to(that['_ready'], {
@@ -1905,7 +1906,7 @@
                 // event.data.originalEvent.preventDefault();
                 if (!GLOBAL.CONF.PREVENT) {
                     this.close();
-                    this.emit('stop');
+                    this.event('stop');
                 }
             });
             this.addChild(this._stop);
@@ -1918,7 +1919,7 @@
                 // event.data.originalEvent.preventDefault();
                 if (!GLOBAL.CONF.PREVENT) {
                     this.close();
-                    this.emit('resume');
+                    this.event('resume');
                 }
             });
             this.addChild(this._resume);
@@ -2230,7 +2231,7 @@
                 // event.data.originalEvent.preventDefault();
                 if (!GLOBAL.CONF.PREVENT) {
                     this.close();
-                    this.emit('stop');
+                    this.event('stop');
                 }
             });
             this._stop.visible = false;
@@ -2239,7 +2240,7 @@
             this._restart.loadImage(`${alias$2}btn_restart.png`);
             this._restart.pivot(0, 0);
             this._restart.pos(439, 791);
-            this._restart.mouseEnabled(true);
+            this._restart.mouseEnabled = true;
             this._restart.on(Laya.Event.CLICK, this, (event) => {
                 // event.data.originalEvent.preventDefault();
                 if (!GLOBAL.CONF.PREVENT) {
@@ -2247,7 +2248,7 @@
                         key: 'restart'
                     });
                     this.removeSelf();
-                    this.emit('restart');
+                    this.event('restart');
                 }
             });
             this._restart.visible = false;
@@ -2279,7 +2280,7 @@
                 // event.data.originalEvent.preventDefault();
                 if (!GLOBAL.CONF.PREVENT) {
                     this.close();
-                    this.emit('stop');
+                    this.event('stop');
                 }
             });
             this._submit.visible = false;
@@ -2295,7 +2296,7 @@
                     window.kfcMario && window.kfcMario.logger && window.kfcMario.logger('click', {
                         key: 'share'
                     });
-                    this.emit('share');
+                    this.event('share');
                 }
             });
             this.addChild(this._share);
@@ -2367,11 +2368,11 @@
                 GLOBAL.DATA.ALL_RECORD = GLOBAL.CONF.MILEAGE;
                 GLOBAL.DATA.SELF_RECORD = GLOBAL.CONF.MILEAGE;
                 this._breakAll.visible = true;
-                this.emit('break', 1);
+                this.event('break', 1);
             } else if (GLOBAL.CONF.MILEAGE > GLOBAL.DATA.SELF_RECORD) {
                 GLOBAL.DATA.SELF_RECORD = GLOBAL.CONF.MILEAGE;
                 this._breakSelf.visible = true;
-                this.emit('break', 0);
+                this.event('break', 0);
             }
             if (info.type === 'gameover') {
                 this._tip.visible = true;
@@ -2729,7 +2730,6 @@
     class menuLayer extends Laya.Scene {
         constructor() {
             super();
-            console.log(Sound, 'Sound');
             this._choosen = 'girl22';
             this.height = 1144;
             this.width = 750;
@@ -2919,7 +2919,6 @@
             this._btnRule.pos(94, 1003);
             this._btnRule.mouseEnabled = (true);
             this._btnRule.on(Laya.Event.CLICK, this, (event) => {
-                console.log('test');
                 // event.data.originalEvent.preventDefault();
                 if (!GLOBAL.CONF.PREVENT) {
                     window.kfcMario && window.kfcMario.showRules && window.kfcMario.showRules();
@@ -2953,7 +2952,6 @@
             this.addChild(this._btnMuse);
         }
         onReady (event) {
-            console.log('test22');
             // event.data.originalEvent.preventDefault();
             if (!GLOBAL.CONF.PREVENT) {
                 if (GLOBAL.DATA.STATUS !== 1) {
@@ -2972,7 +2970,7 @@
                         });
                         Laya.stage.addChild(startLayer);
                         this.removeSelf();
-                        startLayer.emit('transitionend');
+                        startLayer.event('transitionend');
                         GLOBAL.CONF.MODE = GLOBAL.MODES.PRE;
                     } else {
                         window.kfcMario && window.kfcMario.goToLogin && window.kfcMario.goToLogin();
