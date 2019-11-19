@@ -25,20 +25,22 @@ class MainLayer extends Laya.Scene {
         this._ticker.loop(
             this._defaultTickerDuration,
             this,
-            () => {
-                GLOBAL.CONF.MILEAGE++;
-                this._statusBar.syncMileage();
-                if (GLOBAL.CONF.MILEAGE % 50 === 0) {
-                    this._defaultTickerDuration--;
-                    GLOBAL.CONF.SPEED += 0.4;
-                    this._girl.changeJumpDuration();
-                }
-            }
+            this.setTimer
         );
+        this._ticker.callLater(this, this.setTimer);
         this.init(who);
     }
     startRunAction() {
         this.startCountDown();
+    }
+    setTimer() {
+        GLOBAL.CONF.MILEAGE++;
+        this._statusBar.syncMileage();
+        if (GLOBAL.CONF.MILEAGE % 50 === 0) {
+            this._defaultTickerDuration--;
+            GLOBAL.CONF.SPEED += 0.4;
+            this._girl.changeJumpDuration();
+        }
     }
     init (who) {
         // 背景
@@ -130,7 +132,7 @@ class MainLayer extends Laya.Scene {
             Sound.playBg();
             this._girl.startRun();
             this._crash.startAnime();
-            this._ticker.start();
+            this._ticker.runCallLater(this, this.setTimer);
         });
         this.addChild(this._countDown);
         // 外框架
@@ -150,12 +152,13 @@ class MainLayer extends Laya.Scene {
                 this._dust.visible = false;
                 this._girl.resume();
                 this._crash.startAnime();
-                this._ticker.start();
+                this._ticker.runCallLater(this, this.setTimer);
             }
         });
         this._pauseDialog.on('stop', this, () => {
             GLOBAL.CONF.MODE = GLOBAL.MODES.MENU;
             if (GLOBAL.DATA.LOTTERY_LIST.length === 0) {
+                this.removeSelf();
                 const menuLayer = new MenuLayer();
                 // @ts-ignore
                 Laya.stage.addChild(menuLayer);
@@ -172,6 +175,7 @@ class MainLayer extends Laya.Scene {
         });
         this._gameoverDialog.on('stop', this, () => {
             GLOBAL.CONF.MODE = GLOBAL.MODES.MENU;
+            this.removeSelf();
             const menuLayer = new MenuLayer();
             // @ts-ignore
             Laya.stage.addChild(menuLayer);
@@ -236,9 +240,9 @@ class MainLayer extends Laya.Scene {
                     delete this._hand;
                 }
             }
-            if (GLOBAL.CONF.MODE === GLOBAL.MODES.PLAYING) {
+            // if (GLOBAL.CONF.MODE === GLOBAL.MODES.PLAYING) {
                 this._girl.doJump();
-            }
+            // }
         });
         return btnJump;
     }
@@ -247,7 +251,7 @@ class MainLayer extends Laya.Scene {
         this._dust.visible = false;
         this._girl.freeze();
         this._crash.stopAnime();
-        this._ticker.pause();
+        this._ticker.callLater(this, this.setTimer);
     }
     collide (girl, rect) {
         const girlRect = girl.getBounds();
@@ -292,7 +296,7 @@ class MainLayer extends Laya.Scene {
                     GLOBAL.CONF.MODE = GLOBAL.MODES.GAME_OVER;
                     this._girl.beInjured();
                     this._crash.stopAnime();
-                    this._ticker.stop();
+                    this._ticker.callLater(this, this.setTimer);
                     Sound.stopBg();
                 }
             });

@@ -23,58 +23,58 @@ class CountDownScene extends Laya.Scene {
         this.addChild(this[key]);
     }
     initAnime () {
-        const that = this;
-        this._goAnime = Laya.Tween.to(that['_go'], {
+        this._goAnime = Laya.Tween.to(this['_go'], {
             scaleX: 1,
             scaleY: 1
-        }, 1000, Laya.Ease.quintOut, Laya.Handler.create(function () {
-            that['_go'].visible = false;
-            that['_go'].scale(that._initScale, that._initScale);
+        }, 1000, Laya.Ease.quintOut, Laya.Handler.create(this, function () {
+            this['_go'].visible = false;
+            this['_go'].scale(this._initScale, this._initScale);
             // 倒计时结束事件
-            that.event('done');
+            this.event('done');
         }));
         this._goAnime.pause();
-        this._readyAnime = Laya.Tween.to(that['_ready'], {
+        this._readyAnime = Laya.Tween.to(this['_ready'], {
             scaleX: 1,
             scaleY: 1
-        }, 1000, Laya.Ease.quintOut, Laya.Handler.create(function () {
-            that['_ready'].visible = false;
-            that['_ready'].scale(that._initScale, that._initScale);
-            that['_go'].visible = true;
-            that['_go'].scale(that._initScale, that._initScale);
-            that._goAnime.resume();
+        }, 1000, Laya.Ease.quintOut, Laya.Handler.create(this, function () {
+            this['_ready'].visible = false;
+            this['_ready'].scale(this._initScale, this._initScale);
+            this['_go'].visible = true;
+            this['_go'].scale(this._initScale, this._initScale);
+            this._goAnime.resume();
         }));
         this._readyAnime.pause();
-        this._oneAnime = Laya.Tween.to(that['_one'], {
+        this._oneAnime = Laya.Tween.to(this['_one'], {
             scaleX: 1,
             scaleY: 1
-        }, 1000, Laya.Ease.quintOut, Laya.Handler.create(function () {
-            that['_one'].visible = false;
-            that['_one'].scale(that._initScale, that._initScale);
-            that['_ready'].visible = true;
-            this['_ready'].scale(that._initScale, that._initScale);
-            that._readyAnime.resume();
+        }, 1000, Laya.Ease.quintOut, Laya.Handler.create(this, function () {
+            this['_one'].visible = false;
+            this['_one'].scale(this._initScale, this._initScale);
+            this['_ready'].visible = true;
+            this['_ready'].scale(this._initScale, this._initScale);
+            this._readyAnime.resume();
         }));
         this._oneAnime.pause();
-        this._twoAnime = Laya.Tween.to(that['_two'], {
+        this._twoAnime = Laya.Tween.to(this['_two'], {
             scaleX: 1,
             scaleY: 1,
-        }, 1000, Laya.Ease.quintOut, Laya.Handler.create(function () {
-            that['_two'].visible = false;
-            that['_two'].scale(that._initScale, that._initScale);
-            that['_one'].visible = true;
-            this['_one'].scale(that._initScale, that._initScale);
-            that._oneAnime.resume();
+        }, 1000, Laya.Ease.quintOut, Laya.Handler.create(this, function () {
+            this['_two'].visible = false;
+            this['_two'].scale(this._initScale, this._initScale);
+            this['_one'].visible = true;
+            this['_one'].scale(this._initScale, this._initScale);
+            this._oneAnime.resume();
         }));
         this._twoAnime.pause();
-        this._countDown = Laya.Tween.to(that['_three'], {
+        this._countDown = Laya.Tween.to(this['_three'], {
             scaleX: 1,
             scaleY: 1
-        }, 1000, Laya.Ease.quintOut, Laya.Handler.create(function () {
-            that['_three'].visible = false;
-            that['_three'].scale(that._initScale, that._initScale);
-            that['_two'].visible = true;
-            that['_two'].scale(that._initScale, that._initScale);
+        }, 1000, Laya.Ease.quintOut, Laya.Handler.create(this, function () {
+            console.log('end');
+            this['_three'].visible = false;
+            this['_three'].scale(this._initScale, this._initScale);
+            this['_two'].visible = true;
+            this['_two'].scale(this._initScale, this._initScale);
             this._twoAnime.resume();
         }));
         this._countDown.pause();

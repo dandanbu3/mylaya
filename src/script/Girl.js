@@ -20,6 +20,7 @@ class Girl extends Laya.Animation {
         runrun.loadImage(this._runTextures[0]);
 
         this._girlHeight = runrun.height;
+        console.log(this._girlHeight, 'this._girlHeight');
         // TODO 优化耦合性
         GLOBAL.CONF.PRIZE_POS_Y = GLOBAL.CONF.GROUND_POS_Y - this._girlHeight * (GLOBAL.CONF.GIRL_JUMP_TIMES + 1) + 30;
         this._jumpHeight = this._girlHeight * GLOBAL.CONF.GIRL_JUMP_TIMES; // 跳起的高度
@@ -111,7 +112,7 @@ class Girl extends Laya.Animation {
             this.event('notRun');
             Sound.playJump();
             this.loadImages(this._jumpTextures);
-            this.runAction(this._jumpAction);
+            this._jumpAction.resume();
         }
     }
     beInjured () {

@@ -985,7 +985,6 @@
             this._pause.on(Laya.Event.CLICK, this, (event) => {
                 // event.data.originalEvent.preventDefault();
                 // if (GLOBAL.CONF.MODE === GLOBAL.MODES.PLAYING) {
-                    window.test = this;
                     this.event('pause');
                 // }
             });
@@ -1144,6 +1143,7 @@
             runrun.loadImage(this._runTextures[0]);
 
             this._girlHeight = runrun.height;
+            console.log(this._girlHeight, 'this._girlHeight');
             // TODO 优化耦合性
             GLOBAL.CONF.PRIZE_POS_Y = GLOBAL.CONF.GROUND_POS_Y - this._girlHeight * (GLOBAL.CONF.GIRL_JUMP_TIMES + 1) + 30;
             this._jumpHeight = this._girlHeight * GLOBAL.CONF.GIRL_JUMP_TIMES; // 跳起的高度
@@ -1235,7 +1235,7 @@
                 this.event('notRun');
                 Sound.playJump();
                 this.loadImages(this._jumpTextures);
-                this.runAction(this._jumpAction);
+                this._jumpAction.resume();
             }
         }
         beInjured () {
@@ -1672,58 +1672,58 @@
             this.addChild(this[key]);
         }
         initAnime () {
-            const that = this;
-            this._goAnime = Laya.Tween.to(that['_go'], {
+            this._goAnime = Laya.Tween.to(this['_go'], {
                 scaleX: 1,
                 scaleY: 1
-            }, 1000, Laya.Ease.quintOut, Laya.Handler.create(function () {
-                that['_go'].visible = false;
-                that['_go'].scale(that._initScale, that._initScale);
+            }, 1000, Laya.Ease.quintOut, Laya.Handler.create(this, function () {
+                this['_go'].visible = false;
+                this['_go'].scale(this._initScale, this._initScale);
                 // 倒计时结束事件
-                that.event('done');
+                this.event('done');
             }));
             this._goAnime.pause();
-            this._readyAnime = Laya.Tween.to(that['_ready'], {
+            this._readyAnime = Laya.Tween.to(this['_ready'], {
                 scaleX: 1,
                 scaleY: 1
-            }, 1000, Laya.Ease.quintOut, Laya.Handler.create(function () {
-                that['_ready'].visible = false;
-                that['_ready'].scale(that._initScale, that._initScale);
-                that['_go'].visible = true;
-                that['_go'].scale(that._initScale, that._initScale);
-                that._goAnime.resume();
+            }, 1000, Laya.Ease.quintOut, Laya.Handler.create(this, function () {
+                this['_ready'].visible = false;
+                this['_ready'].scale(this._initScale, this._initScale);
+                this['_go'].visible = true;
+                this['_go'].scale(this._initScale, this._initScale);
+                this._goAnime.resume();
             }));
             this._readyAnime.pause();
-            this._oneAnime = Laya.Tween.to(that['_one'], {
+            this._oneAnime = Laya.Tween.to(this['_one'], {
                 scaleX: 1,
                 scaleY: 1
-            }, 1000, Laya.Ease.quintOut, Laya.Handler.create(function () {
-                that['_one'].visible = false;
-                that['_one'].scale(that._initScale, that._initScale);
-                that['_ready'].visible = true;
-                this['_ready'].scale(that._initScale, that._initScale);
-                that._readyAnime.resume();
+            }, 1000, Laya.Ease.quintOut, Laya.Handler.create(this, function () {
+                this['_one'].visible = false;
+                this['_one'].scale(this._initScale, this._initScale);
+                this['_ready'].visible = true;
+                this['_ready'].scale(this._initScale, this._initScale);
+                this._readyAnime.resume();
             }));
             this._oneAnime.pause();
-            this._twoAnime = Laya.Tween.to(that['_two'], {
+            this._twoAnime = Laya.Tween.to(this['_two'], {
                 scaleX: 1,
                 scaleY: 1,
-            }, 1000, Laya.Ease.quintOut, Laya.Handler.create(function () {
-                that['_two'].visible = false;
-                that['_two'].scale(that._initScale, that._initScale);
-                that['_one'].visible = true;
-                this['_one'].scale(that._initScale, that._initScale);
-                that._oneAnime.resume();
+            }, 1000, Laya.Ease.quintOut, Laya.Handler.create(this, function () {
+                this['_two'].visible = false;
+                this['_two'].scale(this._initScale, this._initScale);
+                this['_one'].visible = true;
+                this['_one'].scale(this._initScale, this._initScale);
+                this._oneAnime.resume();
             }));
             this._twoAnime.pause();
-            this._countDown = Laya.Tween.to(that['_three'], {
+            this._countDown = Laya.Tween.to(this['_three'], {
                 scaleX: 1,
                 scaleY: 1
-            }, 1000, Laya.Ease.quintOut, Laya.Handler.create(function () {
-                that['_three'].visible = false;
-                that['_three'].scale(that._initScale, that._initScale);
-                that['_two'].visible = true;
-                that['_two'].scale(that._initScale, that._initScale);
+            }, 1000, Laya.Ease.quintOut, Laya.Handler.create(this, function () {
+                console.log('end');
+                this['_three'].visible = false;
+                this['_three'].scale(this._initScale, this._initScale);
+                this['_two'].visible = true;
+                this['_two'].scale(this._initScale, this._initScale);
                 this._twoAnime.resume();
             }));
             this._countDown.pause();
@@ -2441,24 +2441,27 @@
             this._defaultTickerDuration = 500;
             // 全局的定时器
             // @ts-ignore
-            this._ticker = Laya.timer;
+            this._ticker = new Laya.Timer();
             this._ticker.loop(
                 this._defaultTickerDuration,
                 this,
-                () => {
-                    GLOBAL.CONF.MILEAGE++;
-                    this._statusBar.syncMileage();
-                    if (GLOBAL.CONF.MILEAGE % 50 === 0) {
-                        this._defaultTickerDuration--;
-                        GLOBAL.CONF.SPEED += 0.4;
-                        this._girl.changeJumpDuration();
-                    }
-                }
+                this.setTimer
             );
+            this._ticker.callLater(this, this.setTimer);
+            window.test = this._ticker;
             this.init(who);
         }
         startRunAction() {
             this.startCountDown();
+        }
+        setTimer() {
+            GLOBAL.CONF.MILEAGE++;
+            this._statusBar.syncMileage();
+            if (GLOBAL.CONF.MILEAGE % 50 === 0) {
+                this._defaultTickerDuration--;
+                GLOBAL.CONF.SPEED += 0.4;
+                this._girl.changeJumpDuration();
+            }
         }
         init (who) {
             // 背景
@@ -2550,7 +2553,7 @@
                 Sound.playBg();
                 this._girl.startRun();
                 this._crash.startAnime();
-                this._ticker.start();
+                this._ticker.runCallLater(this, this.setTimer);
             });
             this.addChild(this._countDown);
             // 外框架
@@ -2570,12 +2573,13 @@
                     this._dust.visible = false;
                     this._girl.resume();
                     this._crash.startAnime();
-                    this._ticker.start();
+                    this._ticker.runCallLater(this, this.setTimer);
                 }
             });
             this._pauseDialog.on('stop', this, () => {
                 GLOBAL.CONF.MODE = GLOBAL.MODES.MENU;
                 if (GLOBAL.DATA.LOTTERY_LIST.length === 0) {
+                    this.removeSelf();
                     const menuLayer$1 = new menuLayer();
                     // @ts-ignore
                     Laya.stage.addChild(menuLayer$1);
@@ -2592,6 +2596,7 @@
             });
             this._gameoverDialog.on('stop', this, () => {
                 GLOBAL.CONF.MODE = GLOBAL.MODES.MENU;
+                this.removeSelf();
                 const menuLayer$1 = new menuLayer();
                 // @ts-ignore
                 Laya.stage.addChild(menuLayer$1);
@@ -2634,6 +2639,8 @@
             this._girl.readyStart();
             this._ticker.duration = this._defaultTickerDuration;
             Sound.playCountDown();
+            console.log(this._countDown);
+            window.test2=this._countDown;
             this._countDown.start();
         }
         createJumpBtn () {
@@ -2656,9 +2663,9 @@
                         delete this._hand;
                     }
                 }
-                if (GLOBAL.CONF.MODE === GLOBAL.MODES.PLAYING) {
+                // if (GLOBAL.CONF.MODE === GLOBAL.MODES.PLAYING) {
                     this._girl.doJump();
-                }
+                // }
             });
             return btnJump;
         }
@@ -2667,7 +2674,7 @@
             this._dust.visible = false;
             this._girl.freeze();
             this._crash.stopAnime();
-            this._ticker.pause();
+            this._ticker.callLater(this, this.setTimer);
         }
         collide (girl, rect) {
             const girlRect = girl.getBounds();
@@ -2712,7 +2719,7 @@
                         GLOBAL.CONF.MODE = GLOBAL.MODES.GAME_OVER;
                         this._girl.beInjured();
                         this._crash.stopAnime();
-                        this._ticker.stop();
+                        this._ticker.callLater(this, this.setTimer);
                         Sound.stopBg();
                     }
                 });
