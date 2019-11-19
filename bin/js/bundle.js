@@ -1126,8 +1126,8 @@
 
     class Girl extends Laya.Animation {
         constructor (who) {
-            const preRun = [`${who}/run_0.png`];
             super();
+            const preRun = [`${who}/run_0.png`];
             this.loadImages(preRun);
             this._preTextures = this.createTextures(who, 'pre', 0, 2);
             this._runTextures = this.createTextures(who, 'run', 0, 4);
@@ -1259,7 +1259,7 @@
             if (GLOBAL.CONF.GIRL_STAT === 2) {
                 const currentDis = GLOBAL.CONF.GROUND_POS_Y - this.getPositionY();
                 const speed = this._jumpSpeed * currentDis / this._jumpHeight;
-                const moveAction = new Laya.Tween.to(
+                const moveAction = Laya.Tween.to(
                     this,
                     {x: 56, y: GLOBAL.CONF.GROUND_POS_Y},
                     speed,
@@ -1273,7 +1273,7 @@
             } else if (GLOBAL.CONF.GIRL_STAT === 1) {
                 const currentDis = this.y - (GLOBAL.CONF.GROUND_POS_Y - this._jumpHeight);
                 const speed = (this._jumpSpeed - 100) * currentDis / this._jumpHeight;
-                const jumpAction = new Laya.Tween.to(
+                const jumpAction = Laya.Tween.to(
                     this,
                     {x: 56, y: GLOBAL.CONF.GROUND_POS_Y - this._jumpHeight},
                     speed,
@@ -2448,7 +2448,6 @@
                 this.setTimer
             );
             this._ticker.callLater(this, this.setTimer);
-            window.test = this._ticker;
             this.init(who);
         }
         startRunAction() {
@@ -2639,8 +2638,6 @@
             this._girl.readyStart();
             this._ticker.duration = this._defaultTickerDuration;
             Sound.playCountDown();
-            console.log(this._countDown);
-            window.test2=this._countDown;
             this._countDown.start();
         }
         createJumpBtn () {
