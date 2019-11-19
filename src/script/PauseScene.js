@@ -39,8 +39,8 @@ class PauseScene extends Laya.Scene {
             }
         });
         this.addChild(this._resume);
-        const museTexture = 'tileset-icons-btn_muse.png';
-        const soundTexture = 'tileset-icons-btn_sound.png';
+        const museTexture = 'icons/btn_muse.png';
+        const soundTexture = 'icons/btn_sound.png';
         this._muse = new Laya.Sprite();
         this._muse.loadImage(GLOBAL.CONF.SOUND_ON ? soundTexture : museTexture);
         // @ts-ignore

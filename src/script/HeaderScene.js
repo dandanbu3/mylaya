@@ -123,10 +123,10 @@ class HeaderScene extends Laya.Scene {
                         Laya.Tween.to(oldSprite, {
                             x: oldSprite.x,
                             y: oldSprite.y + 50
-                        }, 500, null, () => {
+                        }, 500, null, Laya.Handler.create(() => {
                             console.log(this);
                             this.removeChild(oldSprite);
-                        });
+                        }));
                     }
                 });
             }

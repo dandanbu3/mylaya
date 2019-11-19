@@ -140,12 +140,12 @@ export default class menuLayer extends Laya.Scene {
             {x: 375, y: posY},
             800,
             null,
-            () => {
+            Laya.Handler.create(() => {
                 if (currentPos <= 284) {
                     this._storySetting.y = 548;
                 }
                 this.startStoryScroll();
-            });
+            }));
         moveAction.pause();
         const stopAction = Laya.Tween.to(
             this._storySetting,
@@ -244,7 +244,7 @@ export default class menuLayer extends Laya.Scene {
                         mid: GLOBAL.DATA.MID
                     });
                     const startLayer = new MainLayer(this._choosen);
-                    startLayer.on('transitionend', () => {
+                    startLayer.on('transitionend', this, () => {
                         startLayer.startRunAction();
                     });
                     Laya.stage.addChild(startLayer);

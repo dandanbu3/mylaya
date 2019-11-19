@@ -10,7 +10,8 @@ class CountDownScene extends Laya.Scene {
         this.initAnime();
     }
     start () {
-        this._countDown.start();
+        this['_three'].visible = true;
+        this._countDown.resume();
     }
     drawSprite (key, name) {
         this[key] = new Laya.Sprite();
@@ -23,52 +24,60 @@ class CountDownScene extends Laya.Scene {
     }
     initAnime () {
         const that = this;
-        this['_go'].scale(this._initScale, this._initScale);
-        that['_go'].visible = true;
         this._goAnime = Laya.Tween.to(that['_go'], {
             scaleX: 1,
             scaleY: 1
-        }, 1000, Laya.Ease.quintOut, function () {
+        }, 1000, Laya.Ease.quintOut, Laya.Handler.create(function () {
             that['_go'].visible = false;
-            this.scale(that._initScale, that._initScale);
+            that['_go'].scale(that._initScale, that._initScale);
             // 倒计时结束事件
             that.event('done');
-        }, 4000);
-        this['_ready'].visible = true;
+        }));
+        this._goAnime.pause();
         this._readyAnime = Laya.Tween.to(that['_ready'], {
             scaleX: 1,
             scaleY: 1
-        }, 1000, Laya.Ease.quintOut, function () {
+        }, 1000, Laya.Ease.quintOut, Laya.Handler.create(function () {
             that['_ready'].visible = false;
-            this.scale(that._initScale, that._initScale);
-            // that._goAnime.restart();
-        }, 3000);
-        that['_one'].visible = true;
+            that['_ready'].scale(that._initScale, that._initScale);
+            that['_go'].visible = true;
+            that['_go'].scale(that._initScale, that._initScale);
+            that._goAnime.resume();
+        }));
+        this._readyAnime.pause();
         this._oneAnime = Laya.Tween.to(that['_one'], {
             scaleX: 1,
             scaleY: 1
-        }, 1000, Laya.Ease.quintOut, function () {
+        }, 1000, Laya.Ease.quintOut, Laya.Handler.create(function () {
             that['_one'].visible = false;
-            this.scale(that._initScale);
-            // that._readyAnime.restart();
-        }, 2000);
-        that['_two'].visible = true;
+            that['_one'].scale(that._initScale, that._initScale);
+            that['_ready'].visible = true;
+            this['_ready'].scale(that._initScale, that._initScale);
+            that._readyAnime.resume();
+        }));
+        this._oneAnime.pause();
         this._twoAnime = Laya.Tween.to(that['_two'], {
             scaleX: 1,
             scaleY: 1,
-        }, 1000, Laya.Ease.quintOut, function () {
+        }, 1000, Laya.Ease.quintOut, Laya.Handler.create(function () {
             that['_two'].visible = false;
-            this.scale(that._initScale, that._initScale);
-            // that._oneAnime.restart();
-        }, 1000);
-        that['_three'].visible = true;
+            that['_two'].scale(that._initScale, that._initScale);
+            that['_one'].visible = true;
+            this['_one'].scale(that._initScale, that._initScale);
+            that._oneAnime.resume();
+        }));
+        this._twoAnime.pause();
         this._countDown = Laya.Tween.to(that['_three'], {
             scaleX: 1,
             scaleY: 1
-        }, 1000, Laya.Ease.quintOut, function () {
+        }, 1000, Laya.Ease.quintOut, Laya.Handler.create(function () {
             that['_three'].visible = false;
-            this.scale(that._initScale, that._initScale);
-        });
+            that['_three'].scale(that._initScale, that._initScale);
+            that['_two'].visible = true;
+            that['_two'].scale(that._initScale, that._initScale);
+            this._twoAnime.resume();
+        }));
+        this._countDown.pause();
     }
 }
 

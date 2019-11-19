@@ -21,7 +21,8 @@ class MainLayer extends Laya.Scene {
         this._defaultTickerDuration = 500;
         // 全局的定时器
         // @ts-ignore
-        this._ticker = Laya.timer.loop(
+        this._ticker = new Laya.Timer();
+        this._ticker.loop(
             this._defaultTickerDuration,
             this,
             () => {
@@ -49,7 +50,8 @@ class MainLayer extends Laya.Scene {
         this.addChild(this._background);
         // 状态栏
         this._statusBar = new BarScene();
-        this._statusBar.on('pause', () => {
+        this._statusBar.on('pause', this, () => {
+            console.log('pause');
             this.gamePause();
             this._pauseDialog.show();
         });
@@ -65,27 +67,27 @@ class MainLayer extends Laya.Scene {
         this.addChild(this._dust);
         // 2233
         this._girl = new Girl(who);
-        this._girl.on('notRun', () => {
+        this._girl.on('notRun', this, () => {
             this._dust.visible = false;
         });
-        this._girl.on('run', () => {
+        this._girl.on('run', this, () => {
             this._dust.visible = true;
         });
-        this._girl.on('die', () => {
+        this._girl.on('die', this, () => {
             this._dieAnime.visible = true;
             this._dieAnime.play();
         });
         this.addChild(this._girl);
         // 可碰撞内容
         this._crash = new CrashScene();
-        this._crash.on('noChance', () => {
+        this._crash.on('noChance', this, () => {
             this.gamePause();
             this._pauseDialog.show(0);
         });
         this.addChild(this._crash);
         // 死亡特效
         this._dieAnime = new Laya.Animation();
-        this._dieAnime.loadImages(this.aniUrls(`${who}-die_`, 18));
+        this._dieAnime.loadImages(this.aniUrls(`${who}/die_`, 18));
         this._dieAnime.interval = 83;
         this._dieAnime.pivot(0, 1);
         if (who === 'girl22') {
@@ -123,7 +125,7 @@ class MainLayer extends Laya.Scene {
 
         // 倒计时
         this._countDown = new CountDownScene();
-        this._countDown.on('done', () => {
+        this._countDown.on('done', this, () => {
             GLOBAL.CONF.MODE = GLOBAL.MODES.PLAYING;
             Sound.playBg();
             this._girl.startRun();
@@ -142,7 +144,7 @@ class MainLayer extends Laya.Scene {
 
         // 各种弹层
         this._pauseDialog = new PauseScene();
-        this._pauseDialog.on('resume', () => {
+        this._pauseDialog.on('resume', this, () => {
             if (GLOBAL.CONF.MODE === GLOBAL.MODES.PAUSED) {
                 GLOBAL.CONF.MODE = GLOBAL.MODES.PLAYING;
                 this._dust.visible = false;
@@ -151,7 +153,7 @@ class MainLayer extends Laya.Scene {
                 this._ticker.start();
             }
         });
-        this._pauseDialog.on('stop', () => {
+        this._pauseDialog.on('stop', this, () => {
             GLOBAL.CONF.MODE = GLOBAL.MODES.MENU;
             if (GLOBAL.DATA.LOTTERY_LIST.length === 0) {
                 const menuLayer = new MenuLayer();
@@ -165,19 +167,19 @@ class MainLayer extends Laya.Scene {
         });
         this.addChild(this._pauseDialog);
         this._gameoverDialog = new GameOverScene();
-        this._gameoverDialog.on('restart', () => {
+        this._gameoverDialog.on('restart', this, () => {
             this.startCountDown();
         });
-        this._gameoverDialog.on('stop', () => {
+        this._gameoverDialog.on('stop', this, () => {
             GLOBAL.CONF.MODE = GLOBAL.MODES.MENU;
             const menuLayer = new MenuLayer();
             // @ts-ignore
             Laya.stage.addChild(menuLayer);
         });
-        this._gameoverDialog.on('share', () => {
+        this._gameoverDialog.on('share', this, () => {
             window.kfcMario && window.kfcMario.showShare && window.kfcMario.showShare();
         });
-        this._gameoverDialog.on('break', type => {
+        this._gameoverDialog.on('break', this, type => {
             this._header.syncRecord();
         });
         this.addChild(this._gameoverDialog);
@@ -269,7 +271,7 @@ class MainLayer extends Laya.Scene {
         }
     }
     // OVERWRITE
-    updateTransform () {
+    onUpdate () {
         if (GLOBAL.CONF.MODE === GLOBAL.MODES.PLAYING) {
             const speed = GLOBAL.CONF.SPEED;
             const enemyCache = this._crash._enemyCache;
@@ -295,12 +297,12 @@ class MainLayer extends Laya.Scene {
                 }
             });
             prizeCache.forEach(prize => {
-                const prizePos = prize.getPositionX();
+                const prizePos = prize.x;
                 if (!prize._destroyed && prizePos <= -224) {
                     prize._destroyed = true;
                     this._crash.removePrize();
                 } else if (!prize._destroyed) {
-                    prize.setPositionX(prizePos - speed);
+                    prize.x = (prizePos - speed);
                 }
                 if (!prize.destroyed && this.collide(this._girl, prize)) {
                     this._crash.hitPrize(prize, (release) => {
@@ -315,7 +317,7 @@ class MainLayer extends Laya.Scene {
                 }
             });
         }
-        this.containerUpdateTransform();
+        // this.containerUpdateTransform();
     }
 }
 

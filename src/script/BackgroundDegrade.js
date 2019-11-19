@@ -42,7 +42,7 @@ class BackgroundDegrade extends Laya.Sprite {
         checkRange();
         return SceneArr[Math.floor(index / 2)];
     }
-    updateTransform () {
+    onUpdate () {
         const speed = GLOBAL.CONF.SPEED;
         if (GLOBAL.CONF.MODE === GLOBAL.MODES.PLAYING) {
             for (let i = 0; i < 2; i++) {
@@ -65,7 +65,7 @@ class BackgroundDegrade extends Laya.Sprite {
                 bg.x = pos - speed;
             }
         }
-        this.customRender();
+        // this.containerUpdateTransform();
     }
 }
 

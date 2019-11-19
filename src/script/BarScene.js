@@ -53,7 +53,7 @@ class BarScene extends Laya.Sprite {
         this._mileageIcon.pivot(0, 0);
         this._mileageIcon.pos(284, 200);
         this.addChild(this._mileageIcon);
-        const m = new Laya.Sprite(`tileset-num-sm_m.png`);
+        const m = new Laya.Sprite();
         m.loadImage(`num/sm_m.png`);
         m.pivot(0, 1);
         m.pos(479, 242);
@@ -71,9 +71,10 @@ class BarScene extends Laya.Sprite {
         this._pause.mouseEnabled = true;
         this._pause.on(Laya.Event.CLICK, this, (event) => {
             // event.data.originalEvent.preventDefault();
-            if (GLOBAL.CONF.MODE === GLOBAL.MODES.PLAYING) {
+            // if (GLOBAL.CONF.MODE === GLOBAL.MODES.PLAYING) {
+                window.test = this;
                 this.event('pause');
-            }
+            // }
         });
         this.addChild(this._pause);
     }
@@ -121,9 +122,9 @@ class BarScene extends Laya.Sprite {
                     const oldAction = Laya.Tween.to(newSprite, {
                         x: oldSprite.x,
                         y: oldSprite.y + 40
-                    }, 500, null, () => {
+                    }, 500, null, Laya.Handler.create(this, () => {
                         this.removeChild(oldSprite);
-                    });
+                    }));
                 }
             });
         }

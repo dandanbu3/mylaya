@@ -723,7 +723,7 @@
             checkRange();
             return SceneArr[Math.floor(index / 2)];
         }
-        updateTransform () {
+        onUpdate () {
             const speed = GLOBAL.CONF.SPEED;
             if (GLOBAL.CONF.MODE === GLOBAL.MODES.PLAYING) {
                 for (let i = 0; i < 4; i++) {
@@ -832,7 +832,7 @@
                     }
                 }
             }
-            this.containerUpdateTransform();
+            // this.containerUpdateTransform();
         }
         aniUrls(name, num) {
             var urls = [];
@@ -886,7 +886,7 @@
             checkRange();
             return SceneArr$1[Math.floor(index / 2)];
         }
-        updateTransform () {
+        onUpdate () {
             const speed = GLOBAL.CONF.SPEED;
             if (GLOBAL.CONF.MODE === GLOBAL.MODES.PLAYING) {
                 for (let i = 0; i < 2; i++) {
@@ -909,7 +909,7 @@
                     bg.x = pos - speed;
                 }
             }
-            this.customRender();
+            // this.containerUpdateTransform();
         }
     }
 
@@ -966,7 +966,7 @@
             this._mileageIcon.pivot(0, 0);
             this._mileageIcon.pos(284, 200);
             this.addChild(this._mileageIcon);
-            const m = new Laya.Sprite(`tileset-num-sm_m.png`);
+            const m = new Laya.Sprite();
             m.loadImage(`num/sm_m.png`);
             m.pivot(0, 1);
             m.pos(479, 242);
@@ -984,9 +984,10 @@
             this._pause.mouseEnabled = true;
             this._pause.on(Laya.Event.CLICK, this, (event) => {
                 // event.data.originalEvent.preventDefault();
-                if (GLOBAL.CONF.MODE === GLOBAL.MODES.PLAYING) {
+                // if (GLOBAL.CONF.MODE === GLOBAL.MODES.PLAYING) {
+                    window.test = this;
                     this.event('pause');
-                }
+                // }
             });
             this.addChild(this._pause);
         }
@@ -1034,9 +1035,9 @@
                         const oldAction = Laya.Tween.to(newSprite, {
                             x: oldSprite.x,
                             y: oldSprite.y + 40
-                        }, 500, null, () => {
+                        }, 500, null, Laya.Handler.create(this, () => {
                             this.removeChild(oldSprite);
-                        });
+                        }));
                     }
                 });
             }
@@ -1156,21 +1157,21 @@
                 {x: 56, y: GLOBAL.CONF.GROUND_POS_Y - this._jumpHeight},
                 this._jumpSpeed,
                 Laya.Ease.quadOut,
-                () => {
+                Laya.Handler.create(() => {
                     GLOBAL.CONF.GIRL_STAT = 2;
                     this._fallAction.resume();
-                });
+                }));
             this._jumpAction.pause();
             this._fallAction = Laya.Tween.to(
                 this,
                 {x: 56, y: GLOBAL.CONF.GROUND_POS_Y},
                 this._jumpSpeed,
                 Laya.Ease.quadIn,
-                () => {
+                Laya.Handler.create(() => {
                     this._timer = Date.now();
                     GLOBAL.CONF.GIRL_STAT = 3;
                     this.loadImages(this._fallTextures);
-                });
+                }));
             this._fallAction.pause();
         }
         changeJumpDuration () { // 调整跳起下落的速度
@@ -1187,15 +1188,15 @@
                 this.loadImages(this._dieGrayTextures);
                 this.event('die');
             });
-            this._dieBlink.play();
+            // this._dieBlink.play();
             this._dieMoveStart = Laya.Tween.to(
                 this,
                 {x: 46, y: GLOBAL.CONF.GROUND_POS_Y - 30}, 
                 150,
                 null,
-                () => {
+                Laya.Handler.create(() => {
                     this._dieMoveEnd.resume();
-                });
+                }));
             this._dieMoveStart.pause();
             this._dieMoveEnd = Laya.Tween.to(
                 this,
@@ -1242,12 +1243,15 @@
             this.event('notRun');
             Sound.playGameOver();
             this.loadImage([this._runTextures[0]]);
-            this.removeActionsTrace();
-            this.runAction(Tiny.Repeat(3, this._dieBlink));
+            // this.removeActionsTrace();
+            Laya.Tween.clearAll(this);
+            // this.runAction(Tiny.Repeat(3, this._dieBlink));
+            this._dieBlink.play(3);
             this._dieMoveStart.resume();
         }
         freeze () {
-            this.removeActionsTrace();
+            // this.removeActionsTrace();
+            Laya.Tween.clearAll(this);
             this.stop();
         }
         resume () {
@@ -1260,11 +1264,11 @@
                     {x: 56, y: GLOBAL.CONF.GROUND_POS_Y},
                     speed,
                     Laya.Ease.quadIn,
-                    () => {
+                    Laya.Handler.create(() => {
                         this._timer = Date.now();
                         GLOBAL.CONF.GIRL_STAT = 3;
                         this.loadImages(this._fallTextures);
-                    });
+                    }));
                 // this.runAction(moveAction);
             } else if (GLOBAL.CONF.GIRL_STAT === 1) {
                 const currentDis = this.y - (GLOBAL.CONF.GROUND_POS_Y - this._jumpHeight);
@@ -1274,14 +1278,14 @@
                     {x: 56, y: GLOBAL.CONF.GROUND_POS_Y - this._jumpHeight},
                     speed,
                     Laya.Ease.quadOut,
-                    () => {
+                    Laya.Handler.create(() => {
                         GLOBAL.CONF.GIRL_STAT = 2;
                         this._fallAction.resume;
-                    });
+                    }));
                 // this.runAction(jumpAction);
             }
         }
-        updateTransform () {
+        onUpdate () {
             if (GLOBAL.CONF.MODE === GLOBAL.MODES.PLAYING && GLOBAL.CONF.GIRL_STAT === 3) {
                 if (Date.now() - this._timer >= 100000 / 6 / this.interval ) {
                     this.event('run');
@@ -1289,7 +1293,7 @@
                     GLOBAL.CONF.GIRL_STAT = 0;
                 }
             }
-            this.containerUpdateTransform();
+            // this.containerUpdateTransform();
         }
     }
 
@@ -1303,12 +1307,12 @@
             this._empty = false;
             this.pivot(0, 1);
             this.y = 0;
-            this._moveUp = Laya.Tween.to(this, {y: 10}, 80, null, () => {
+            this._moveUp = Laya.Tween.to(this, {y: 10}, 80, null, Laya.Handler.create(() => {
                 this.y = 0;
-            });
-            this._moveDown = Laya.Tween.to(this, {y: 10}, 80, null, () => {
+            }));
+            this._moveDown = Laya.Tween.to(this, {y: 10}, 80, null, Laya.Handler.create(() => {
                 this.y = 10;
-            }, 80);
+            }), 80);
         }
         playAnime () {
             this._moveUp.resume();
@@ -1326,14 +1330,14 @@
             this.loadImage(`other/tvempty.png`);
             this.pivot(0.5, 1);
             this.pos(200, GLOBAL.CONF.PRIZE_POS_Y - 140);
-            this._fadeAction = Laya.Tween.to(this, {alpha: 0}, 500, null, () => {
+            this._fadeAction = Laya.Tween.to(this, {alpha: 0}, 500, null, Laya.Handler.create(() => {
                 this.alpha = 1;
-            });
+            }));
             this._fadeAction.pause();
-            this._moveAction = Laya.Tween.to(this, {x: 200, y: GLOBAL.CONF.PRIZE_POS_Y - 190}, 500, null, () => {
+            this._moveAction = Laya.Tween.to(this, {x: 200, y: GLOBAL.CONF.PRIZE_POS_Y - 190}, 500, null, Laya.Handler.create(() => {
                 this.y = GLOBAL.CONF.PRIZE_POS_Y - 140;
                 this.visible = false;
-            });
+            }));
             this._moveAction.pause();
             this.scale(1.5, 1.5);
             this.visible = false;
@@ -1624,10 +1628,10 @@
                             Laya.Tween.to(oldSprite, {
                                 x: oldSprite.x,
                                 y: oldSprite.y + 50
-                            }, 500, null, () => {
+                            }, 500, null, Laya.Handler.create(() => {
                                 console.log(this);
                                 this.removeChild(oldSprite);
-                            });
+                            }));
                         }
                     });
                 }
@@ -1655,7 +1659,8 @@
             this.initAnime();
         }
         start () {
-            this._countDown.start();
+            this['_three'].visible = true;
+            this._countDown.resume();
         }
         drawSprite (key, name) {
             this[key] = new Laya.Sprite();
@@ -1668,52 +1673,60 @@
         }
         initAnime () {
             const that = this;
-            this['_go'].scale(this._initScale, this._initScale);
-            that['_go'].visible = true;
             this._goAnime = Laya.Tween.to(that['_go'], {
                 scaleX: 1,
                 scaleY: 1
-            }, 1000, Laya.Ease.quintOut, function () {
+            }, 1000, Laya.Ease.quintOut, Laya.Handler.create(function () {
                 that['_go'].visible = false;
-                this.scale(that._initScale, that._initScale);
+                that['_go'].scale(that._initScale, that._initScale);
                 // 倒计时结束事件
                 that.event('done');
-            }, 4000);
-            this['_ready'].visible = true;
+            }));
+            this._goAnime.pause();
             this._readyAnime = Laya.Tween.to(that['_ready'], {
                 scaleX: 1,
                 scaleY: 1
-            }, 1000, Laya.Ease.quintOut, function () {
+            }, 1000, Laya.Ease.quintOut, Laya.Handler.create(function () {
                 that['_ready'].visible = false;
-                this.scale(that._initScale, that._initScale);
-                // that._goAnime.restart();
-            }, 3000);
-            that['_one'].visible = true;
+                that['_ready'].scale(that._initScale, that._initScale);
+                that['_go'].visible = true;
+                that['_go'].scale(that._initScale, that._initScale);
+                that._goAnime.resume();
+            }));
+            this._readyAnime.pause();
             this._oneAnime = Laya.Tween.to(that['_one'], {
                 scaleX: 1,
                 scaleY: 1
-            }, 1000, Laya.Ease.quintOut, function () {
+            }, 1000, Laya.Ease.quintOut, Laya.Handler.create(function () {
                 that['_one'].visible = false;
-                this.scale(that._initScale);
-                // that._readyAnime.restart();
-            }, 2000);
-            that['_two'].visible = true;
+                that['_one'].scale(that._initScale, that._initScale);
+                that['_ready'].visible = true;
+                this['_ready'].scale(that._initScale, that._initScale);
+                that._readyAnime.resume();
+            }));
+            this._oneAnime.pause();
             this._twoAnime = Laya.Tween.to(that['_two'], {
                 scaleX: 1,
                 scaleY: 1,
-            }, 1000, Laya.Ease.quintOut, function () {
+            }, 1000, Laya.Ease.quintOut, Laya.Handler.create(function () {
                 that['_two'].visible = false;
-                this.scale(that._initScale, that._initScale);
-                // that._oneAnime.restart();
-            }, 1000);
-            that['_three'].visible = true;
+                that['_two'].scale(that._initScale, that._initScale);
+                that['_one'].visible = true;
+                this['_one'].scale(that._initScale, that._initScale);
+                that._oneAnime.resume();
+            }));
+            this._twoAnime.pause();
             this._countDown = Laya.Tween.to(that['_three'], {
                 scaleX: 1,
                 scaleY: 1
-            }, 1000, Laya.Ease.quintOut, function () {
+            }, 1000, Laya.Ease.quintOut, Laya.Handler.create(function () {
                 that['_three'].visible = false;
-                this.scale(that._initScale, that._initScale);
-            });
+                that['_three'].scale(that._initScale, that._initScale);
+                that['_two'].visible = true;
+                that['_two'].scale(that._initScale, that._initScale);
+                this._twoAnime.resume();
+            }));
+            this._countDown.pause();
         }
     }
 
@@ -1923,8 +1936,8 @@
                 }
             });
             this.addChild(this._resume);
-            const museTexture = 'tileset-icons-btn_muse.png';
-            const soundTexture = 'tileset-icons-btn_sound.png';
+            const museTexture = 'icons/btn_muse.png';
+            const soundTexture = 'icons/btn_sound.png';
             this._muse = new Laya.Sprite();
             this._muse.loadImage(GLOBAL.CONF.SOUND_ON ? soundTexture : museTexture);
             // @ts-ignore
@@ -2428,7 +2441,8 @@
             this._defaultTickerDuration = 500;
             // 全局的定时器
             // @ts-ignore
-            this._ticker = Laya.timer.loop(
+            this._ticker = Laya.timer;
+            this._ticker.loop(
                 this._defaultTickerDuration,
                 this,
                 () => {
@@ -2456,7 +2470,8 @@
             this.addChild(this._background);
             // 状态栏
             this._statusBar = new BarScene();
-            this._statusBar.on('pause', () => {
+            this._statusBar.on('pause', this, () => {
+                console.log('pause');
                 this.gamePause();
                 this._pauseDialog.show();
             });
@@ -2472,27 +2487,27 @@
             this.addChild(this._dust);
             // 2233
             this._girl = new Girl(who);
-            this._girl.on('notRun', () => {
+            this._girl.on('notRun', this, () => {
                 this._dust.visible = false;
             });
-            this._girl.on('run', () => {
+            this._girl.on('run', this, () => {
                 this._dust.visible = true;
             });
-            this._girl.on('die', () => {
+            this._girl.on('die', this, () => {
                 this._dieAnime.visible = true;
                 this._dieAnime.play();
             });
             this.addChild(this._girl);
             // 可碰撞内容
             this._crash = new CrashScene();
-            this._crash.on('noChance', () => {
+            this._crash.on('noChance', this, () => {
                 this.gamePause();
                 this._pauseDialog.show(0);
             });
             this.addChild(this._crash);
             // 死亡特效
             this._dieAnime = new Laya.Animation();
-            this._dieAnime.loadImages(this.aniUrls(`${who}-die_`, 18));
+            this._dieAnime.loadImages(this.aniUrls(`${who}/die_`, 18));
             this._dieAnime.interval = 83;
             this._dieAnime.pivot(0, 1);
             if (who === 'girl22') {
@@ -2530,7 +2545,7 @@
 
             // 倒计时
             this._countDown = new CountDownScene();
-            this._countDown.on('done', () => {
+            this._countDown.on('done', this, () => {
                 GLOBAL.CONF.MODE = GLOBAL.MODES.PLAYING;
                 Sound.playBg();
                 this._girl.startRun();
@@ -2549,7 +2564,7 @@
 
             // 各种弹层
             this._pauseDialog = new PauseScene();
-            this._pauseDialog.on('resume', () => {
+            this._pauseDialog.on('resume', this, () => {
                 if (GLOBAL.CONF.MODE === GLOBAL.MODES.PAUSED) {
                     GLOBAL.CONF.MODE = GLOBAL.MODES.PLAYING;
                     this._dust.visible = false;
@@ -2558,7 +2573,7 @@
                     this._ticker.start();
                 }
             });
-            this._pauseDialog.on('stop', () => {
+            this._pauseDialog.on('stop', this, () => {
                 GLOBAL.CONF.MODE = GLOBAL.MODES.MENU;
                 if (GLOBAL.DATA.LOTTERY_LIST.length === 0) {
                     const menuLayer$1 = new menuLayer();
@@ -2572,19 +2587,19 @@
             });
             this.addChild(this._pauseDialog);
             this._gameoverDialog = new GameOverScene();
-            this._gameoverDialog.on('restart', () => {
+            this._gameoverDialog.on('restart', this, () => {
                 this.startCountDown();
             });
-            this._gameoverDialog.on('stop', () => {
+            this._gameoverDialog.on('stop', this, () => {
                 GLOBAL.CONF.MODE = GLOBAL.MODES.MENU;
                 const menuLayer$1 = new menuLayer();
                 // @ts-ignore
                 Laya.stage.addChild(menuLayer$1);
             });
-            this._gameoverDialog.on('share', () => {
+            this._gameoverDialog.on('share', this, () => {
                 window.kfcMario && window.kfcMario.showShare && window.kfcMario.showShare();
             });
-            this._gameoverDialog.on('break', type => {
+            this._gameoverDialog.on('break', this, type => {
                 this._header.syncRecord();
             });
             this.addChild(this._gameoverDialog);
@@ -2676,7 +2691,7 @@
             }
         }
         // OVERWRITE
-        updateTransform () {
+        onUpdate () {
             if (GLOBAL.CONF.MODE === GLOBAL.MODES.PLAYING) {
                 const speed = GLOBAL.CONF.SPEED;
                 const enemyCache = this._crash._enemyCache;
@@ -2702,12 +2717,12 @@
                     }
                 });
                 prizeCache.forEach(prize => {
-                    const prizePos = prize.getPositionX();
+                    const prizePos = prize.x;
                     if (!prize._destroyed && prizePos <= -224) {
                         prize._destroyed = true;
                         this._crash.removePrize();
                     } else if (!prize._destroyed) {
-                        prize.setPositionX(prizePos - speed);
+                        prize.x = (prizePos - speed);
                     }
                     if (!prize.destroyed && this.collide(this._girl, prize)) {
                         this._crash.hitPrize(prize, (release) => {
@@ -2722,7 +2737,7 @@
                     }
                 });
             }
-            this.containerUpdateTransform();
+            // this.containerUpdateTransform();
         }
     }
 
@@ -2861,12 +2876,12 @@
                 {x: 375, y: posY},
                 800,
                 null,
-                () => {
+                Laya.Handler.create(() => {
                     if (currentPos <= 284) {
                         this._storySetting.y = 548;
                     }
                     this.startStoryScroll();
-                });
+                }));
             moveAction.pause();
             const stopAction = Laya.Tween.to(
                 this._storySetting,
@@ -2965,7 +2980,7 @@
                             mid: GLOBAL.DATA.MID
                         });
                         const startLayer = new MainLayer(this._choosen);
-                        startLayer.on('transitionend', () => {
+                        startLayer.on('transitionend', this, () => {
                             startLayer.startRunAction();
                         });
                         Laya.stage.addChild(startLayer);

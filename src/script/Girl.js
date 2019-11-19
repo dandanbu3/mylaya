@@ -33,21 +33,21 @@ class Girl extends Laya.Animation {
             {x: 56, y: GLOBAL.CONF.GROUND_POS_Y - this._jumpHeight},
             this._jumpSpeed,
             Laya.Ease.quadOut,
-            () => {
+            Laya.Handler.create(() => {
                 GLOBAL.CONF.GIRL_STAT = 2;
                 this._fallAction.resume();
-            });
+            }));
         this._jumpAction.pause();
         this._fallAction = Laya.Tween.to(
             this,
             {x: 56, y: GLOBAL.CONF.GROUND_POS_Y},
             this._jumpSpeed,
             Laya.Ease.quadIn,
-            () => {
+            Laya.Handler.create(() => {
                 this._timer = Date.now();
                 GLOBAL.CONF.GIRL_STAT = 3;
                 this.loadImages(this._fallTextures);
-            });
+            }));
         this._fallAction.pause();
     }
     changeJumpDuration () { // 调整跳起下落的速度
@@ -64,15 +64,15 @@ class Girl extends Laya.Animation {
             this.loadImages(this._dieGrayTextures);
             this.event('die');
         });
-        this._dieBlink.play();
+        // this._dieBlink.play();
         this._dieMoveStart = Laya.Tween.to(
             this,
             {x: 46, y: GLOBAL.CONF.GROUND_POS_Y - 30}, 
             150,
             null,
-            () => {
+            Laya.Handler.create(() => {
                 this._dieMoveEnd.resume();
-            });
+            }));
         this._dieMoveStart.pause();
         this._dieMoveEnd = Laya.Tween.to(
             this,
@@ -119,12 +119,15 @@ class Girl extends Laya.Animation {
         this.event('notRun');
         Sound.playGameOver();
         this.loadImage([this._runTextures[0]]);
-        this.removeActionsTrace();
-        this.runAction(Tiny.Repeat(3, this._dieBlink));
+        // this.removeActionsTrace();
+        Laya.Tween.clearAll(this);
+        // this.runAction(Tiny.Repeat(3, this._dieBlink));
+        this._dieBlink.play(3);
         this._dieMoveStart.resume();
     }
     freeze () {
-        this.removeActionsTrace();
+        // this.removeActionsTrace();
+        Laya.Tween.clearAll(this);
         this.stop();
     }
     resume () {
@@ -137,11 +140,11 @@ class Girl extends Laya.Animation {
                 {x: 56, y: GLOBAL.CONF.GROUND_POS_Y},
                 speed,
                 Laya.Ease.quadIn,
-                () => {
+                Laya.Handler.create(() => {
                     this._timer = Date.now();
                     GLOBAL.CONF.GIRL_STAT = 3;
                     this.loadImages(this._fallTextures);
-                });
+                }));
             // this.runAction(moveAction);
         } else if (GLOBAL.CONF.GIRL_STAT === 1) {
             const currentDis = this.y - (GLOBAL.CONF.GROUND_POS_Y - this._jumpHeight);
@@ -151,14 +154,14 @@ class Girl extends Laya.Animation {
                 {x: 56, y: GLOBAL.CONF.GROUND_POS_Y - this._jumpHeight},
                 speed,
                 Laya.Ease.quadOut,
-                () => {
+                Laya.Handler.create(() => {
                     GLOBAL.CONF.GIRL_STAT = 2;
                     this._fallAction.resume;
-                });
+                }));
             // this.runAction(jumpAction);
         }
     }
-    updateTransform () {
+    onUpdate () {
         if (GLOBAL.CONF.MODE === GLOBAL.MODES.PLAYING && GLOBAL.CONF.GIRL_STAT === 3) {
             if (Date.now() - this._timer >= 100000 / 6 / this.interval ) {
                 this.event('run');
@@ -166,7 +169,7 @@ class Girl extends Laya.Animation {
                 GLOBAL.CONF.GIRL_STAT = 0;
             }
         }
-        this.containerUpdateTransform();
+        // this.containerUpdateTransform();
     }
 }
 
