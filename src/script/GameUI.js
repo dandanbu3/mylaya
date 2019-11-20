@@ -22,6 +22,10 @@ export default class GameUI extends Laya.Scene {
         this.tipLbll.on(Laya.Event.CLICK, this, this.onTipClick);
     }
 
+    onUpdate () {
+        console.log(111);
+    }
+
     onTipClick(e) {
         this.tipLbll.visible = false;
         this._score = 0;

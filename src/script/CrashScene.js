@@ -165,7 +165,7 @@ class CrashScene extends Laya.Scene {
             // 限制奖品箱子出现的范围
             const prevEnemy = this._enemyCache[this._enemyCache.length - 2];
             const startPos = prevEnemy.x;
-            const randomPos = this.getRandom(startPos, enemy.getPositionX() - 500);
+            const randomPos = this.getRandom(startPos, enemy.x - 500);
             const prizeBox = new PrizeBox();
             if (GLOBAL.DATA.OPEN_CHANCE > 0) { // 有奖品的箱子
                 prizeBox.pos(randomPos, GLOBAL.CONF.PRIZE_POS_Y);

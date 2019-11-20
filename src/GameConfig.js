@@ -3,6 +3,9 @@ import GameUI from "./script/GameUI"
 import GameControl from "./script/GameControl"
 import Bullet from "./script/Bullet"
 import DropBox from "./script/DropBox"
+import Girl from "./script/Girl"
+import MainLayer from "./script/MainLayer"
+import MenuLayer from "./script/menuLayer"
 
 export default class GameConfig {
     static init() {
@@ -11,7 +14,10 @@ export default class GameConfig {
 		reg("script/GameUI.js",GameUI);
 		reg("script/GameControl.js",GameControl);
 		reg("script/Bullet.js",Bullet);
-		reg("script/DropBox.js",DropBox);
+        reg("script/DropBox.js",DropBox);
+        reg("script/Girl.js",Girl);
+        reg("script/MainLayer.js",MainLayer);
+        reg("script/menuLayer.js",MenuLayer);
     }
 }
 GameConfig.width = 750;

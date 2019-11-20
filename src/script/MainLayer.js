@@ -274,8 +274,10 @@ class MainLayer extends Laya.Scene {
             return collideRect.x > 0 && Tiny.rectIntersectsRect(girlRect, collideRect);
         }
     }
+    
     // OVERWRITE
     onUpdate () {
+        console.log(111);
         if (GLOBAL.CONF.MODE === GLOBAL.MODES.PLAYING) {
             const speed = GLOBAL.CONF.SPEED;
             const enemyCache = this._crash._enemyCache;
