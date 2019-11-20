@@ -6,6 +6,9 @@ import DropBox from "./script/DropBox"
 import Girl from "./script/Girl"
 import MainLayer from "./script/MainLayer"
 import MenuLayer from "./script/menuLayer"
+import CrashScene from "./script/CrashScene"
+import BackgroundDegrade from "./script/BackgroundDegrade"
+import BackgroundScene from "./script/BackgroundScene"
 
 export default class GameConfig {
     static init() {
@@ -17,7 +20,10 @@ export default class GameConfig {
         reg("script/DropBox.js",DropBox);
         reg("script/Girl.js",Girl);
         reg("script/MainLayer.js",MainLayer);
-        reg("script/menuLayer.js",MenuLayer);
+        reg("script/MenuLayer.js",MenuLayer);
+        reg("script/CrashScene.js",CrashScene);
+        reg("script/BackgroundDegrade.js",BackgroundDegrade);
+        reg("script/BackgroundScene.js",BackgroundScene);
     }
 }
 GameConfig.width = 750;
@@ -27,7 +33,7 @@ GameConfig.scaleMode ="fixedwidth";
 GameConfig.screenMode = "none";
 GameConfig.alignV = "top";
 GameConfig.alignH = "left";
-GameConfig.startScene = "test/TestScene.scene";
+// GameConfig.startScene = "test/TestScene.scene";
 GameConfig.sceneRoot = "";
 GameConfig.debug = true;
 GameConfig.stat = false;

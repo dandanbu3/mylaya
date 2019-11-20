@@ -27,6 +27,7 @@ class Girl extends Laya.Animation {
         this._jumpSpeed = 400;
         this.createJumpAction();
         this.createDieAction();
+        Laya.timer.frameLoop(1, this, this.onUpdate);
     }
     createJumpAction () {
         this._jumpAction = Laya.Tween.to(
@@ -107,6 +108,7 @@ class Girl extends Laya.Animation {
         this.event('run');
     }
     doJump () {
+        console.log('doJump', GLOBAL.CONF.GIRL_STAT);
         if (GLOBAL.CONF.GIRL_STAT !== 1 && GLOBAL.CONF.GIRL_STAT !== 2) {
             GLOBAL.CONF.GIRL_STAT = 1;
             this.event('notRun');
@@ -163,6 +165,7 @@ class Girl extends Laya.Animation {
         }
     }
     onUpdate () {
+        console.log('onupdate');
         if (GLOBAL.CONF.MODE === GLOBAL.MODES.PLAYING && GLOBAL.CONF.GIRL_STAT === 3) {
             if (Date.now() - this._timer >= 100000 / 6 / this.interval ) {
                 this.event('run');

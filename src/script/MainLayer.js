@@ -16,6 +16,7 @@ import Util from './utils';
 class MainLayer extends Laya.Scene {
     constructor (who) {
         super();
+        Laya.timer.frameLoop(1, this, this.onUpdate);
         // Tiny.app.view.style['touch-action'] = 'none';
         // Tiny.app.renderer.plugins.interaction.autoPreventDefault = true;
         this._defaultTickerDuration = 500;
@@ -229,6 +230,7 @@ class MainLayer extends Laya.Scene {
         btnJump.pos(94, 1012);
         btnJump.mouseEnabled = true;
         btnJump.on(Laya.Event.CLICK, this, (event) => {
+            console.log('jump', btnJump._clicked);
             // event.data.originalEvent.preventDefault();
             // @ts-ignore
             if (!btnJump._clicked) {
@@ -274,7 +276,7 @@ class MainLayer extends Laya.Scene {
             return collideRect.x > 0 && Tiny.rectIntersectsRect(girlRect, collideRect);
         }
     }
-    
+
     // OVERWRITE
     onUpdate () {
         console.log(111);

@@ -4,6 +4,7 @@ const SceneArr = ['forest', 'water', 'city'];
 class BackgroundScene extends Laya.Sprite {
     constructor () {
         super();
+        Laya.timer.frameLoop(1, this, this.onUpdate);
         this._bgCache = [];
         this._cloudCache = [];
         this._mgCache = [];

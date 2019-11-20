@@ -28,6 +28,7 @@ class BackgroundDegrade extends Laya.Sprite {
             this._bgCache.push(bg);
             bgPos += bg.width;
         }
+        Laya.timer.frameLoop(1, this, this.onUpdate);
     }
     checkPosPlace (posX) {
         let posRange = this._bgList[this._newGroundIndex].width - (Laya.stage.width - this._bgCache[this._newGroundIndex % 2].getPositionX()); // 边界

@@ -596,6 +596,7 @@
             this._jumpSpeed = 400;
             this.createJumpAction();
             this.createDieAction();
+            Laya.timer.frameLoop(1, this, this.onUpdate);
         }
         createJumpAction () {
             this._jumpAction = Laya.Tween.to(
@@ -676,6 +677,7 @@
             this.event('run');
         }
         doJump () {
+            console.log('doJump', GLOBAL.CONF.GIRL_STAT);
             if (GLOBAL.CONF.GIRL_STAT !== 1 && GLOBAL.CONF.GIRL_STAT !== 2) {
                 GLOBAL.CONF.GIRL_STAT = 1;
                 this.event('notRun');
@@ -732,6 +734,7 @@
             }
         }
         onUpdate () {
+            console.log('onupdate');
             if (GLOBAL.CONF.MODE === GLOBAL.MODES.PLAYING && GLOBAL.CONF.GIRL_STAT === 3) {
                 if (Date.now() - this._timer >= 100000 / 6 / this.interval ) {
                     this.event('run');
@@ -747,6 +750,7 @@
     class BackgroundScene extends Laya.Sprite {
         constructor () {
             super();
+            Laya.timer.frameLoop(1, this, this.onUpdate);
             this._bgCache = [];
             this._cloudCache = [];
             this._mgCache = [];
@@ -1096,6 +1100,7 @@
                 this._bgCache.push(bg);
                 bgPos += bg.width;
             }
+            Laya.timer.frameLoop(1, this, this.onUpdate);
         }
         checkPosPlace (posX) {
             let posRange = this._bgList[this._newGroundIndex].width - (Laya.stage.width - this._bgCache[this._newGroundIndex % 2].getPositionX()); // 边界
@@ -2724,6 +2729,7 @@
     class MainLayer extends Laya.Scene {
         constructor (who) {
             super();
+            Laya.timer.frameLoop(1, this, this.onUpdate);
             // Tiny.app.view.style['touch-action'] = 'none';
             // Tiny.app.renderer.plugins.interaction.autoPreventDefault = true;
             this._defaultTickerDuration = 500;
@@ -2937,6 +2943,7 @@
             btnJump.pos(94, 1012);
             btnJump.mouseEnabled = true;
             btnJump.on(Laya.Event.CLICK, this, (event) => {
+                console.log('jump', btnJump._clicked);
                 // event.data.originalEvent.preventDefault();
                 // @ts-ignore
                 if (!btnJump._clicked) {
@@ -2982,6 +2989,7 @@
                 return collideRect.x > 0 && Tiny.rectIntersectsRect(girlRect, collideRect);
             }
         }
+
         // OVERWRITE
         onUpdate () {
             console.log(111);
@@ -3046,7 +3054,10 @@
             reg("script/DropBox.js",DropBox);
             reg("script/Girl.js",Girl);
             reg("script/MainLayer.js",MainLayer);
-            reg("script/menuLayer.js",menuLayer);
+            reg("script/MenuLayer.js",menuLayer);
+            reg("script/CrashScene.js",CrashScene);
+            reg("script/BackgroundDegrade.js",BackgroundDegrade);
+            reg("script/BackgroundScene.js",BackgroundScene);
         }
     }
     GameConfig.width = 750;
@@ -3056,7 +3067,7 @@
     GameConfig.screenMode = "none";
     GameConfig.alignV = "top";
     GameConfig.alignH = "left";
-    GameConfig.startScene = "test/TestScene.scene";
+    // GameConfig.startScene = "test/TestScene.scene";
     GameConfig.sceneRoot = "";
     GameConfig.debug = true;
     GameConfig.stat = false;
