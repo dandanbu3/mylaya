@@ -1393,9 +1393,9 @@
             }
             this._prizeAnime = new Laya.Animation();
             this._prizeAnime.loadImages(animeTextures);
-            this._prizeAnime.onLoop = () => {
-                this._prizeAnime.stop();
-            };
+            // this._prizeAnime.onLoop = () => {
+            //     this._prizeAnime.stop();
+            // };
             this._prizeAnime.interval = 42;
             this._prizeAnime.pos(14, 186);
             this.addChild(this._prizeAnime);
@@ -1491,8 +1491,8 @@
                     if (drawed) {
                         Sound.playHit();
                         GLOBAL.CONF.HIT++;
-                        this._prizeAnime.stop();
-                        this._prizeAnime.play();
+                        // this._prizeAnime.stop();
+                        this._prizeAnime.play(0, false);
                     } else {
                         prize._empty = true;
                         Sound.playHitEmpty();
