@@ -258,28 +258,41 @@ class MainLayer extends Laya.Scene {
     collide (girl, rect) {
         const girlRect = girl.getBounds();
         const collideRect = rect.getBounds();
-        girlRect.x += 26;
-        girlRect.width -= 40;
+        console.log(girlRect, 'girlRect', 'collideRect', collideRect);
+        girlRect.x = girl.x + 26;
+        girlRect.y = girl.y;
+        girlRect.width = girl.width + 40;
+        girlRect.height = girl.height;
         if (rect._points) {
             const pointLength = rect._points.length;
             let hit = false;
             for (let i = 0; i < pointLength; i++) {
                 const point = rect._points[i];
-                const p = new Tiny.Point(point.x + collideRect.x, point.y + collideRect.y);
-                if (collideRect.x > 0 && Tiny.rectContainsPoint(girlRect, p)) {
+                const p = new Laya.Vector2(point.x + collideRect.x, point.y + collideRect.y);
+                if (collideRect.x > 0 && this.boxContainsPoint(girlRect, p)) {
                     hit = true;
                     break;
                 }
             }
             return hit;
         } else {
-            return collideRect.x > 0 && Tiny.rectIntersectsRect(girlRect, collideRect);
+            return collideRect.x > 0 && this.boxContainsBox(girlRect, collideRect);
         }
     }
-
+    boxContainsPoint(a, b) {
+        if(a.x< b.x && a.x + a.width > b.x) {
+            return true;
+        }
+        return false;
+    }
+    boxContainsBox(a, b) {
+        return this.boxContainsPoint(a, {x: b.x, y: b.y})
+            || this.boxContainsPoint(a, {x: b.x, y: b.y + b.height})
+            || this.boxContainsPoint(a, {x: b.x + b.width, y: b.y})
+            || this.boxContainsPoint(a, {x: b.x + b.width, y: b.y + b.height});
+    }
     // OVERWRITE
     onUpdate () {
-        console.log(111);
         if (GLOBAL.CONF.MODE === GLOBAL.MODES.PLAYING) {
             const speed = GLOBAL.CONF.SPEED;
             const enemyCache = this._crash._enemyCache;

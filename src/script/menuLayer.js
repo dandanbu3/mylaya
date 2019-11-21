@@ -264,34 +264,21 @@ class GrilRadio extends Laya.Sprite {
         this.width = 120;
         this.height = 120;
         this._checked = checked;
-        this._selectBg = new Laya.Sprite();
-        this._selectBg.loadImage(`${alias}select_bg.png`);
-        this._selectBg.width = 160;
-        this._selectBg.height = 160;
-        this._selectFront = new Laya.Sprite();
-        this._selectFront.loadImage(`${alias}select_front.png`);
-        this._selectFront.width = 188;
-        this._selectFront.height = 192;
-        this._selectedBg = new Laya.Sprite();
-        this._selectedBg.loadImage(`${alias}selected_bg.png`);
-        this._selectedBg.width = 160;
-        this._selectedBg.height = 160;
-        this._selectedFront = new Laya.Sprite();
-        this._selectedFront.loadImage(`${alias}selected_front.png`);
-        this._selectedFront.width = 188;
-        this._selectedFront.height = 192;
-        this._selectedIcon = new Laya.Sprite();
-        this._selectedIcon.loadImage(`${alias}selected_icon.png`);
-        this._selectedIcon.width = 56;
-        this._selectedIcon.height = 56;
-        this._bgSprite = this._checked ? this._selectedBg : this._selectBg;
+        this._selectBg = `${alias}select_bg.png`;
+        this._selectFront = `${alias}select_front.png`;
+        this._selectedBg = `${alias}selected_bg.png`;
+        this._selectedFront = `${alias}selected_front.png`;
+        this._selectedIcon = `${alias}selected_icon.png`;
+        this._bgSprite = new Laya.Sprite();
+        this._bgSprite.loadImage(this._checked ? this._selectedBg : this._selectBg);
         this._bgSprite.pos(-79, -82);
         this.addChild(this._bgSprite);
-        
-        this._frontSprite = this._checked ? this._selectedFront : this._selectFront;
+        this._frontSprite = new Laya.Sprite();
+        this._frontSprite.loadImage(this._checked ? this._selectedFront : this._selectFront);
         this._frontSprite.pos(-93, -96);
         this.addChild(this._frontSprite);
-        this._iconSprite = this._selectedIcon;
+        this._iconSprite = new Laya.Sprite();
+        this._iconSprite.loadImage(this._selectedIcon);
         if (!this._checked) {
             this._iconSprite.visible = false;
         } else {
@@ -308,7 +295,7 @@ class GrilRadio extends Laya.Sprite {
         this._checked = isChecked;
         this._bgSprite = this._checked ? this._selectedBg : this._selectBg;
         this._frontSprite = this._checked ? this._selectedFront: this._selectFront;
-        this._iconSprite.visible = (this._checked);
+        this._iconSprite.visible = this._checked;
         if (this._checked) {
             this.scale(1.1, 1.1);
         } else {

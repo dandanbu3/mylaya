@@ -193,7 +193,7 @@ class BackgroundScene extends Laya.Sprite {
         }
     }
     checkPosPlace (posX) {
-        let posRange = this._groundList[this._newGroundIndex].width - (Laya.stage.width - this._groundCache[this._newGroundIndex % 2].getPositionX()); // 边界
+        let posRange = this._groundList[this._newGroundIndex].width - (Laya.stage.width - this._groundCache[this._newGroundIndex % 2].x); // 边界
         let index = this._newGroundIndex;
         const checkRange = () => {
             if (posX > posRange) {

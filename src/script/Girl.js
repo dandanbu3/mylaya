@@ -4,6 +4,9 @@ import Sound from './Sound';
 class Girl extends Laya.Animation {
     constructor (who) {
         super();
+        this.autoSize = true;
+        this.width = 90;
+        this.height = 100;
         const preRun = [`${who}/run_0.png`];
         this.loadImages(preRun);
         this._preTextures = this.createTextures(who, 'pre', 0, 2);
@@ -15,7 +18,8 @@ class Girl extends Laya.Animation {
         this.loadImages(this._preTextures);
         this.interval = 160;
         this.pivot(0, 1);
-        this.pos(56, GLOBAL.CONF.GROUND_POS_Y);
+        this.pos(56, GLOBAL.CONF.GROUND_POS_Y - this.height);
+        console.log(this.x, this.y);
         const runrun = new Laya.Sprite();
         runrun.loadImage(this._runTextures[0]);
 
@@ -121,7 +125,7 @@ class Girl extends Laya.Animation {
         GLOBAL.CONF.GIRL_STAT = -1;
         this.event('notRun');
         Sound.playGameOver();
-        this.loadImage([this._runTextures[0]]);
+        this.loadImages([this._runTextures[0]]);
         // this.removeActionsTrace();
         Laya.Tween.clearAll(this);
         // this.runAction(Tiny.Repeat(3, this._dieBlink));

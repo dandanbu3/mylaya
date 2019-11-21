@@ -573,6 +573,9 @@
     class Girl extends Laya.Animation {
         constructor (who) {
             super();
+            this.autoSize = true;
+            this.width = 90;
+            this.height = 100;
             const preRun = [`${who}/run_0.png`];
             this.loadImages(preRun);
             this._preTextures = this.createTextures(who, 'pre', 0, 2);
@@ -584,7 +587,8 @@
             this.loadImages(this._preTextures);
             this.interval = 160;
             this.pivot(0, 1);
-            this.pos(56, GLOBAL.CONF.GROUND_POS_Y);
+            this.pos(56, GLOBAL.CONF.GROUND_POS_Y - this.height);
+            console.log(this.x, this.y);
             const runrun = new Laya.Sprite();
             runrun.loadImage(this._runTextures[0]);
 
@@ -690,7 +694,7 @@
             GLOBAL.CONF.GIRL_STAT = -1;
             this.event('notRun');
             Sound.playGameOver();
-            this.loadImage([this._runTextures[0]]);
+            this.loadImages([this._runTextures[0]]);
             // this.removeActionsTrace();
             Laya.Tween.clearAll(this);
             // this.runAction(Tiny.Repeat(3, this._dieBlink));
@@ -939,7 +943,7 @@
             }
         }
         checkPosPlace (posX) {
-            let posRange = this._groundList[this._newGroundIndex].width - (Laya.stage.width - this._groundCache[this._newGroundIndex % 2].getPositionX()); // 边界
+            let posRange = this._groundList[this._newGroundIndex].width - (Laya.stage.width - this._groundCache[this._newGroundIndex % 2].x); // 边界
             let index = this._newGroundIndex;
             const checkRange = () => {
                 if (posX > posRange) {
@@ -1449,7 +1453,7 @@
                     this._prizeCache.push(prizeBox);
                 } else { // 空气屁箱子
                     prizeBox._empty = true;
-                    prizeBox.setPosition(randomPos, GLOBAL.CONF.PRIZE_POS_Y);
+                    prizeBox.pos(randomPos, GLOBAL.CONF.PRIZE_POS_Y);
                     this.addChild(prizeBox);
                     this._prizeCache.push(prizeBox);
                 }
@@ -2266,34 +2270,21 @@
             this.width = 120;
             this.height = 120;
             this._checked = checked;
-            this._selectBg = new Laya.Sprite();
-            this._selectBg.loadImage(`${alias$1}select_bg.png`);
-            this._selectBg.width = 160;
-            this._selectBg.height = 160;
-            this._selectFront = new Laya.Sprite();
-            this._selectFront.loadImage(`${alias$1}select_front.png`);
-            this._selectFront.width = 188;
-            this._selectFront.height = 192;
-            this._selectedBg = new Laya.Sprite();
-            this._selectedBg.loadImage(`${alias$1}selected_bg.png`);
-            this._selectedBg.width = 160;
-            this._selectedBg.height = 160;
-            this._selectedFront = new Laya.Sprite();
-            this._selectedFront.loadImage(`${alias$1}selected_front.png`);
-            this._selectedFront.width = 188;
-            this._selectedFront.height = 192;
-            this._selectedIcon = new Laya.Sprite();
-            this._selectedIcon.loadImage(`${alias$1}selected_icon.png`);
-            this._selectedIcon.width = 56;
-            this._selectedIcon.height = 56;
-            this._bgSprite = this._checked ? this._selectedBg : this._selectBg;
+            this._selectBg = `${alias$1}select_bg.png`;
+            this._selectFront = `${alias$1}select_front.png`;
+            this._selectedBg = `${alias$1}selected_bg.png`;
+            this._selectedFront = `${alias$1}selected_front.png`;
+            this._selectedIcon = `${alias$1}selected_icon.png`;
+            this._bgSprite = new Laya.Sprite();
+            this._bgSprite.loadImage(this._checked ? this._selectedBg : this._selectBg);
             this._bgSprite.pos(-79, -82);
             this.addChild(this._bgSprite);
-            
-            this._frontSprite = this._checked ? this._selectedFront : this._selectFront;
+            this._frontSprite = new Laya.Sprite();
+            this._frontSprite.loadImage(this._checked ? this._selectedFront : this._selectFront);
             this._frontSprite.pos(-93, -96);
             this.addChild(this._frontSprite);
-            this._iconSprite = this._selectedIcon;
+            this._iconSprite = new Laya.Sprite();
+            this._iconSprite.loadImage(this._selectedIcon);
             if (!this._checked) {
                 this._iconSprite.visible = false;
             } else {
@@ -2310,7 +2301,7 @@
             this._checked = isChecked;
             this._bgSprite = this._checked ? this._selectedBg : this._selectBg;
             this._frontSprite = this._checked ? this._selectedFront: this._selectFront;
-            this._iconSprite.visible = (this._checked);
+            this._iconSprite.visible = this._checked;
             if (this._checked) {
                 this.scale(1.1, 1.1);
             } else {
@@ -2971,28 +2962,41 @@
         collide (girl, rect) {
             const girlRect = girl.getBounds();
             const collideRect = rect.getBounds();
-            girlRect.x += 26;
-            girlRect.width -= 40;
+            console.log(girlRect, 'girlRect', 'collideRect', collideRect);
+            girlRect.x = girl.x + 26;
+            girlRect.y = girl.y;
+            girlRect.width = girl.width + 40;
+            girlRect.height = girl.height;
             if (rect._points) {
                 const pointLength = rect._points.length;
                 let hit = false;
                 for (let i = 0; i < pointLength; i++) {
                     const point = rect._points[i];
-                    const p = new Tiny.Point(point.x + collideRect.x, point.y + collideRect.y);
-                    if (collideRect.x > 0 && Tiny.rectContainsPoint(girlRect, p)) {
+                    const p = new Laya.Vector2(point.x + collideRect.x, point.y + collideRect.y);
+                    if (collideRect.x > 0 && this.boxContainsPoint(girlRect, p)) {
                         hit = true;
                         break;
                     }
                 }
                 return hit;
             } else {
-                return collideRect.x > 0 && Tiny.rectIntersectsRect(girlRect, collideRect);
+                return collideRect.x > 0 && this.boxContainsBox(girlRect, collideRect);
             }
         }
-
+        boxContainsPoint(a, b) {
+            if(a.x< b.x && a.x + a.width > b.x) {
+                return true;
+            }
+            return false;
+        }
+        boxContainsBox(a, b) {
+            return this.boxContainsPoint(a, {x: b.x, y: b.y})
+                || this.boxContainsPoint(a, {x: b.x, y: b.y + b.height})
+                || this.boxContainsPoint(a, {x: b.x + b.width, y: b.y})
+                || this.boxContainsPoint(a, {x: b.x + b.width, y: b.y + b.height});
+        }
         // OVERWRITE
         onUpdate () {
-            console.log(111);
             if (GLOBAL.CONF.MODE === GLOBAL.MODES.PLAYING) {
                 const speed = GLOBAL.CONF.SPEED;
                 const enemyCache = this._crash._enemyCache;

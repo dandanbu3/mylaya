@@ -173,7 +173,7 @@ class CrashScene extends Laya.Scene {
                 this._prizeCache.push(prizeBox);
             } else { // 空气屁箱子
                 prizeBox._empty = true;
-                prizeBox.setPosition(randomPos, GLOBAL.CONF.PRIZE_POS_Y);
+                prizeBox.pos(randomPos, GLOBAL.CONF.PRIZE_POS_Y);
                 this.addChild(prizeBox);
                 this._prizeCache.push(prizeBox);
             }
