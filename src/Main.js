@@ -57,7 +57,6 @@ class Main {
             delete resource.cityDegRight;
 		}
 		var loadSource = Object.values(resource).map(function(item) {return item.url});
-		console.log(loadSource, 'loadSource');
 		Laya.loader.load(loadSource,
 			Laya.Handler.create(this, this.loadComplete),
 			Laya.Handler.create(this, this.loadProgress, [], false)

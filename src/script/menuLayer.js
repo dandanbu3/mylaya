@@ -134,13 +134,13 @@ export default class menuLayer extends Laya.Scene {
     startStoryScroll () {
         const currentPos = this._storySetting.y;
         const posY = currentPos - 44;
-        console.log(posY, posY);
         const moveAction = Laya.Tween.to(
             this._storySetting,
             {x: 375, y: posY},
             800,
             null,
-            Laya.Handler.create(() => {
+            Laya.Handler.create(this, () => {
+                console.log(currentPos, 'currentPos');
                 if (currentPos <= 284) {
                     this._storySetting.y = 548;
                 }
@@ -152,7 +152,8 @@ export default class menuLayer extends Laya.Scene {
             {x: 375, y: currentPos},
             1000,
             null,
-            Laya.Handler.create(() => {
+            Laya.Handler.create(this, () => {
+                console.log('endend');
                 moveAction.resume();
             }));
     }
@@ -293,8 +294,8 @@ class GrilRadio extends Laya.Sprite {
     }
     click (isChecked) {
         this._checked = isChecked;
-        this._bgSprite = this._checked ? this._selectedBg : this._selectBg;
-        this._frontSprite = this._checked ? this._selectedFront: this._selectFront;
+        this._bgSprite.loadImage(this._checked ? this._selectedBg : this._selectBg);
+        this._frontSprite.loadImage(this._checked ? this._selectedFront: this._selectFront);
         this._iconSprite.visible = this._checked;
         if (this._checked) {
             this.scale(1.1, 1.1);
