@@ -296,7 +296,7 @@ class BackgroundScene extends Laya.Sprite {
                             this._mgCache[1].pivot(0, 0);
                             this._mgCache[1].y = 60;
                             this._fgCache[1].pivot(0, 0);
-                            this._fgCache[1].y(60);
+                            this._fgCache[1].y = 60;
                         }
                         this._cloudCache[1].x = this._cloudCache[0].width + this._cloudCache[0].x;
                         this._mgCache[1].x = this._mgCache[0].width + this._mgCache[0].x;

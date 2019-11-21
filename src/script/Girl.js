@@ -39,7 +39,7 @@ class Girl extends Laya.Animation {
             {x: 56, y: GLOBAL.CONF.GROUND_POS_Y - this._jumpHeight},
             this._jumpSpeed,
             Laya.Ease.quadOut,
-            Laya.Handler.create(() => {
+            Laya.Handler.create(this, () => {
                 GLOBAL.CONF.GIRL_STAT = 2;
                 this._fallAction.resume();
             }));
@@ -49,7 +49,7 @@ class Girl extends Laya.Animation {
             {x: 56, y: GLOBAL.CONF.GROUND_POS_Y},
             this._jumpSpeed,
             Laya.Ease.quadIn,
-            Laya.Handler.create(() => {
+            Laya.Handler.create(this, () => {
                 this._timer = Date.now();
                 GLOBAL.CONF.GIRL_STAT = 3;
                 this.loadImages(this._fallTextures);
@@ -76,7 +76,7 @@ class Girl extends Laya.Animation {
             {x: 46, y: GLOBAL.CONF.GROUND_POS_Y - 30}, 
             150,
             null,
-            Laya.Handler.create(() => {
+            Laya.Handler.create(this, () => {
                 this._dieMoveEnd.resume();
             }));
         this._dieMoveStart.pause();
@@ -147,7 +147,7 @@ class Girl extends Laya.Animation {
                 {x: 56, y: GLOBAL.CONF.GROUND_POS_Y},
                 speed,
                 Laya.Ease.quadIn,
-                Laya.Handler.create(() => {
+                Laya.Handler.create(this, () => {
                     this._timer = Date.now();
                     GLOBAL.CONF.GIRL_STAT = 3;
                     this.loadImages(this._fallTextures);
@@ -161,7 +161,7 @@ class Girl extends Laya.Animation {
                 {x: 56, y: GLOBAL.CONF.GROUND_POS_Y - this._jumpHeight},
                 speed,
                 Laya.Ease.quadOut,
-                Laya.Handler.create(() => {
+                Laya.Handler.create(this, () => {
                     GLOBAL.CONF.GIRL_STAT = 2;
                     this._fallAction.resume;
                 }));

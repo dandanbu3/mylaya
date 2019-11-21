@@ -12,10 +12,10 @@ class PrizeBox extends Laya.Sprite {
         this.pivot(0, 1);
         const that = this;
         this.y = 0;
-        this._moveUp = Laya.Tween.to(this, {y: 10}, 80, null, Laya.Handler.create(() => {
+        this._moveUp = Laya.Tween.to(this, {y: 10}, 80, null, Laya.Handler.create(this, () => {
             this.y = 0;
         }));
-        this._moveDown = Laya.Tween.to(this, {y: 10}, 80, null, Laya.Handler.create(() => {
+        this._moveDown = Laya.Tween.to(this, {y: 10}, 80, null, Laya.Handler.create(this, () => {
             this.y = 10;
         }), 80);
     }
@@ -35,11 +35,11 @@ class EmptyFart extends Laya.Sprite {
         this.loadImage(`other/tvempty.png`);
         this.pivot(0.5, 1);
         this.pos(200, GLOBAL.CONF.PRIZE_POS_Y - 140);
-        this._fadeAction = Laya.Tween.to(this, {alpha: 0}, 500, null, Laya.Handler.create(() => {
+        this._fadeAction = Laya.Tween.to(this, {alpha: 0}, 500, null, Laya.Handler.create(this, () => {
             this.alpha = 1;
         }));
         this._fadeAction.pause();
-        this._moveAction = Laya.Tween.to(this, {x: 200, y: GLOBAL.CONF.PRIZE_POS_Y - 190}, 500, null, Laya.Handler.create(() => {
+        this._moveAction = Laya.Tween.to(this, {x: 200, y: GLOBAL.CONF.PRIZE_POS_Y - 190}, 500, null, Laya.Handler.create(this, () => {
             this.y = GLOBAL.CONF.PRIZE_POS_Y - 140;
             this.visible = false;
         }));

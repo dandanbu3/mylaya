@@ -401,7 +401,7 @@
                 {x: 56, y: GLOBAL.CONF.GROUND_POS_Y - this._jumpHeight},
                 this._jumpSpeed,
                 Laya.Ease.quadOut,
-                Laya.Handler.create(() => {
+                Laya.Handler.create(this, () => {
                     GLOBAL.CONF.GIRL_STAT = 2;
                     this._fallAction.resume();
                 }));
@@ -411,7 +411,7 @@
                 {x: 56, y: GLOBAL.CONF.GROUND_POS_Y},
                 this._jumpSpeed,
                 Laya.Ease.quadIn,
-                Laya.Handler.create(() => {
+                Laya.Handler.create(this, () => {
                     this._timer = Date.now();
                     GLOBAL.CONF.GIRL_STAT = 3;
                     this.loadImages(this._fallTextures);
@@ -438,7 +438,7 @@
                 {x: 46, y: GLOBAL.CONF.GROUND_POS_Y - 30}, 
                 150,
                 null,
-                Laya.Handler.create(() => {
+                Laya.Handler.create(this, () => {
                     this._dieMoveEnd.resume();
                 }));
             this._dieMoveStart.pause();
@@ -509,7 +509,7 @@
                     {x: 56, y: GLOBAL.CONF.GROUND_POS_Y},
                     speed,
                     Laya.Ease.quadIn,
-                    Laya.Handler.create(() => {
+                    Laya.Handler.create(this, () => {
                         this._timer = Date.now();
                         GLOBAL.CONF.GIRL_STAT = 3;
                         this.loadImages(this._fallTextures);
@@ -523,7 +523,7 @@
                     {x: 56, y: GLOBAL.CONF.GROUND_POS_Y - this._jumpHeight},
                     speed,
                     Laya.Ease.quadOut,
-                    Laya.Handler.create(() => {
+                    Laya.Handler.create(this, () => {
                         GLOBAL.CONF.GIRL_STAT = 2;
                         this._fallAction.resume;
                     }));
@@ -1085,10 +1085,10 @@
             this._empty = false;
             this.pivot(0, 1);
             this.y = 0;
-            this._moveUp = Laya.Tween.to(this, {y: 10}, 80, null, Laya.Handler.create(() => {
+            this._moveUp = Laya.Tween.to(this, {y: 10}, 80, null, Laya.Handler.create(this, () => {
                 this.y = 0;
             }));
-            this._moveDown = Laya.Tween.to(this, {y: 10}, 80, null, Laya.Handler.create(() => {
+            this._moveDown = Laya.Tween.to(this, {y: 10}, 80, null, Laya.Handler.create(this, () => {
                 this.y = 10;
             }), 80);
         }
@@ -1108,11 +1108,11 @@
             this.loadImage(`other/tvempty.png`);
             this.pivot(0.5, 1);
             this.pos(200, GLOBAL.CONF.PRIZE_POS_Y - 140);
-            this._fadeAction = Laya.Tween.to(this, {alpha: 0}, 500, null, Laya.Handler.create(() => {
+            this._fadeAction = Laya.Tween.to(this, {alpha: 0}, 500, null, Laya.Handler.create(this, () => {
                 this.alpha = 1;
             }));
             this._fadeAction.pause();
-            this._moveAction = Laya.Tween.to(this, {x: 200, y: GLOBAL.CONF.PRIZE_POS_Y - 190}, 500, null, Laya.Handler.create(() => {
+            this._moveAction = Laya.Tween.to(this, {x: 200, y: GLOBAL.CONF.PRIZE_POS_Y - 190}, 500, null, Laya.Handler.create(this, () => {
                 this.y = GLOBAL.CONF.PRIZE_POS_Y - 140;
                 this.visible = false;
             }));
@@ -1406,7 +1406,7 @@
                             Laya.Tween.to(oldSprite, {
                                 x: oldSprite.x,
                                 y: oldSprite.y + 50
-                            }, 500, null, Laya.Handler.create(() => {
+                            }, 500, null, Laya.Handler.create(this, () => {
                                 console.log(this);
                                 this.removeChild(oldSprite);
                             }));
@@ -1933,7 +1933,6 @@
         startStoryScroll () {
             const currentPos = this._storySetting.y;
             const posY = currentPos - 44;
-            console.log(posY, 'posY');
             const moveAction = Laya.Tween.to(
                 this._storySetting,
                 {x: 375, y: posY},
