@@ -81,6 +81,7 @@ class MainLayer extends Laya.Scene {
             this._dieAnime.play();
         });
         this.addChild(this._girl);
+        console.log(this._girl, 'this._girl');
         // 可碰撞内容
         this._crash = new CrashScene();
         this._crash.on('noChance', this, () => {
@@ -94,9 +95,9 @@ class MainLayer extends Laya.Scene {
         this._dieAnime.interval = 83;
         this._dieAnime.pivot(0, 1);
         if (who === 'girl22') {
-            this._dieAnime.pos(32, GLOBAL.CONF.GROUND_POS_Y + 1);
+            this._dieAnime.pos(32, GLOBAL.CONF.GROUND_POS_Y + 1 - 449);
         } else {
-            this._dieAnime.pos(16, GLOBAL.CONF.GROUND_POS_Y + 3);
+            this._dieAnime.pos(16, GLOBAL.CONF.GROUND_POS_Y + 3 - 449);
         }
         this._dieAnime.onLoop = () => {
             this._dieAnime.stop();

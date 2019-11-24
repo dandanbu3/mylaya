@@ -1158,7 +1158,7 @@
             const enemy = new EnemyBox(randomItem);
             enemy.play();
             enemy.pivot(0, 1);
-            enemy.pos(Laya.stage.width * 3, GLOBAL.CONF.GROUND_POS_Y);
+            enemy.pos(Laya.stage.width * 3, GLOBAL.CONF.GROUND_POS_Y - 200);
             this.addChild(enemy);
             this._enemyCache.push(enemy);
 
@@ -1191,7 +1191,7 @@
             const randomItem = this.randomEnemyItem();
             const enemy = new EnemyBox(randomItem);
             enemy.play();
-            enemy.pos(Laya.stage.width + randomInterval, GLOBAL.CONF.GROUND_POS_Y);
+            enemy.pos(Laya.stage.width + randomInterval, GLOBAL.CONF.GROUND_POS_Y - 200);
             this._enemyCache.push(enemy);
             this.addChild(enemy);
             this.addRandomPrize(enemy);
@@ -2577,6 +2577,7 @@
                 this._dieAnime.play();
             });
             this.addChild(this._girl);
+            console.log(this._girl, 'this._girl');
             // 可碰撞内容
             this._crash = new CrashScene();
             this._crash.on('noChance', this, () => {
@@ -2590,9 +2591,9 @@
             this._dieAnime.interval = 83;
             this._dieAnime.pivot(0, 1);
             if (who === 'girl22') {
-                this._dieAnime.pos(32, GLOBAL.CONF.GROUND_POS_Y + 1);
+                this._dieAnime.pos(32, GLOBAL.CONF.GROUND_POS_Y + 1 - 449);
             } else {
-                this._dieAnime.pos(16, GLOBAL.CONF.GROUND_POS_Y + 3);
+                this._dieAnime.pos(16, GLOBAL.CONF.GROUND_POS_Y + 3 - 449);
             }
             this._dieAnime.onLoop = () => {
                 this._dieAnime.stop();
