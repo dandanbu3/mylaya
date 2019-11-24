@@ -68,6 +68,7 @@ class MainLayer extends Laya.Scene {
         this._dust.play();
         this._dust.visible = false;
         this.addChild(this._dust);
+        console.log(wh0, 'who');
         // 2233
         this._girl = new Girl(who);
         this._girl.on('notRun', this, () => {
@@ -82,6 +83,8 @@ class MainLayer extends Laya.Scene {
         });
         this.addChild(this._girl);
         console.log(this._girl, 'this._girl');
+        console.log(this._girl.height, this._girl.y, 'this._girl');
+        this._girl.zOrder = 100;
         // 可碰撞内容
         this._crash = new CrashScene();
         this._crash.on('noChance', this, () => {
@@ -99,13 +102,13 @@ class MainLayer extends Laya.Scene {
         } else {
             this._dieAnime.pos(16, GLOBAL.CONF.GROUND_POS_Y + 3 - 449);
         }
-        this._dieAnime.onLoop = () => {
+        this._dieAnime.on(Laya.Event.COMPLETE, this, () => {
             this._dieAnime.stop();
             this._dieAnime.visible = false;
             this._gameoverDialog.show({
                 type: 'gameover'
             });
-        };
+        });
         this._dieAnime.visible = false;
         this.addChild(this._dieAnime);
 
@@ -113,7 +116,7 @@ class MainLayer extends Laya.Scene {
         this._jumpBtn = this.createJumpBtn();
         this.addChild(this._jumpBtn);
         const isFrist = Util.storage.get('bili_mario_gamed') !== 'gamed';
-        if (isFrist) { // 加手提示
+        if (!isFrist) { // 加手提示
             const hand = new Laya.Animation();
             hand.loadImages(this.aniUrls('other/hand_', 12));
             hand.pivot(0, 0);
@@ -141,7 +144,7 @@ class MainLayer extends Laya.Scene {
         const frame = new Laya.Sprite();
         frame.loadImage(resource['frame'].url);
         frame.pivot(0, 0);
-        frame.pos(0);
+        frame.pos(0, 0);
         this.addChild(frame);
         this._header = new HeaderScene();
         this.addChild(this._header);
@@ -259,7 +262,6 @@ class MainLayer extends Laya.Scene {
     collide (girl, rect) {
         const girlRect = girl.getBounds();
         const collideRect = rect.getBounds();
-        console.log(girlRect, 'girlRect', 'collideRect', collideRect);
         girlRect.x = girl.x + 26;
         girlRect.y = girl.y;
         girlRect.width = girl.width + 40;
@@ -301,6 +303,7 @@ class MainLayer extends Laya.Scene {
             enemyCache.forEach(enemy => {
                 const enemyPos = enemy.x;
                 const enemyWidth = enemy.getBounds().width;
+                console.log(enemyWidth, 'enemyWidth');
                 if (!enemy._destroyed && enemyPos <= -enemyWidth * 2) {
                     enemy._destroyed = true;
                     this._crash.removeEnemy();

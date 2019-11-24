@@ -5,8 +5,11 @@ class Girl extends Laya.Animation {
     constructor (who) {
         super();
         this.autoSize = true;
+        console.log(who, 'who');
         const preRun = [`${who}/run_0.png`];
         this.loadImages(preRun);
+        this.width = 180;
+        this.height = 200;
         this._preTextures = this.createTextures(who, 'pre', 0, 2);
         this._runTextures = this.createTextures(who, 'run', 0, 4);
         this._jumpTextures = this.createTextures(who, 'jump', 0, 1);
@@ -16,8 +19,9 @@ class Girl extends Laya.Animation {
         this.loadImages(this._preTextures);
         this.interval = 160;
         this.pivot(0, 1);
-        this.pos(56, GLOBAL.CONF.GROUND_POS_Y - this.height);
-        console.log(this.x, this.y);
+        this.zOrder = 100;
+        this.pos(56, GLOBAL.CONF.GROUND_POS_Y - 200);
+        console.log(this.x, this.y, this.height, GLOBAL.CONF.GROUND_POS_Y, 'thisheight');
         const runrun = new Laya.Sprite();
         runrun.loadImage(this._runTextures[0]);
 
@@ -44,7 +48,7 @@ class Girl extends Laya.Animation {
         this._jumpAction.pause();
         this._fallAction = Laya.Tween.to(
             this,
-            {x: 56, y: GLOBAL.CONF.GROUND_POS_Y},
+            {x: 56, y: GLOBAL.CONF.GROUND_POS_Y - 200},
             this._jumpSpeed,
             Laya.Ease.quadIn,
             Laya.Handler.create(this, () => {
@@ -98,7 +102,7 @@ class Girl extends Laya.Animation {
     }
     readyStart () { // 预备开始，主要是倒计时开始的时候用
         this.event('notRun');
-        this.pos(56, GLOBAL.CONF.GROUND_POS_Y - this.height);
+        this.pos(56, GLOBAL.CONF.GROUND_POS_Y - 200);
         GLOBAL.CONF.GIRL_STAT = -1;
         this.loadImages(this._preTextures);
         this.interval = 160;
@@ -107,6 +111,7 @@ class Girl extends Laya.Animation {
         GLOBAL.CONF.GIRL_STAT = 0;
         this.loadImages(this._runTextures);
         this.interval = 100;
+        console.log('this', this.y, this.x);
         this.event('run');
     }
     doJump () {
@@ -137,12 +142,13 @@ class Girl extends Laya.Animation {
     }
     resume () {
         this.play();
+        console.log(GLOBAL.CONF.GIRL_STAT, 'GLOBAL.CONF.GIRL_STAT');
         if (GLOBAL.CONF.GIRL_STAT === 2) {
-            const currentDis = GLOBAL.CONF.GROUND_POS_Y - this.getPositionY();
+            const currentDis = GLOBAL.CONF.GROUND_POS_Y - this.y;
             const speed = this._jumpSpeed * currentDis / this._jumpHeight;
             const moveAction = Laya.Tween.to(
                 this,
-                {x: 56, y: GLOBAL.CONF.GROUND_POS_Y},
+                {x: 56, y: GLOBAL.CONF.GROUND_POS_Y - 200},
                 speed,
                 Laya.Ease.quadIn,
                 Laya.Handler.create(this, () => {
@@ -161,7 +167,7 @@ class Girl extends Laya.Animation {
                 Laya.Ease.quadOut,
                 Laya.Handler.create(this, () => {
                     GLOBAL.CONF.GIRL_STAT = 2;
-                    this._fallAction.resume;
+                    this._fallAction.resume();
                 }));
             // this.runAction(jumpAction);
         }
