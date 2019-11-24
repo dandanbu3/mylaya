@@ -367,8 +367,6 @@
         constructor (who) {
             super();
             this.autoSize = true;
-            this.width = 90;
-            this.height = 100;
             const preRun = [`${who}/run_0.png`];
             this.loadImages(preRun);
             this._preTextures = this.createTextures(who, 'pre', 0, 2);
@@ -462,7 +460,7 @@
         }
         readyStart () { // 预备开始，主要是倒计时开始的时候用
             this.event('notRun');
-            this.pos(56, GLOBAL.CONF.GROUND_POS_Y);
+            this.pos(56, GLOBAL.CONF.GROUND_POS_Y - this.height);
             GLOBAL.CONF.GIRL_STAT = -1;
             this.loadImages(this._preTextures);
             this.interval = 160;
@@ -531,7 +529,6 @@
             }
         }
         onUpdate () {
-            console.log('onupdate');
             if (GLOBAL.CONF.MODE === GLOBAL.MODES.PLAYING && GLOBAL.CONF.GIRL_STAT === 3) {
                 if (Date.now() - this._timer >= 100000 / 6 / this.interval ) {
                     this.event('run');
@@ -839,7 +836,7 @@
                                 this._mgCache[1].pivot(0, 0);
                                 this._mgCache[1].y = 60;
                                 this._fgCache[1].pivot(0, 0);
-                                this._fgCache[1].y(60);
+                                this._fgCache[1].y = 60;
                             }
                             this._cloudCache[1].x = this._cloudCache[0].width + this._cloudCache[0].x;
                             this._mgCache[1].x = this._mgCache[0].width + this._mgCache[0].x;
@@ -900,7 +897,7 @@
             Laya.timer.frameLoop(1, this, this.onUpdate);
         }
         checkPosPlace (posX) {
-            let posRange = this._bgList[this._newGroundIndex].width - (Laya.stage.width - this._bgCache[this._newGroundIndex % 2].getPositionX()); // 边界
+            let posRange = this._bgList[this._newGroundIndex].width - (Laya.stage.width - this._bgCache[this._newGroundIndex % 2].x); // 边界
             let index = this._newGroundIndex;
             const checkRange = () => {
                 if (posX > posRange) {
@@ -1909,19 +1906,21 @@
             const textBg = new Laya.Sprite();
             textBg.loadImage(`${alias$1}text_bg.png`);
             textBg.autoSize = true;
+            textBg.name = 'textBg';
             textBg.pivot(0.5, 1);
-            textBg.pos(375, 588);
+            textBg.pos(93, 536);
             this.addChild(textBg);
             this._storySetting = new Laya.Sprite();
             this._storySetting.loadImage(RESOURCES['storySetting'].url);
             this._storySetting.autoSize = true;
-            this._storySetting.pivot(0.5, 0);
-            this._storySetting.pos(375, 548);
-            const copy = new Laya.Sprite();
-            copy.loadImage(RESOURCES['storySetting'].url);
-            copy.autoSize = true;
-            copy.pos(-239.5, 308);
-            this.addChild(copy);
+            this._storySetting.name = '_storySetting';
+            this._storySetting.pivot(0.5, 1);
+            this._storySetting.pos(135, 496);
+            // const copy = new Laya.Sprite();
+            // copy.loadImage(resource['storySetting'].url);
+            // copy.autoSize = true;
+            // copy.pos(-239.5, 308);
+            // this.addChild(copy);
             this.addChild(this._storySetting);
             this.startStoryScroll();
             const menuBg = new Laya.Sprite();
@@ -1935,24 +1934,22 @@
             const posY = currentPos - 44;
             const moveAction = Laya.Tween.to(
                 this._storySetting,
-                {x: 375, y: posY},
+                {x: 135, y: posY},
                 800,
                 null,
                 Laya.Handler.create(this, () => {
-                    console.log(currentPos, 'currentPos');
-                    if (currentPos <= 284) {
-                        this._storySetting.y = 548;
+                    if (currentPos <= 280) {
+                        this._storySetting.y = 496;
                     }
                     this.startStoryScroll();
                 }));
             moveAction.pause();
             const stopAction = Laya.Tween.to(
                 this._storySetting,
-                {x: 375, y: currentPos},
+                {x: 135, y: currentPos},
                 1000,
                 null,
                 Laya.Handler.create(this, () => {
-                    console.log('endend');
                     moveAction.resume();
                 }));
         }
@@ -1961,7 +1958,7 @@
             logo.loadImages(this.aniUrls('logo/logo_', 26));
             logo.interval = 160;
             logo.pivot(0, 0);
-            logo.pos(55, 277);
+            logo.pos(41, 277);
             logo.play();
             this.addChild(logo);
             const frame = new Laya.Sprite();
@@ -2005,22 +2002,22 @@
             });
             this.addChild(this._btnRule);
 
-            const museTexture = new Laya.Sprite();
-            museTexture.loadImage(`${alias$1}btn_muse_large.png`);
-            const soundTexture = new Laya.Sprite();
-            soundTexture.loadImage(`${alias$1}btn_sound_large.png`);
+            const museTexture = `${alias$1}btn_muse_large.png`;
+            const soundTexture = `${alias$1}btn_sound_large.png`;
             if (GLOBAL.CONF.SOUND_ON) {
                 Sound.playBg();
             }
-            this._btnMuse = new Laya.Sprite(GLOBAL.CONF.SOUND_ON ? soundTexture : museTexture);
+            this._btnMuse = new Laya.Sprite();
+            this._btnMuse.loadImage(GLOBAL.CONF.SOUND_ON ? soundTexture : museTexture);
+            this._btnMuse.name = 'btnMuse';
             this._btnMuse.pivot(0, 0);
             this._btnMuse.pos(650, 766);
             this._btnMuse.mouseEnabled = true;
-            this._btnMuse.on(Laya.Event.CLICK, this,(event) => {
-                event.data.originalEvent.preventDefault();
+            this._btnMuse.on(Laya.Event.CLICK, this, (event) => {
+                // event.data.originalEvent.preventDefault();
                 if (!GLOBAL.CONF.PREVENT) {
                     GLOBAL.CONF.SOUND_ON = !GLOBAL.CONF.SOUND_ON;
-                    this._btnMuse.texture = GLOBAL.CONF.SOUND_ON ? soundTexture : museTexture;
+                    this._btnMuse.loadImage(GLOBAL.CONF.SOUND_ON ? soundTexture : museTexture);
                     if (GLOBAL.CONF.SOUND_ON) {
                         Sound.playBg();
                     } else {
@@ -2079,6 +2076,7 @@
             this.addChild(this._frontSprite);
             this._iconSprite = new Laya.Sprite();
             this._iconSprite.loadImage(this._selectedIcon);
+            this._iconSprite.zOrder = 10;
             if (!this._checked) {
                 this._iconSprite.visible = false;
             } else {
@@ -2941,8 +2939,11 @@
     	onConfigLoaded() {
     		//加载IDE指定的场景
     		if (this.GLOBAL.CONF.STATUS !== 4) {
-    			var test = new menuLayer();
-    			Laya.stage.addChild(test);
+    			const menuLayer$1 = new menuLayer();
+    			Laya.stage.addChild(menuLayer$1);
+    		} else {
+    			const finishLayer = new FinishLayer();
+    		    Laya.stage.addChild(finishLayer);
     		}
     	}
     	/** 资源加载完成时回调*/

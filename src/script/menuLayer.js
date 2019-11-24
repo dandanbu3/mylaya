@@ -110,19 +110,21 @@ export default class menuLayer extends Laya.Scene {
         const textBg = new Laya.Sprite();
         textBg.loadImage(`${alias}text_bg.png`);
         textBg.autoSize = true;
+        textBg.name = 'textBg';
         textBg.pivot(0.5, 1);
-        textBg.pos(375, 588);
+        textBg.pos(93, 536);
         this.addChild(textBg);
         this._storySetting = new Laya.Sprite();
         this._storySetting.loadImage(resource['storySetting'].url);
         this._storySetting.autoSize = true;
-        this._storySetting.pivot(0.5, 0);
-        this._storySetting.pos(375, 548);
-        const copy = new Laya.Sprite();
-        copy.loadImage(resource['storySetting'].url);
-        copy.autoSize = true;
-        copy.pos(-239.5, 308);
-        this.addChild(copy);
+        this._storySetting.name = '_storySetting';
+        this._storySetting.pivot(0.5, 1);
+        this._storySetting.pos(135, 496);
+        // const copy = new Laya.Sprite();
+        // copy.loadImage(resource['storySetting'].url);
+        // copy.autoSize = true;
+        // copy.pos(-239.5, 308);
+        // this.addChild(copy);
         this.addChild(this._storySetting);
         this.startStoryScroll();
         const menuBg = new Laya.Sprite();
@@ -136,24 +138,22 @@ export default class menuLayer extends Laya.Scene {
         const posY = currentPos - 44;
         const moveAction = Laya.Tween.to(
             this._storySetting,
-            {x: 375, y: posY},
+            {x: 135, y: posY},
             800,
             null,
             Laya.Handler.create(this, () => {
-                console.log(currentPos, 'currentPos');
-                if (currentPos <= 284) {
-                    this._storySetting.y = 548;
+                if (currentPos <= 280) {
+                    this._storySetting.y = 496;
                 }
                 this.startStoryScroll();
             }));
         moveAction.pause();
         const stopAction = Laya.Tween.to(
             this._storySetting,
-            {x: 375, y: currentPos},
+            {x: 135, y: currentPos},
             1000,
             null,
             Laya.Handler.create(this, () => {
-                console.log('endend');
                 moveAction.resume();
             }));
     }
@@ -162,7 +162,7 @@ export default class menuLayer extends Laya.Scene {
         logo.loadImages(this.aniUrls('logo/logo_', 26));
         logo.interval = 160;
         logo.pivot(0, 0);
-        logo.pos(55, 277);
+        logo.pos(41, 277);
         logo.play();
         this.addChild(logo);
         const frame = new Laya.Sprite();
@@ -206,22 +206,22 @@ export default class menuLayer extends Laya.Scene {
         });
         this.addChild(this._btnRule);
 
-        const museTexture = new Laya.Sprite();
-        museTexture.loadImage(`${alias}btn_muse_large.png`);
-        const soundTexture = new Laya.Sprite();
-        soundTexture.loadImage(`${alias}btn_sound_large.png`);
+        const museTexture = `${alias}btn_muse_large.png`;
+        const soundTexture = `${alias}btn_sound_large.png`;
         if (GLOBAL.CONF.SOUND_ON) {
             Sound.playBg();
         }
-        this._btnMuse = new Laya.Sprite(GLOBAL.CONF.SOUND_ON ? soundTexture : museTexture);
+        this._btnMuse = new Laya.Sprite();
+        this._btnMuse.loadImage(GLOBAL.CONF.SOUND_ON ? soundTexture : museTexture);
+        this._btnMuse.name = 'btnMuse';
         this._btnMuse.pivot(0, 0);
         this._btnMuse.pos(650, 766);
         this._btnMuse.mouseEnabled = true;
-        this._btnMuse.on(Laya.Event.CLICK, this,(event) => {
-            event.data.originalEvent.preventDefault();
+        this._btnMuse.on(Laya.Event.CLICK, this, (event) => {
+            // event.data.originalEvent.preventDefault();
             if (!GLOBAL.CONF.PREVENT) {
                 GLOBAL.CONF.SOUND_ON = !GLOBAL.CONF.SOUND_ON;
-                this._btnMuse.texture = GLOBAL.CONF.SOUND_ON ? soundTexture : museTexture;
+                this._btnMuse.loadImage(GLOBAL.CONF.SOUND_ON ? soundTexture : museTexture);
                 if (GLOBAL.CONF.SOUND_ON) {
                     Sound.playBg();
                 } else {
@@ -280,6 +280,7 @@ class GrilRadio extends Laya.Sprite {
         this.addChild(this._frontSprite);
         this._iconSprite = new Laya.Sprite();
         this._iconSprite.loadImage(this._selectedIcon);
+        this._iconSprite.zOrder = 10;
         if (!this._checked) {
             this._iconSprite.visible = false;
         } else {

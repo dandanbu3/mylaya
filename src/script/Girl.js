@@ -5,8 +5,6 @@ class Girl extends Laya.Animation {
     constructor (who) {
         super();
         this.autoSize = true;
-        this.width = 90;
-        this.height = 100;
         const preRun = [`${who}/run_0.png`];
         this.loadImages(preRun);
         this._preTextures = this.createTextures(who, 'pre', 0, 2);
@@ -100,7 +98,7 @@ class Girl extends Laya.Animation {
     }
     readyStart () { // 预备开始，主要是倒计时开始的时候用
         this.event('notRun');
-        this.pos(56, GLOBAL.CONF.GROUND_POS_Y);
+        this.pos(56, GLOBAL.CONF.GROUND_POS_Y - this.height);
         GLOBAL.CONF.GIRL_STAT = -1;
         this.loadImages(this._preTextures);
         this.interval = 160;
@@ -169,7 +167,6 @@ class Girl extends Laya.Animation {
         }
     }
     onUpdate () {
-        console.log('onupdate');
         if (GLOBAL.CONF.MODE === GLOBAL.MODES.PLAYING && GLOBAL.CONF.GIRL_STAT === 3) {
             if (Date.now() - this._timer >= 100000 / 6 / this.interval ) {
                 this.event('run');

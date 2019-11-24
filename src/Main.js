@@ -2,6 +2,7 @@
 import resource from "./script/resource";
 import GLOBAL from './script/Global';
 import MenuLayer from './script/menuLayer';
+import FinishLayer from './script/finisherLayer';
 class Main {
 	constructor() {
 		//根据IDE设置初始化引擎		
@@ -73,8 +74,11 @@ class Main {
 	onConfigLoaded() {
 		//加载IDE指定的场景
 		if (this.GLOBAL.CONF.STATUS !== 4) {
-			var test = new MenuLayer();
-			Laya.stage.addChild(test);
+			const menuLayer = new MenuLayer();
+			Laya.stage.addChild(menuLayer);
+		} else {
+			const finishLayer = new FinishLayer();
+		    Laya.stage.addChild(finishLayer);
 		}
 	}
 	/** 资源加载完成时回调*/
