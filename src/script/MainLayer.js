@@ -68,7 +68,7 @@ class MainLayer extends Laya.Scene {
         this._dust.play();
         this._dust.visible = false;
         this.addChild(this._dust);
-        console.log(wh0, 'who');
+        console.log(who, 'who');
         // 2233
         this._girl = new Girl(who);
         this._girl.on('notRun', this, () => {
@@ -82,9 +82,6 @@ class MainLayer extends Laya.Scene {
             this._dieAnime.play();
         });
         this.addChild(this._girl);
-        console.log(this._girl, 'this._girl');
-        console.log(this._girl.height, this._girl.y, 'this._girl');
-        this._girl.zOrder = 100;
         // 可碰撞内容
         this._crash = new CrashScene();
         this._crash.on('noChance', this, () => {

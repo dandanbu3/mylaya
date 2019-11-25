@@ -8,25 +8,34 @@ class Girl extends Laya.Animation {
         console.log(who, 'who');
         const preRun = [`${who}/run_0.png`];
         this.loadImages(preRun);
-        this.width = 180;
-        this.height = 200;
         this._preTextures = this.createTextures(who, 'pre', 0, 2);
         this._runTextures = this.createTextures(who, 'run', 0, 4);
         this._jumpTextures = this.createTextures(who, 'jump', 0, 1);
         this._fallTextures = this.createTextures(who, 'jump', 1, 4);
         this._dieTextures = [`${who}/die.png`];
         this._dieGrayTextures = [`${who}/die_gray.png`];
+
+        // 计算动画高度
+        const runrun = new Laya.Sprite();
+        runrun.autoSize = true;
+        runrun.loadImage(this._runTextures[0]);
+        this._girlHeight = runrun.height;
+        const pre = new Laya.Sprite();
+        pre.autoSize = true;
+        pre.loadImage(this._jumpTextures[0]);
+        this._preHeight = pre.height;
+        console.log(pre.height, 'height');
+        const jumpGirl = new Laya.Sprite();
+        jumpGirl.autoSize = true;
+        jumpGirl.loadImage(this._fallTextures[0]);
+        this._jumpGirlHeight = jumpGirl.height;
+
         this.loadImages(this._preTextures);
         this.interval = 160;
         this.pivot(0, 1);
-        this.zOrder = 100;
         this.pos(56, GLOBAL.CONF.GROUND_POS_Y - 200);
-        console.log(this.x, this.y, this.height, GLOBAL.CONF.GROUND_POS_Y, 'thisheight');
-        const runrun = new Laya.Sprite();
-        runrun.loadImage(this._runTextures[0]);
-
-        this._girlHeight = runrun.height;
-        console.log(this._girlHeight, 'this._girlHeight');
+        this.play();
+        
         // TODO 优化耦合性
         GLOBAL.CONF.PRIZE_POS_Y = GLOBAL.CONF.GROUND_POS_Y - this._girlHeight * (GLOBAL.CONF.GIRL_JUMP_TIMES + 1) + 30;
         this._jumpHeight = this._girlHeight * GLOBAL.CONF.GIRL_JUMP_TIMES; // 跳起的高度
