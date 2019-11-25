@@ -1364,7 +1364,7 @@
             x.loadImage(`num/lg_x.png`);
             x.autoSize = true;
             x.pivot(0, 1);
-            x.pos(175, 94);
+            x.pos(175, 79);
             this.addChild(x);
             this.reset();
         }
@@ -1384,12 +1384,12 @@
             const m = new Laya.Sprite();
             m.loadImage(`num/sm_m.png`);
             m.pivot(0, 1);
-            m.pos(678, 80);
+            m.pos(678, 75);
             this.addChild(m);
             const mPersonal = new Laya.Sprite();
             mPersonal.loadImage(`num/sm_m.png`);
             mPersonal.pivot(0, 1);
-            mPersonal.pos(678, 153);
+            mPersonal.pos(678, 148);
             this.addChild(mPersonal);
             this.syncRecord();
         }
@@ -1413,7 +1413,7 @@
                             this._prizeNumCache.splice(index, 1, newSprite);
                             Laya.Tween.to(newSprite, {
                                 x: 207 + index * 28,
-                                y: 94
+                                y: 69
                             }, 500);
                             Laya.Tween.to(oldSprite, {
                                 x: oldSprite.x,
@@ -1429,11 +1429,11 @@
         }
         reset (remainBox) {
             this._remainBox = remainBox === undefined ? GLOBAL.DATA.DISPLAY_CHANCE : remainBox;
-            this.drawNum('_prizeNumCache', this._remainBox, 'lg', {x: 207, y: 94});
+            this.drawNum('_prizeNumCache', this._remainBox, 'lg', {x: 207, y: 69});
         }
         syncRecord () {
-            this.drawNum('_recordAllNumCache', GLOBAL.DATA.ALL_RECORD, 'sm', {x: 665, y: 80}, 20, true);
-            this.drawNum('_recordSelfNumCache', GLOBAL.DATA.SELF_RECORD, 'sm', {x: 665, y: 153}, 20, true);
+            this.drawNum('_recordAllNumCache', GLOBAL.DATA.ALL_RECORD, 'sm', {x: 655, y: 70}, 20, true);
+            this.drawNum('_recordSelfNumCache', GLOBAL.DATA.SELF_RECORD, 'sm', {x: 655, y: 143}, 20, true);
         }
     }
 
@@ -1930,7 +1930,7 @@
             this._storySetting.autoSize = true;
             this._storySetting.name = '_storySetting';
             this._storySetting.pivot(0.5, 1);
-            this._storySetting.pos(135, 496);
+            this._storySetting.pos(135, 504);
             // const copy = new Laya.Sprite();
             // copy.loadImage(resource['storySetting'].url);
             // copy.autoSize = true;
@@ -1953,8 +1953,8 @@
                 800,
                 null,
                 Laya.Handler.create(this, () => {
-                    if (currentPos <= 280) {
-                        this._storySetting.y = 496;
+                    if (currentPos <= 288) {
+                        this._storySetting.y = 504;
                     }
                     this.startStoryScroll();
                 }));

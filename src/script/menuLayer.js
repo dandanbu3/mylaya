@@ -119,7 +119,7 @@ export default class menuLayer extends Laya.Scene {
         this._storySetting.autoSize = true;
         this._storySetting.name = '_storySetting';
         this._storySetting.pivot(0.5, 1);
-        this._storySetting.pos(135, 496);
+        this._storySetting.pos(135, 504);
         // const copy = new Laya.Sprite();
         // copy.loadImage(resource['storySetting'].url);
         // copy.autoSize = true;
@@ -142,8 +142,8 @@ export default class menuLayer extends Laya.Scene {
             800,
             null,
             Laya.Handler.create(this, () => {
-                if (currentPos <= 280) {
-                    this._storySetting.y = 496;
+                if (currentPos <= 288) {
+                    this._storySetting.y = 504;
                 }
                 this.startStoryScroll();
             }));
