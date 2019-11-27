@@ -40,11 +40,11 @@ class BarScene extends Laya.Sprite {
         const x = new Laya.Sprite();
         x.loadImage(`num/lg_x.png`);
         x.pivot(0, 1);
-        x.pos(104, 242);
+        x.pos(104, 232);
         this.addChild(x);
         this.drawNum('_prizeNumCache', GLOBAL.CONF.HIT, 'sm', {
             x: 133,
-            y: 242
+            y: 232
         }, 20);
     }
     createMileage () {
@@ -56,11 +56,11 @@ class BarScene extends Laya.Sprite {
         const m = new Laya.Sprite();
         m.loadImage(`num/sm_m.png`);
         m.pivot(0, 1);
-        m.pos(479, 242);
+        m.pos(479, 232);
         this.addChild(m);
         this.drawNum('_mileageNumCache', GLOBAL.CONF.MILEAGE, 'sm', {
             x: 467,
-            y: 242
+            y: 232
         }, 20, true);
     }
     createPause () {
@@ -80,11 +80,11 @@ class BarScene extends Laya.Sprite {
     reset () {
         this.drawNum('_mileageNumCache', GLOBAL.CONF.MILEAGE, 'sm', {
             x: 467,
-            y: 242
+            y: 232
         }, 20, true);
         this.drawNum('_prizeNumCache', GLOBAL.CONF.HIT, 'sm', {
             x: 133,
-            y: 242
+            y: 232
         }, 20);
     }
     addPrize () {
@@ -93,7 +93,7 @@ class BarScene extends Laya.Sprite {
         if (newValue.length < oldValue.length) {
             this.drawNum('_prizeNumCache', GLOBAL.CONF.HIT, 'sm', {
                 x: 133,
-                y: 242
+                y: 232
             }, 20);
         } else {
             const newArr = newValue.split('');
@@ -107,7 +107,7 @@ class BarScene extends Laya.Sprite {
                     this.addChild(newSprite);
                     const oldSprite = this._prizeNumCache[index];
                     this._prizeNumCache.splice(index, 1, newSprite);
-                    // const moveAction = Tiny.MoveTo(500, Tiny.point(133 + index * 20, 242));
+                    // const moveAction = Tiny.MoveTo(500, Tiny.point(133 + index * 20, 232));
                     // newSprite.runAction(moveAction);
                     // const oldAction = Tiny.MoveTo(500, Tiny.point(oldSprite.getPositionX(), oldSprite.getPositionY() + 40));
                     // oldAction.onComplete = () => {
@@ -116,7 +116,7 @@ class BarScene extends Laya.Sprite {
                     // oldSprite.runAction(oldAction);
                     const moveAction = Laya.Tween.to(newSprite, {
                         x: 133 + index * 20,
-                        y: 242
+                        y: 232
                     }, 500);
                     const oldAction = Laya.Tween.to(newSprite, {
                         x: oldSprite.x,
@@ -131,7 +131,7 @@ class BarScene extends Laya.Sprite {
     syncMileage () {
         this.drawNum('_mileageNumCache', GLOBAL.CONF.MILEAGE, 'sm', {
             x: 467,
-            y: 242
+            y: 232
         }, 20, true);
     }
 }

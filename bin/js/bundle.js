@@ -991,11 +991,11 @@
             const x = new Laya.Sprite();
             x.loadImage(`num/lg_x.png`);
             x.pivot(0, 1);
-            x.pos(104, 242);
+            x.pos(104, 232);
             this.addChild(x);
             this.drawNum('_prizeNumCache', GLOBAL.CONF.HIT, 'sm', {
                 x: 133,
-                y: 242
+                y: 232
             }, 20);
         }
         createMileage () {
@@ -1007,11 +1007,11 @@
             const m = new Laya.Sprite();
             m.loadImage(`num/sm_m.png`);
             m.pivot(0, 1);
-            m.pos(479, 242);
+            m.pos(479, 232);
             this.addChild(m);
             this.drawNum('_mileageNumCache', GLOBAL.CONF.MILEAGE, 'sm', {
                 x: 467,
-                y: 242
+                y: 232
             }, 20, true);
         }
         createPause () {
@@ -1031,11 +1031,11 @@
         reset () {
             this.drawNum('_mileageNumCache', GLOBAL.CONF.MILEAGE, 'sm', {
                 x: 467,
-                y: 242
+                y: 232
             }, 20, true);
             this.drawNum('_prizeNumCache', GLOBAL.CONF.HIT, 'sm', {
                 x: 133,
-                y: 242
+                y: 232
             }, 20);
         }
         addPrize () {
@@ -1044,7 +1044,7 @@
             if (newValue.length < oldValue.length) {
                 this.drawNum('_prizeNumCache', GLOBAL.CONF.HIT, 'sm', {
                     x: 133,
-                    y: 242
+                    y: 232
                 }, 20);
             } else {
                 const newArr = newValue.split('');
@@ -1058,7 +1058,7 @@
                         this.addChild(newSprite);
                         const oldSprite = this._prizeNumCache[index];
                         this._prizeNumCache.splice(index, 1, newSprite);
-                        // const moveAction = Tiny.MoveTo(500, Tiny.point(133 + index * 20, 242));
+                        // const moveAction = Tiny.MoveTo(500, Tiny.point(133 + index * 20, 232));
                         // newSprite.runAction(moveAction);
                         // const oldAction = Tiny.MoveTo(500, Tiny.point(oldSprite.getPositionX(), oldSprite.getPositionY() + 40));
                         // oldAction.onComplete = () => {
@@ -1067,7 +1067,7 @@
                         // oldSprite.runAction(oldAction);
                         const moveAction = Laya.Tween.to(newSprite, {
                             x: 133 + index * 20,
-                            y: 242
+                            y: 232
                         }, 500);
                         const oldAction = Laya.Tween.to(newSprite, {
                             x: oldSprite.x,
@@ -1082,7 +1082,7 @@
         syncMileage () {
             this.drawNum('_mileageNumCache', GLOBAL.CONF.MILEAGE, 'sm', {
                 x: 467,
-                y: 242
+                y: 232
             }, 20, true);
         }
     }
@@ -1457,7 +1457,7 @@
             this[key].loadImage(`icons/${name}.png`);
             this[key].pivot(0.5, 0.5);
             this[key].scale(this._initScale, this._initScale);
-            this[key].pos(375, 600);
+            this[key].pos(375 - this[key].width / 2, 600);
             this[key].visible = false;
             this.addChild(this[key]);
         }
@@ -2293,25 +2293,25 @@
             this._titleGameOver = new Laya.Sprite();
             this._titleGameOver.loadImage(`${alias$3}gameover.png`);
             this._titleGameOver.pivot(0.5, 0);
-            this._titleGameOver.pos(375, 264);
+            this._titleGameOver.pos(375 - this._titleGameOver.width / 2, 264);
             this._titleGameOver.visible = false;
             this.addChild(this._titleGameOver);
             this._titleGameFinish = new Laya.Sprite();
             this._titleGameFinish.loadImage(`${alias$3}game_finish_title.png`);
             this._titleGameFinish.pivot(0.5, 0);
-            this._titleGameFinish.pos(375, 265);
+            this._titleGameFinish.pos(375 - this._titleGameFinish.width / 2, 265);
             this._titleGameFinish.visible = false;
             this.addChild(this._titleGameFinish);
             this._mileage = new Laya.Sprite();
             this._mileage.loadImage(`${alias$3}text_bg.png`);
             this._mileage.pivot(0.5, 0);
-            this._mileage.pos(375, 372);
+            this._mileage.pos(375 - this._mileage.width / 2, 372);
             const mileageTitle = new Laya.Text();
             mileageTitle.text = '本次里程数';
             mileageTitle.fontSize = 24;
             mileageTitle.bold = true;
             mileageTitle.color = '#fff';
-            mileageTitle.pos(-160, 14);
+            mileageTitle.pos(160, 14);
             this._mileage.addChild(mileageTitle);
             this.addChild(this._mileage);
             this._breakSelf = new Laya.Sprite();
@@ -2360,7 +2360,7 @@
             this._rank = new Laya.Sprite();
             this._rank.loadImage(`${alias$3}btn_view_rank.png`);
             this._rank.pivot(0.5, 0);
-            this._rank.pos(375, 791);
+            this._rank.pos(375 - this._rank.width / 2, 791);
             this._rank.mouseEnabled = true;
             this._rank.on(Laya.Event.CLICK, this, (event) => {
                 // event.data.originalEvent.preventDefault();
@@ -2378,7 +2378,7 @@
             this._submit = new Laya.Sprite();
             this._submit.loadImage(`${alias$3}btn_submit.png`);
             this._submit.pivot(0.5, 0);
-            this._submit.pos(375, 822);
+            this._submit.pos(375 - this._submit.width, 822);
             this._submit.mouseEnabled = true;
             this._submit.on(Laya.Event.CLICK, this, (event) => {
                 // event.data.originalEvent.preventDefault();
@@ -2407,7 +2407,7 @@
             this._tip = new Laya.Sprite();
             this._tip.loadImage(`other/low_battery_tip.png`);
             this._tip.pivot(0.5, 0);
-            this._tip.pos(375, 1100);
+            this._tip.pos(375 - this._tip.width / 2, 1100);
             this._tip.visible = false;
             this.addChild(this._tip);
             this.visible = false;
@@ -2533,13 +2533,13 @@
             this._defaultTickerDuration = 500;
             // 全局的定时器
             // @ts-ignore
-            this._ticker = new Laya.Timer();
-            this._ticker.loop(
-                this._defaultTickerDuration,
-                this,
-                this.setTimer
-            );
-            this._ticker.callLater(this, this.setTimer);
+            this._ticker = Laya.timer;
+            // this._ticker.loop(
+            //     this._defaultTickerDuration,
+            //     this,
+            //     this.setTimer
+            // );
+            // this._ticker.callLater(this, this.setTimer);
             this.init(who);
         }
         startRunAction() {
@@ -2550,6 +2550,12 @@
             this._statusBar.syncMileage();
             if (GLOBAL.CONF.MILEAGE % 50 === 0) {
                 this._defaultTickerDuration--;
+                this._ticker.clear(this, this.setTimer);
+                this._ticker.loop(
+                    this._defaultTickerDuration,
+                    this,
+                    this.setTimer
+                );
                 GLOBAL.CONF.SPEED += 0.4;
                 this._girl.changeJumpDuration();
             }
@@ -2646,6 +2652,7 @@
                 this._girl.startRun();
                 this._crash.startAnime();
                 this._ticker.runCallLater(this, this.setTimer);
+                this._ticker.loop(this._defaultTickerDuration, this, this.setTimer);
             });
             this.addChild(this._countDown);
             // 外框架
@@ -2665,6 +2672,7 @@
                     this._dust.visible = false;
                     this._girl.resume();
                     this._crash.startAnime();
+                    this._ticker.loop(this._defaultTickerDuration, this, this.setTimer);
                     this._ticker.runCallLater(this, this.setTimer);
                 }
             });
@@ -2765,7 +2773,7 @@
             this._dust.visible = false;
             this._girl.freeze();
             this._crash.stopAnime();
-            this._ticker.callLater(this, this.setTimer);
+            this._ticker.clear(this, this.setTimer);
         }
         collide (girl, rect) {
             const girlRect = girl.getBounds();
@@ -2825,7 +2833,7 @@
                         GLOBAL.CONF.MODE = GLOBAL.MODES.GAME_OVER;
                         this._girl.beInjured();
                         this._crash.stopAnime();
-                        this._ticker.callLater(this, this.setTimer);
+                        this._ticker.clear(this, this.setTimer);
                         Sound.stopBg();
                     }
                 });
@@ -2877,7 +2885,7 @@
     GameConfig.alignH = "left";
     // GameConfig.startScene = "test/TestScene.scene";
     GameConfig.sceneRoot = "";
-    GameConfig.debug = true;
+    GameConfig.debug = false;
     GameConfig.stat = false;
     GameConfig.physicsDebug = false;
     GameConfig.exportSceneToJson = true;

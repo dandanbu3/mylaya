@@ -18,7 +18,7 @@ class CountDownScene extends Laya.Scene {
         this[key].loadImage(`icons/${name}.png`);
         this[key].pivot(0.5, 0.5);
         this[key].scale(this._initScale, this._initScale);
-        this[key].pos(375, 600);
+        this[key].pos(375 - this[key].width / 2, 600);
         this[key].visible = false;
         this.addChild(this[key]);
     }

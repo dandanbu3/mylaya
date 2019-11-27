@@ -22,13 +22,13 @@ class MainLayer extends Laya.Scene {
         this._defaultTickerDuration = 500;
         // 全局的定时器
         // @ts-ignore
-        this._ticker = new Laya.Timer();
-        this._ticker.loop(
-            this._defaultTickerDuration,
-            this,
-            this.setTimer
-        );
-        this._ticker.callLater(this, this.setTimer);
+        this._ticker = Laya.timer;
+        // this._ticker.loop(
+        //     this._defaultTickerDuration,
+        //     this,
+        //     this.setTimer
+        // );
+        // this._ticker.callLater(this, this.setTimer);
         this.init(who);
     }
     startRunAction() {
@@ -39,6 +39,12 @@ class MainLayer extends Laya.Scene {
         this._statusBar.syncMileage();
         if (GLOBAL.CONF.MILEAGE % 50 === 0) {
             this._defaultTickerDuration--;
+            this._ticker.clear(this, this.setTimer);
+            this._ticker.loop(
+                this._defaultTickerDuration,
+                this,
+                this.setTimer
+            );
             GLOBAL.CONF.SPEED += 0.4;
             this._girl.changeJumpDuration();
         }
@@ -135,6 +141,7 @@ class MainLayer extends Laya.Scene {
             this._girl.startRun();
             this._crash.startAnime();
             this._ticker.runCallLater(this, this.setTimer);
+            this._ticker.loop(this._defaultTickerDuration, this, this.setTimer);
         });
         this.addChild(this._countDown);
         // 外框架
@@ -154,6 +161,7 @@ class MainLayer extends Laya.Scene {
                 this._dust.visible = false;
                 this._girl.resume();
                 this._crash.startAnime();
+                this._ticker.loop(this._defaultTickerDuration, this, this.setTimer);
                 this._ticker.runCallLater(this, this.setTimer);
             }
         });
@@ -254,7 +262,7 @@ class MainLayer extends Laya.Scene {
         this._dust.visible = false;
         this._girl.freeze();
         this._crash.stopAnime();
-        this._ticker.callLater(this, this.setTimer);
+        this._ticker.clear(this, this.setTimer);
     }
     collide (girl, rect) {
         const girlRect = girl.getBounds();
@@ -314,7 +322,7 @@ class MainLayer extends Laya.Scene {
                     GLOBAL.CONF.MODE = GLOBAL.MODES.GAME_OVER;
                     this._girl.beInjured();
                     this._crash.stopAnime();
-                    this._ticker.callLater(this, this.setTimer);
+                    this._ticker.clear(this, this.setTimer);
                     Sound.stopBg();
                 }
             });
