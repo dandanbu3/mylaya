@@ -33,13 +33,15 @@ class Girl extends Laya.Animation {
         this.loadImages(this._preTextures);
         this.interval = 160;
         this.pivot(0, 1);
-        this.pos(56, GLOBAL.CONF.GROUND_POS_Y - 200);
+        this.pos(56, GLOBAL.CONF.GROUND_POS_Y - this._girlHeight);
         this.play();
         
         // TODO 优化耦合性
         GLOBAL.CONF.PRIZE_POS_Y = GLOBAL.CONF.GROUND_POS_Y - this._girlHeight * (GLOBAL.CONF.GIRL_JUMP_TIMES + 1) + 30;
         this._jumpHeight = this._girlHeight * GLOBAL.CONF.GIRL_JUMP_TIMES; // 跳起的高度
         this._jumpSpeed = 400;
+        this._jumpDuration = this._jumpSpeed;
+        this._fallDuration = this._jumpSpeed;
         this.createJumpAction();
         this.createDieAction();
         Laya.timer.frameLoop(1, this, this.onUpdate);
@@ -47,8 +49,8 @@ class Girl extends Laya.Animation {
     createJumpAction () {
         this._jumpAction = Laya.Tween.to(
             this,
-            {x: 56, y: GLOBAL.CONF.GROUND_POS_Y - this._jumpHeight},
-            this._jumpSpeed,
+            {x: 56, y: GLOBAL.CONF.GROUND_POS_Y - this._jumpHeight - this._girlHeight},
+            this._jumpDuration,
             Laya.Ease.quadOut,
             Laya.Handler.create(this, () => {
                 GLOBAL.CONF.GIRL_STAT = 2;
@@ -57,8 +59,8 @@ class Girl extends Laya.Animation {
         this._jumpAction.pause();
         this._fallAction = Laya.Tween.to(
             this,
-            {x: 56, y: GLOBAL.CONF.GROUND_POS_Y - 200},
-            this._jumpSpeed,
+            {x: 56, y: GLOBAL.CONF.GROUND_POS_Y - this._girlHeight},
+            this._fallDuration,
             Laya.Ease.quadIn,
             Laya.Handler.create(this, () => {
                 this._timer = Date.now();
@@ -70,8 +72,8 @@ class Girl extends Laya.Animation {
     changeJumpDuration () { // 调整跳起下落的速度
         const conf = GLOBAL.CONF;
         const ratio = ((conf.SPEED / conf.DEFAULT_SPEED) - 1) / 2 + 1; // 保证ratio大于1
-        this._jumpAction.duration = this._jumpSpeed / ratio;
-        this._fallAction.duration = this._jumpSpeed / ratio;
+        this._jumpDuration = this._jumpSpeed / ratio;
+        this._fallDuration = this._jumpSpeed / ratio;
     }
     createDieAction () {
         this._dieBlink = new Laya.TimeLine();
@@ -111,7 +113,7 @@ class Girl extends Laya.Animation {
     }
     readyStart () { // 预备开始，主要是倒计时开始的时候用
         this.event('notRun');
-        this.pos(56, GLOBAL.CONF.GROUND_POS_Y - 200);
+        this.pos(56, GLOBAL.CONF.GROUND_POS_Y - this._girlHeight);
         GLOBAL.CONF.GIRL_STAT = -1;
         this.loadImages(this._preTextures);
         this.interval = 160;
@@ -130,7 +132,7 @@ class Girl extends Laya.Animation {
             this.event('notRun');
             Sound.playJump();
             this.loadImages(this._jumpTextures);
-            this._jumpAction.resume();
+            this._jumpAction.restart();
         }
     }
     beInjured () {

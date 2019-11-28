@@ -395,13 +395,15 @@
             this.loadImages(this._preTextures);
             this.interval = 160;
             this.pivot(0, 1);
-            this.pos(56, GLOBAL.CONF.GROUND_POS_Y - 200);
+            this.pos(56, GLOBAL.CONF.GROUND_POS_Y - this._girlHeight);
             this.play();
             
             // TODO 优化耦合性
             GLOBAL.CONF.PRIZE_POS_Y = GLOBAL.CONF.GROUND_POS_Y - this._girlHeight * (GLOBAL.CONF.GIRL_JUMP_TIMES + 1) + 30;
             this._jumpHeight = this._girlHeight * GLOBAL.CONF.GIRL_JUMP_TIMES; // 跳起的高度
             this._jumpSpeed = 400;
+            this._jumpDuration = this._jumpSpeed;
+            this._fallDuration = this._jumpSpeed;
             this.createJumpAction();
             this.createDieAction();
             Laya.timer.frameLoop(1, this, this.onUpdate);
@@ -409,8 +411,8 @@
         createJumpAction () {
             this._jumpAction = Laya.Tween.to(
                 this,
-                {x: 56, y: GLOBAL.CONF.GROUND_POS_Y - this._jumpHeight},
-                this._jumpSpeed,
+                {x: 56, y: GLOBAL.CONF.GROUND_POS_Y - this._jumpHeight - this._girlHeight},
+                this._jumpDuration,
                 Laya.Ease.quadOut,
                 Laya.Handler.create(this, () => {
                     GLOBAL.CONF.GIRL_STAT = 2;
@@ -419,8 +421,8 @@
             this._jumpAction.pause();
             this._fallAction = Laya.Tween.to(
                 this,
-                {x: 56, y: GLOBAL.CONF.GROUND_POS_Y - 200},
-                this._jumpSpeed,
+                {x: 56, y: GLOBAL.CONF.GROUND_POS_Y - this._girlHeight},
+                this._fallDuration,
                 Laya.Ease.quadIn,
                 Laya.Handler.create(this, () => {
                     this._timer = Date.now();
@@ -432,8 +434,8 @@
         changeJumpDuration () { // 调整跳起下落的速度
             const conf = GLOBAL.CONF;
             const ratio = ((conf.SPEED / conf.DEFAULT_SPEED) - 1) / 2 + 1; // 保证ratio大于1
-            this._jumpAction.duration = this._jumpSpeed / ratio;
-            this._fallAction.duration = this._jumpSpeed / ratio;
+            this._jumpDuration = this._jumpSpeed / ratio;
+            this._fallDuration = this._jumpSpeed / ratio;
         }
         createDieAction () {
             this._dieBlink = new Laya.TimeLine();
@@ -492,7 +494,7 @@
                 this.event('notRun');
                 Sound.playJump();
                 this.loadImages(this._jumpTextures);
-                this._jumpAction.resume();
+                this._jumpAction.restart();
             }
         }
         beInjured () {
@@ -1455,9 +1457,9 @@
         drawSprite (key, name) {
             this[key] = new Laya.Sprite();
             this[key].loadImage(`icons/${name}.png`);
-            this[key].pivot(0.5, 0.5);
+            this[key].pivot(375, 600 + this[key].width / 2);
             this[key].scale(this._initScale, this._initScale);
-            this[key].pos(375 - this[key].width / 2, 600);
+            this[key].pos(750 - this[key].width / 2, 1200 + this[key].width / 2);
             this[key].visible = false;
             this.addChild(this[key]);
         }
@@ -2651,7 +2653,7 @@
                 Sound.playBg();
                 this._girl.startRun();
                 this._crash.startAnime();
-                this._ticker.runCallLater(this, this.setTimer);
+                // this._ticker.runCallLater(this, this.setTimer);
                 this._ticker.loop(this._defaultTickerDuration, this, this.setTimer);
             });
             this.addChild(this._countDown);
@@ -2673,7 +2675,7 @@
                     this._girl.resume();
                     this._crash.startAnime();
                     this._ticker.loop(this._defaultTickerDuration, this, this.setTimer);
-                    this._ticker.runCallLater(this, this.setTimer);
+                    // this._ticker.runCallLater(this, this.setTimer);
                 }
             });
             this._pauseDialog.on('stop', this, () => {
@@ -2737,7 +2739,9 @@
             this._header.reset();
             this._statusBar.reset();
             this._girl.readyStart();
-            this._ticker.duration = this._defaultTickerDuration;
+            // this._ticker.duration = this._defaultTickerDuration;
+            this._ticker.clear(this, this.setTimer);
+            this._ticker.loop(this._defaultTickerDuration, this, this.setTimer);
             Sound.playCountDown();
             this._countDown.start();
         }

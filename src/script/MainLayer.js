@@ -140,7 +140,7 @@ class MainLayer extends Laya.Scene {
             Sound.playBg();
             this._girl.startRun();
             this._crash.startAnime();
-            this._ticker.runCallLater(this, this.setTimer);
+            // this._ticker.runCallLater(this, this.setTimer);
             this._ticker.loop(this._defaultTickerDuration, this, this.setTimer);
         });
         this.addChild(this._countDown);
@@ -162,7 +162,7 @@ class MainLayer extends Laya.Scene {
                 this._girl.resume();
                 this._crash.startAnime();
                 this._ticker.loop(this._defaultTickerDuration, this, this.setTimer);
-                this._ticker.runCallLater(this, this.setTimer);
+                // this._ticker.runCallLater(this, this.setTimer);
             }
         });
         this._pauseDialog.on('stop', this, () => {
@@ -226,7 +226,9 @@ class MainLayer extends Laya.Scene {
         this._header.reset();
         this._statusBar.reset();
         this._girl.readyStart();
-        this._ticker.duration = this._defaultTickerDuration;
+        // this._ticker.duration = this._defaultTickerDuration;
+        this._ticker.clear(this, this.setTimer);
+        this._ticker.loop(this._defaultTickerDuration, this, this.setTimer);
         Sound.playCountDown();
         this._countDown.start();
     }
