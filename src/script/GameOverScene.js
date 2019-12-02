@@ -33,7 +33,7 @@ class GameOverScene extends Laya.Scene {
         mileageTitle.fontSize = 24;
         mileageTitle.bold = true;
         mileageTitle.color = '#fff';
-        mileageTitle.pos(160, 14);
+        mileageTitle.pos(60, 16);
         this._mileage.addChild(mileageTitle);
         this.addChild(this._mileage);
         this._breakSelf = new Laya.Sprite();
@@ -137,7 +137,7 @@ class GameOverScene extends Laya.Scene {
     setCenter () {
         this._titleGameOver.y = 464;
         this._titleGameFinish.y = 465;
-        this._mileage.y = (572);
+        this._mileage.y = 572;
         this._breakSelf.y = 520;
         this._breakAll.y = 520;
 
@@ -168,7 +168,7 @@ class GameOverScene extends Laya.Scene {
         numArr.forEach((item, index) => {
             const sprite = new Laya.Sprite();
             sprite.loadImage(`num/${size}_${item}.png`);
-            sprite.pivot(0.5, 1);
+            sprite.pivot(0, 0);
             if (reverse) {
                 sprite.pos(pos.x - index * (interval), pos.y);
             } else {
@@ -180,8 +180,8 @@ class GameOverScene extends Laya.Scene {
         if (!reverse) {
             const m = new Laya.Sprite();
             m.loadImage(`num/${size}_m.png`);
-            m.pivot(0, 1);
-            m.pos(pos.x + (numArr.length - 1) * interval + 13, pos.y);
+            m.pivot(0, 0);
+            m.pos(pos.x + (numArr.length - 1) * interval + 19, pos.y + 4);
             wrapper.addChild(m);
             this._numCache.push(m);
         }
@@ -212,8 +212,8 @@ class GameOverScene extends Laya.Scene {
             this._submit.visible = true;
         }
         this.drawNum(this._mileage, GLOBAL.CONF.MILEAGE, 'sm', {
-            x: 0,
-            y: 37
+            x: 200,
+            y: 16
         }, 20);
         if (GLOBAL.CONF.HIT === 0) {
             this.setCenter();

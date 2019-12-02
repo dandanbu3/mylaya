@@ -7,18 +7,20 @@ class CountDownScene extends Laya.Scene {
         this.drawSprite('_one', 'start_1');
         this.drawSprite('_ready', 'start_ready');
         this.drawSprite('_go', 'start_go');
-        this.initAnime();
+        // this.initAnime();
     }
     start () {
         this['_three'].visible = true;
+        this.initAnime();
         this._countDown.resume();
     }
     drawSprite (key, name) {
         this[key] = new Laya.Sprite();
         this[key].loadImage(`icons/${name}.png`);
-        this[key].pivot(375, 600 + this[key].width / 2);
+        this[key].pivot(375, 600);
+        console.log(this[key].width, 'this[key].width');
         this[key].scale(this._initScale, this._initScale);
-        this[key].pos(750 - this[key].width / 2, 1200 + this[key].width / 2);
+        this[key].pos(750 - this[key].width / 2, 600);
         this[key].visible = false;
         this.addChild(this[key]);
     }

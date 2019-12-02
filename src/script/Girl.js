@@ -54,9 +54,11 @@ class Girl extends Laya.Animation {
             Laya.Ease.quadOut,
             Laya.Handler.create(this, () => {
                 GLOBAL.CONF.GIRL_STAT = 2;
-                this._fallAction.resume();
+                this.createFallAction();
             }));
         this._jumpAction.pause();
+    }
+    createFallAction() {
         this._fallAction = Laya.Tween.to(
             this,
             {x: 56, y: GLOBAL.CONF.GROUND_POS_Y - this._girlHeight},
@@ -67,7 +69,6 @@ class Girl extends Laya.Animation {
                 GLOBAL.CONF.GIRL_STAT = 3;
                 this.loadImages(this._fallTextures);
             }));
-        this._fallAction.pause();
     }
     changeJumpDuration () { // 调整跳起下落的速度
         const conf = GLOBAL.CONF;
@@ -132,7 +133,9 @@ class Girl extends Laya.Animation {
             this.event('notRun');
             Sound.playJump();
             this.loadImages(this._jumpTextures);
-            this._jumpAction.restart();
+            // this._jumpAction.restart();
+            this.createJumpAction();
+            this._jumpAction.resume();
         }
     }
     beInjured () {

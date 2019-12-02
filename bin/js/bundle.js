@@ -475,7 +475,7 @@
         }
         readyStart () { // 预备开始，主要是倒计时开始的时候用
             this.event('notRun');
-            this.pos(56, GLOBAL.CONF.GROUND_POS_Y - 200);
+            this.pos(56, GLOBAL.CONF.GROUND_POS_Y - this._girlHeight);
             GLOBAL.CONF.GIRL_STAT = -1;
             this.loadImages(this._preTextures);
             this.interval = 160;
@@ -494,7 +494,9 @@
                 this.event('notRun');
                 Sound.playJump();
                 this.loadImages(this._jumpTextures);
-                this._jumpAction.restart();
+                // this._jumpAction.restart();
+                this.createJumpAction();
+                this._jumpAction.resume();
             }
         }
         beInjured () {
@@ -974,7 +976,7 @@
             numArr.forEach((item, index) => {
                 const sprite = new Laya.Sprite();
                 sprite.loadImage(`num/${size}_${item}.png`);
-                sprite.pivot(0.5, 1);
+                sprite.pivot(0, 0);
                 if (reverse) {
                     sprite.pos(pos.x - index * (interval), pos.y);
                 } else {
@@ -997,7 +999,7 @@
             this.addChild(x);
             this.drawNum('_prizeNumCache', GLOBAL.CONF.HIT, 'sm', {
                 x: 133,
-                y: 232
+                y: 226
             }, 20);
         }
         createMileage () {
@@ -1009,11 +1011,11 @@
             const m = new Laya.Sprite();
             m.loadImage(`num/sm_m.png`);
             m.pivot(0, 1);
-            m.pos(479, 232);
+            m.pos(485, 232);
             this.addChild(m);
             this.drawNum('_mileageNumCache', GLOBAL.CONF.MILEAGE, 'sm', {
                 x: 467,
-                y: 232
+                y: 226
             }, 20, true);
         }
         createPause () {
@@ -1033,11 +1035,11 @@
         reset () {
             this.drawNum('_mileageNumCache', GLOBAL.CONF.MILEAGE, 'sm', {
                 x: 467,
-                y: 232
+                y: 226
             }, 20, true);
             this.drawNum('_prizeNumCache', GLOBAL.CONF.HIT, 'sm', {
                 x: 133,
-                y: 232
+                y: 226
             }, 20);
         }
         addPrize () {
@@ -1046,7 +1048,7 @@
             if (newValue.length < oldValue.length) {
                 this.drawNum('_prizeNumCache', GLOBAL.CONF.HIT, 'sm', {
                     x: 133,
-                    y: 232
+                    y: 226
                 }, 20);
             } else {
                 const newArr = newValue.split('');
@@ -1069,7 +1071,7 @@
                         // oldSprite.runAction(oldAction);
                         const moveAction = Laya.Tween.to(newSprite, {
                             x: 133 + index * 20,
-                            y: 232
+                            y: 226
                         }, 500);
                         const oldAction = Laya.Tween.to(newSprite, {
                             x: oldSprite.x,
@@ -1084,7 +1086,7 @@
         syncMileage () {
             this.drawNum('_mileageNumCache', GLOBAL.CONF.MILEAGE, 'sm', {
                 x: 467,
-                y: 232
+                y: 226
             }, 20, true);
         }
     }
@@ -1448,18 +1450,20 @@
             this.drawSprite('_one', 'start_1');
             this.drawSprite('_ready', 'start_ready');
             this.drawSprite('_go', 'start_go');
-            this.initAnime();
+            // this.initAnime();
         }
         start () {
             this['_three'].visible = true;
+            this.initAnime();
             this._countDown.resume();
         }
         drawSprite (key, name) {
             this[key] = new Laya.Sprite();
             this[key].loadImage(`icons/${name}.png`);
-            this[key].pivot(375, 600 + this[key].width / 2);
+            this[key].pivot(375, 600);
+            console.log(this[key].width, 'this[key].width');
             this[key].scale(this._initScale, this._initScale);
-            this[key].pos(750 - this[key].width / 2, 1200 + this[key].width / 2);
+            this[key].pos(750 - this[key].width / 2, 600);
             this[key].visible = false;
             this.addChild(this[key]);
         }
@@ -2313,7 +2317,7 @@
             mileageTitle.fontSize = 24;
             mileageTitle.bold = true;
             mileageTitle.color = '#fff';
-            mileageTitle.pos(160, 14);
+            mileageTitle.pos(60, 16);
             this._mileage.addChild(mileageTitle);
             this.addChild(this._mileage);
             this._breakSelf = new Laya.Sprite();
@@ -2417,7 +2421,7 @@
         setCenter () {
             this._titleGameOver.y = 464;
             this._titleGameFinish.y = 465;
-            this._mileage.y = (572);
+            this._mileage.y = 572;
             this._breakSelf.y = 520;
             this._breakAll.y = 520;
 
@@ -2448,7 +2452,7 @@
             numArr.forEach((item, index) => {
                 const sprite = new Laya.Sprite();
                 sprite.loadImage(`num/${size}_${item}.png`);
-                sprite.pivot(0.5, 1);
+                sprite.pivot(0, 0);
                 if (reverse) {
                     sprite.pos(pos.x - index * (interval), pos.y);
                 } else {
@@ -2460,8 +2464,8 @@
             if (!reverse) {
                 const m = new Laya.Sprite();
                 m.loadImage(`num/${size}_m.png`);
-                m.pivot(0, 1);
-                m.pos(pos.x + (numArr.length - 1) * interval + 13, pos.y);
+                m.pivot(0, 0);
+                m.pos(pos.x + (numArr.length - 1) * interval + 19, pos.y + 4);
                 wrapper.addChild(m);
                 this._numCache.push(m);
             }
@@ -2492,8 +2496,8 @@
                 this._submit.visible = true;
             }
             this.drawNum(this._mileage, GLOBAL.CONF.MILEAGE, 'sm', {
-                x: 0,
-                y: 37
+                x: 200,
+                y: 16
             }, 20);
             if (GLOBAL.CONF.HIT === 0) {
                 this.setCenter();
@@ -2889,7 +2893,7 @@
     GameConfig.alignH = "left";
     // GameConfig.startScene = "test/TestScene.scene";
     GameConfig.sceneRoot = "";
-    GameConfig.debug = false;
+    GameConfig.debug = true;
     GameConfig.stat = false;
     GameConfig.physicsDebug = false;
     GameConfig.exportSceneToJson = true;
