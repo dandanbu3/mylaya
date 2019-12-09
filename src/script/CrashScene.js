@@ -62,6 +62,10 @@ class EnemyBox extends Laya.Animation {
         }
         super();
         this.loadImages(textures);
+        const barrier = new Laya.Sprite();
+        barrier.autoSize = true;
+        barrier.loadImage(textures[0]);
+        this.barrierHeight = barrier.height;
         this.pivot(0, 1);
         this._inview = false;
         this._name = item.name;
@@ -88,7 +92,7 @@ class CrashScene extends Laya.Scene {
         const enemy = new EnemyBox(randomItem);
         enemy.play();
         enemy.pivot(0, 1);
-        enemy.pos(Laya.stage.width * 3, GLOBAL.CONF.GROUND_POS_Y - 200);
+        enemy.pos(Laya.stage.width * 3, GLOBAL.CONF.GROUND_POS_Y - enemy.barrierHeight);
         this.addChild(enemy);
         this._enemyCache.push(enemy);
 
@@ -121,7 +125,7 @@ class CrashScene extends Laya.Scene {
         const randomItem = this.randomEnemyItem();
         const enemy = new EnemyBox(randomItem);
         enemy.play();
-        enemy.pos(Laya.stage.width + randomInterval, GLOBAL.CONF.GROUND_POS_Y - 200);
+        enemy.pos(Laya.stage.width + randomInterval, GLOBAL.CONF.GROUND_POS_Y - enemy.barrierHeight);
         this._enemyCache.push(enemy);
         this.addChild(enemy);
         this.addRandomPrize(enemy);

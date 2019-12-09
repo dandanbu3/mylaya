@@ -269,6 +269,9 @@ class MainLayer extends Laya.Scene {
     collide (girl, rect) {
         const girlRect = girl.getBounds();
         const collideRect = rect.getBounds();
+        console.log(collideRect, 'collideRect');
+        console.log(girlRect, 'girlRect');
+        console.log(rect._points, 'rect._points');
         girlRect.x = girl.x + 26;
         girlRect.y = girl.y;
         girlRect.width = girl.width + 40;
