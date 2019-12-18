@@ -222,13 +222,14 @@ class MainLayer extends Laya.Scene {
         GLOBAL.CONF.HIT = 0;
         GLOBAL.CONF.MILEAGE = 0;
         this._girl.changeJumpDuration();
+        console.log(this._crash.init, 'this._crash.init');
         this._crash.init();
         this._header.reset();
         this._statusBar.reset();
         this._girl.readyStart();
         // this._ticker.duration = this._defaultTickerDuration;
-        this._ticker.clear(this, this.setTimer);
-        this._ticker.loop(this._defaultTickerDuration, this, this.setTimer);
+        // this._ticker.clear(this, this.setTimer);
+        // this._ticker.loop(this._defaultTickerDuration, this, this.setTimer);
         Sound.playCountDown();
         this._countDown.start();
     }
