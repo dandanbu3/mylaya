@@ -73,7 +73,7 @@ class GameOverScene extends Laya.Scene {
                 window.kfcMario && window.kfcMario.logger && window.kfcMario.logger('click', {
                     key: 'restart'
                 });
-                this.removeSelf();
+                this.visible = false;
                 this.event('restart');
             }
         });
