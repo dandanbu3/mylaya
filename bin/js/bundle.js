@@ -1465,10 +1465,11 @@
         drawSprite (key, name) {
             this[key] = new Laya.Sprite();
             this[key].loadImage(`icons/${name}.png`);
-            this[key].pivot(375, 600);
-            console.log(this[key].width, 'this[key].width');
+            
+            console.log(this[key].width, name, 'this[key].width', this._initScale);
+            this[key].pos(375, 600 + this[key].height / 2);
+            this[key].pivot(this[key].width / 2, this[key].height / 2);
             this[key].scale(this._initScale, this._initScale);
-            this[key].pos(750 - this[key].width / 2, 600);
             this[key].visible = false;
             this.addChild(this[key]);
         }
@@ -1481,6 +1482,7 @@
                 this['_go'].scale(this._initScale, this._initScale);
                 // 倒计时结束事件
                 this.event('done');
+                console.log('done', 'wanle');
             }));
             this._goAnime.pause();
             this._readyAnime = Laya.Tween.to(this['_ready'], {
@@ -2633,6 +2635,7 @@
                 this._gameoverDialog.show({
                     type: 'gameover'
                 });
+                console.log('gameover');
             });
             this._dieAnime.visible = false;
             this.addChild(this._dieAnime);
@@ -2690,7 +2693,8 @@
             this._pauseDialog.on('stop', this, () => {
                 GLOBAL.CONF.MODE = GLOBAL.MODES.MENU;
                 if (GLOBAL.DATA.LOTTERY_LIST.length === 0) {
-                    this.removeSelf();
+                    this.removeChildren();
+                    this.destroy();
                     const menuLayer$1 = new menuLayer();
                     // @ts-ignore
                     Laya.stage.addChild(menuLayer$1);
@@ -2707,7 +2711,8 @@
             });
             this._gameoverDialog.on('stop', this, () => {
                 GLOBAL.CONF.MODE = GLOBAL.MODES.MENU;
-                this.removeSelf();
+                this.removeChildren();
+                this.destroy();
                 const menuLayer$1 = new menuLayer();
                 // @ts-ignore
                 Laya.stage.addChild(menuLayer$1);
@@ -2744,13 +2749,14 @@
             GLOBAL.CONF.HIT = 0;
             GLOBAL.CONF.MILEAGE = 0;
             this._girl.changeJumpDuration();
+            console.log(this._crash.init, 'this._crash.init');
             this._crash.init();
             this._header.reset();
             this._statusBar.reset();
             this._girl.readyStart();
             // this._ticker.duration = this._defaultTickerDuration;
-            this._ticker.clear(this, this.setTimer);
-            this._ticker.loop(this._defaultTickerDuration, this, this.setTimer);
+            // this._ticker.clear(this, this.setTimer);
+            // this._ticker.loop(this._defaultTickerDuration, this, this.setTimer);
             Sound.playCountDown();
             this._countDown.start();
         }
@@ -2791,9 +2797,9 @@
         collide (girl, rect) {
             const girlRect = girl.getBounds();
             const collideRect = rect.getBounds();
-            // console.log(collideRect, 'collideRect');
-            // console.log(girlRect, 'girlRect');
-            // console.log(rect._points, 'rect._points');
+            console.log(collideRect, 'collideRect');
+            console.log(girlRect, 'girlRect');
+            console.log(rect._points, 'rect._points');
             girlRect.x = girl.x + 26;
             girlRect.y = girl.y;
             girlRect.width = girl.width + 40;

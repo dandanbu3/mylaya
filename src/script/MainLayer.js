@@ -111,6 +111,7 @@ class MainLayer extends Laya.Scene {
             this._gameoverDialog.show({
                 type: 'gameover'
             });
+            console.log('gameover');
         });
         this._dieAnime.visible = false;
         this.addChild(this._dieAnime);
@@ -168,7 +169,8 @@ class MainLayer extends Laya.Scene {
         this._pauseDialog.on('stop', this, () => {
             GLOBAL.CONF.MODE = GLOBAL.MODES.MENU;
             if (GLOBAL.DATA.LOTTERY_LIST.length === 0) {
-                this.removeSelf();
+                this.removeChildren();
+                this.destroy();
                 const menuLayer = new MenuLayer();
                 // @ts-ignore
                 Laya.stage.addChild(menuLayer);
@@ -185,7 +187,8 @@ class MainLayer extends Laya.Scene {
         });
         this._gameoverDialog.on('stop', this, () => {
             GLOBAL.CONF.MODE = GLOBAL.MODES.MENU;
-            this.removeSelf();
+            this.removeChildren();
+            this.destroy();
             const menuLayer = new MenuLayer();
             // @ts-ignore
             Laya.stage.addChild(menuLayer);
