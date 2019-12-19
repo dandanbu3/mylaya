@@ -14,20 +14,20 @@ class GameOverScene extends Laya.Scene {
         this.addChild(this._bg);
         this._titleGameOver = new Laya.Sprite();
         this._titleGameOver.loadImage(`${alias}gameover.png`);
-        this._titleGameOver.pivot(0.5, 0);
-        this._titleGameOver.pos(375 - this._titleGameOver.width / 2, 264);
+        this._titleGameOver.pivot(this._titleGameOver.width / 2, 0);
+        this._titleGameOver.pos(375, 264);
         this._titleGameOver.visible = false;
         this.addChild(this._titleGameOver);
         this._titleGameFinish = new Laya.Sprite();
         this._titleGameFinish.loadImage(`${alias}game_finish_title.png`);
-        this._titleGameFinish.pivot(0.5, 0);
-        this._titleGameFinish.pos(375 - this._titleGameFinish.width / 2, 265);
+        this._titleGameFinish.pivot(this._titleGameFinish.width / 2, 0);
+        this._titleGameFinish.pos(375, 265);
         this._titleGameFinish.visible = false;
         this.addChild(this._titleGameFinish);
         this._mileage = new Laya.Sprite();
         this._mileage.loadImage(`${alias}text_bg.png`);
-        this._mileage.pivot(0.5, 0);
-        this._mileage.pos(375 - this._mileage.width / 2, 372);
+        this._mileage.pivot(this._mileage.width / 2, 0);
+        this._mileage.pos(375, 372);
         const mileageTitle = new Laya.Text();
         mileageTitle.text = '本次里程数';
         mileageTitle.fontSize = 24;
@@ -81,8 +81,8 @@ class GameOverScene extends Laya.Scene {
         this.addChild(this._restart);
         this._rank = new Laya.Sprite();
         this._rank.loadImage(`${alias}btn_view_rank.png`);
-        this._rank.pivot(0.5, 0);
-        this._rank.pos(375 - this._rank.width / 2, 791);
+        this._rank.pivot(this._rank.width / 2, 0);
+        this._rank.pos(375, 791);
         this._rank.mouseEnabled = true;
         this._rank.on(Laya.Event.CLICK, this, (event) => {
             // event.data.originalEvent.preventDefault();
@@ -99,8 +99,8 @@ class GameOverScene extends Laya.Scene {
         this.addChild(this._rank);
         this._submit = new Laya.Sprite();
         this._submit.loadImage(`${alias}btn_submit.png`);
-        this._submit.pivot(0.5, 0);
-        this._submit.pos(375 - this._submit.width, 822);
+        this._submit.pivot(this._submit.width / 2, 0);
+        this._submit.pos(375, 822);
         this._submit.mouseEnabled = true;
         this._submit.on(Laya.Event.CLICK, this, (event) => {
             // event.data.originalEvent.preventDefault();
@@ -113,7 +113,7 @@ class GameOverScene extends Laya.Scene {
         this.addChild(this._submit);
         this._share = new Laya.Sprite();
         this._share.loadImage(`${alias}btn_share.png`);
-        this._share.pivot(0);
+        this._share.pivot(0, 0);
         this._share.pos(270, 959);
         this._share.mouseEnabled = true;
         this._share.on(Laya.Event.CLICK, this, (event) => {
@@ -128,8 +128,8 @@ class GameOverScene extends Laya.Scene {
         this.addChild(this._share);
         this._tip = new Laya.Sprite();
         this._tip.loadImage(`other/low_battery_tip.png`);
-        this._tip.pivot(0.5, 0);
-        this._tip.pos(375 - this._tip.width / 2, 1100);
+        this._tip.pivot(this._tip.width / 2, 0);
+        this._tip.pos(375 , 1100);
         this._tip.visible = false;
         this.addChild(this._tip);
         this.visible = false;

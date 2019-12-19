@@ -22,7 +22,7 @@ class BackgroundDegrade extends Laya.Sprite {
             bg._inview = true;
             // @ts-ignore
             bg._allinview = true;
-            bg.pivot(0, 1);
+            bg.pivot(0, bg.height);
             bg.pos(bgPos, Laya.stage.height);
             this.addChild(bg);
             this._bgCache.push(bg);

@@ -20,7 +20,7 @@ class FinishLayer extends Laya.Scene {
         this.addChild(this._bg);
         const title = new Laya.Sprite();
         title.loadImage(`${alias}act_finish_title.png`);
-        title.pivot(0.5, 0);
+        title.pivot(title.width / 2, 0);
         title.pos(375, 297);
         this.addChild(title);
         this.drawRank(1);
@@ -29,7 +29,7 @@ class FinishLayer extends Laya.Scene {
         if (GLOBAL.DATA.RANK_SELF && GLOBAL.DATA.RANK_SELF.score) {
             const dash = new Laya.Sprite();
             dash.loadImage(`${alias}dash.png`);
-            dash.pivot(0.5, 0);
+            dash.pivot(dash.width / 2, 0);
             dash.pos(375, 706);
             this.addChild(dash);
             this.drawRankSelf();
@@ -52,7 +52,7 @@ class FinishLayer extends Laya.Scene {
         numArr.forEach((item, index) => {
             const sprite = new Laya.Sprite();
             sprite.loadImage(`num/${size}_${item}.png`);
-            sprite.pivot(0, 1);
+            sprite.pivot(0, sprite.height);
             if (reverse) {
                 sprite.pos(pos.x - index * (interval), pos.y);
             } else {
@@ -64,7 +64,7 @@ class FinishLayer extends Laya.Scene {
     drawRankSelf () {
         const rankItem = new Laya.Sprite();
         rankItem.loadImage(`${alias}rank_bg.png`);
-        rankItem.pivot(0.5, 0);
+        rankItem.pivot(rankItem.width / 2, 0);
         rankItem.pos(375, 763);
         this.addChild(rankItem);
         if (GLOBAL.DATA.RANK_SELF.rank > 100) {
@@ -106,7 +106,7 @@ class FinishLayer extends Laya.Scene {
             this.drawNum(rankItem, GLOBAL.DATA.RANK_SELF.score, 'sm', {x: 220, y: 50}, 20, true);
             const m = new Laya.Sprite();
             m.loadImage(`num/sm_m.png`);
-            m.pivot(0, 1);
+            m.pivot(0, m.height);
             m.pos(239, 50);
             rankItem.addChild(m);
         }
@@ -114,7 +114,7 @@ class FinishLayer extends Laya.Scene {
     drawRank (rank) {
         const rankItem = new Laya.Sprite();
         rankItem.loadImage(`${alias}rank_bg.png`);
-        rankItem.pivot(0.5, 0);
+        rankItem.pivot(rankItem.width / 2, 0);
         rankItem.pos(375, 450 + (rank - 1) * 82);
         const rankEnum = ['one', 'two', 'three'];
         const rankIcon = new Laya.Sprite();
@@ -154,7 +154,7 @@ class FinishLayer extends Laya.Scene {
                 this.drawNum(rankItem, data.score, 'sm', {x: 220, y: 50}, 20, true);
                 const m = new Laya.Sprite();
                 m.loadImage(`num/sm_m.png`);
-                m.pivot(0, 1);
+                m.pivot(0, m.height);
                 m.pos(239, 50);
                 rankItem.addChild(m);
             }

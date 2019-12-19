@@ -46,7 +46,7 @@ class HeaderScene extends Laya.Scene {
             const login = new Laya.Sprite();
             login.loadImage(`other/login.png`);
             login.autoSize = true;
-            login.pivot(0, 1);
+            login.pivot(0, login.height);
             login.pos(60, 146);
             login.mouseEnabled = true;
             avatar.on(Laya.Event.CLICK, this, (event) => {
@@ -111,7 +111,7 @@ class HeaderScene extends Laya.Scene {
                     if (item !== oldArr[index]) {
                         const newSprite = new Laya.Sprite();
                         newSprite.loadImage(`num/lg_${item}.png`);
-                        newSprite.pivot(0.5, 1);
+                        newSprite.pivot(newSprite.width / 2, newSprite.height);
                         newSprite.pos(207 + index * 28, 44);
                         this.addChild(newSprite);
                         const oldSprite = this._prizeNumCache[index];

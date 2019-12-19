@@ -69,12 +69,14 @@ class MainLayer extends Laya.Scene {
         this._dust = new Laya.Animation();
         this._dust.loadImages(this.aniUrls("other/dust_", 13));
         this._dust.interval = 44;
-        this._dust.pivot(1, 1);
+        const dustHeight = new Laya.Sprite();
+        dustHeight.loadImage('other/dust_0.png');
+        this._dust.pivot(dustHeight.width, dustHeight.height);
         this._dust.pos(120, GLOBAL.CONF.GROUND_POS_Y);
         this._dust.play();
         this._dust.visible = false;
         this.addChild(this._dust);
-        console.log(who, 'who');
+
         // 2233
         this._girl = new Girl(who);
         this._girl.on('notRun', this, () => {
@@ -99,11 +101,14 @@ class MainLayer extends Laya.Scene {
         this._dieAnime = new Laya.Animation();
         this._dieAnime.loadImages(this.aniUrls(`${who}/die_`, 18));
         this._dieAnime.interval = 83;
-        this._dieAnime.pivot(0, 1);
+        const girlHeight = new Laya.Sprite();
+        girlHeight.loadImage(`${who}/die_0.png`);
+        this._dieAnime.pivot(0, girlHeight.height);
+        console.log(girlHeight.height, 'girlHeight.height');
         if (who === 'girl22') {
-            this._dieAnime.pos(32, GLOBAL.CONF.GROUND_POS_Y + 1 - 449);
+            this._dieAnime.pos(32, GLOBAL.CONF.GROUND_POS_Y + 1);
         } else {
-            this._dieAnime.pos(16, GLOBAL.CONF.GROUND_POS_Y + 3 - 449);
+            this._dieAnime.pos(16, GLOBAL.CONF.GROUND_POS_Y + 3);
         }
         this._dieAnime.on(Laya.Event.COMPLETE, this, () => {
             this._dieAnime.stop();
@@ -111,7 +116,6 @@ class MainLayer extends Laya.Scene {
             this._gameoverDialog.show({
                 type: 'gameover'
             });
-            console.log('gameover');
         });
         this._dieAnime.visible = false;
         this.addChild(this._dieAnime);
@@ -225,7 +229,6 @@ class MainLayer extends Laya.Scene {
         GLOBAL.CONF.HIT = 0;
         GLOBAL.CONF.MILEAGE = 0;
         this._girl.changeJumpDuration();
-        console.log(this._crash.init, 'this._crash.init');
         this._crash.init();
         this._header.reset();
         this._statusBar.reset();
@@ -287,22 +290,27 @@ class MainLayer extends Laya.Scene {
                 const point = rect._points[i];
                 const p = new Laya.Vector2(point.x + collideRect.x, point.y + collideRect.y);
                 if (collideRect.x > 0 && this.boxContainsPoint(girlRect, p)) {
+                    console.log(girlRect, p, 'collide');
                     hit = true;
                     break;
                 }
             }
             return hit;
         } else {
-            return collideRect.x > 0 && this.boxContainsBox(girlRect, collideRect);
+            let hit = collideRect.x > 0 && this.boxContainsBox(girlRect, collideRect);
+            console.log(girlRect, collideRect, 'nopoint', hit);
+            return ;
         }
     }
     boxContainsPoint(a, b) {
-        if(a.x< b.x && a.x + a.width > b.x) {
+        console.log((a.x< b.x), (a.x + a.width > b.x), (a.y < b.y), (a.y + a.height > b.y));
+        if((a.x< b.x) && (a.x + a.width > b.x) && (a.y < b.y) && (a.y + a.height > b.y)) {
             return true;
         }
         return false;
     }
     boxContainsBox(a, b) {
+        console.log(this.boxContainsPoint(a, {x: b.x, y: b.y}), this.boxContainsPoint(a, {x: b.x, y: b.y + b.height}), this.boxContainsPoint(a, {x: b.x + b.width, y: b.y}), this.boxContainsPoint(a, {x: b.x + b.width, y: b.y + b.height}));
         return this.boxContainsPoint(a, {x: b.x, y: b.y})
             || this.boxContainsPoint(a, {x: b.x, y: b.y + b.height})
             || this.boxContainsPoint(a, {x: b.x + b.width, y: b.y})
@@ -310,6 +318,7 @@ class MainLayer extends Laya.Scene {
     }
     // OVERWRITE
     onUpdate () {
+        // console.log('this1');
         if (GLOBAL.CONF.MODE === GLOBAL.MODES.PLAYING) {
             const speed = GLOBAL.CONF.SPEED;
             const enemyCache = this._crash._enemyCache;
@@ -317,7 +326,6 @@ class MainLayer extends Laya.Scene {
             enemyCache.forEach(enemy => {
                 const enemyPos = enemy.x;
                 const enemyWidth = enemy.getBounds().width;
-                console.log(enemyWidth, 'enemyWidth');
                 if (!enemy._destroyed && enemyPos <= -enemyWidth * 2) {
                     enemy._destroyed = true;
                     this._crash.removeEnemy();

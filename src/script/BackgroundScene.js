@@ -86,7 +86,9 @@ class BackgroundScene extends Laya.Sprite {
         this._fgCache[0]._adAnime = new Laya.Animation();
         this._fgCache[0]._adAnime.loadImages(this.aniUrls("bg/ad_22_",43));
         this._fgCache[0]._adAnime.interval = 33;
-        this._fgCache[0]._adAnime.pivot(0, 1);
+        const fgCacheHeight0 = new Laya.Sprite();
+        fgCacheHeight0.loadImage('bg/ad_22_0.png');
+        this._fgCache[0]._adAnime.pivot(0, fgCacheHeight0.height);
         this._fgCache[0]._adAnime.pos(408, 756);
         this._fgCache[0]._adAnime.play();
         this._fgCache[0]._adAnime.visible = (false);
@@ -94,7 +96,9 @@ class BackgroundScene extends Laya.Sprite {
         this._fgCache[1]._adAnime = new Laya.Animation();
         this._fgCache[1]._adAnime.loadImages(this.aniUrls("bg/ad_33_",32));
         this._fgCache[1]._adAnime.interval = 33;
-        this._fgCache[1]._adAnime.pivot(0, 1);
+        const fgCacheHeight1 = new Laya.Sprite();
+        fgCacheHeight1.loadImage('bg/ad_33_0.png');
+        this._fgCache[1]._adAnime.pivot(0, fgCacheHeight1.height);
         this._fgCache[1]._adAnime.pos(1060, 764);
         this._fgCache[1]._adAnime.play();
         this._fgCache[1]._adAnime.visible = (false);
@@ -206,6 +210,7 @@ class BackgroundScene extends Laya.Sprite {
         return SceneArr[Math.floor(index / 2)];
     }
     onUpdate () {
+        // console.log('this2');
         const speed = GLOBAL.CONF.SPEED;
         if (GLOBAL.CONF.MODE === GLOBAL.MODES.PLAYING) {
             for (let i = 0; i < 4; i++) {
@@ -239,9 +244,9 @@ class BackgroundScene extends Laya.Sprite {
                             this._fgCache[0].loadImage(this._fgList[this._newGroundIndex]);
                             const which = Math.floor(this._newGroundIndex / 2);
                             if (which === 1) {
-                                this._mgCache[0].pivot(0, 1);
+                                this._mgCache[0].pivot(0, this._mgCache[0].height);
                                 this._mgCache[0].y = GLOBAL.CONF.GROUND_POS_Y + 64;
-                                this._fgCache[0].pivot(0, 1);
+                                this._fgCache[0].pivot(0, this._fgCache[0].height);
                                 this._fgCache[0].y = 1136;
                             } else {
                                 this._mgCache[0].pivot(0, 0);
@@ -288,9 +293,9 @@ class BackgroundScene extends Laya.Sprite {
                         this._fgCache[1].loadImage(this._fgList[nextIndex]);
                         const which = Math.floor(nextIndex / 2);
                         if (which === 1) {
-                            this._mgCache[1].pivot(0, 1);
+                            this._mgCache[1].pivot(0, this._mgCache[1].height);
                             this._mgCache[1].y = GLOBAL.CONF.GROUND_POS_Y + 64;
-                            this._fgCache[1].pivot(0, 1);
+                            this._fgCache[1].pivot(0, this._fgCache[1].height);
                             this._fgCache[1].y = 1136;
                         } else {
                             this._mgCache[1].pivot(0, 0);

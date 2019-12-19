@@ -30,15 +30,23 @@ class Girl extends Laya.Animation {
         jumpGirl.loadImage(this._fallTextures[0]);
         this._jumpGirlHeight = jumpGirl.height;
 
+        const preGirl = new Laya.Sprite();
+        preGirl.autoSize = true;
+        preGirl.loadImage(this._preTextures[0]);
+        this._preGirlHeight = preGirl.height;
+        const dieGirl = new Laya.Sprite();
+        dieGirl.loadImage(this._dieGrayTextures[0]);
+        this._dieGirlHeight = dieGirl.height;
+
         this.loadImages(this._preTextures);
         this.interval = 160;
-        this.pivot(0, 1);
-        this.pos(56, GLOBAL.CONF.GROUND_POS_Y - this._girlHeight);
+        this.pivot(0, this._girlHeight);
+        this.pos(56, GLOBAL.CONF.GROUND_POS_Y);
         this.play();
         
         // TODO 优化耦合性
         GLOBAL.CONF.PRIZE_POS_Y = GLOBAL.CONF.GROUND_POS_Y - this._girlHeight * (GLOBAL.CONF.GIRL_JUMP_TIMES + 1) + 30;
-        this._jumpHeight = this._girlHeight * GLOBAL.CONF.GIRL_JUMP_TIMES; // 跳起的高度
+        this._jumpHeight = this._jumpGirlHeight * GLOBAL.CONF.GIRL_JUMP_TIMES; // 跳起的高度
         this._jumpSpeed = 400;
         this._jumpDuration = this._jumpSpeed;
         this._fallDuration = this._jumpSpeed;
@@ -49,7 +57,7 @@ class Girl extends Laya.Animation {
     createJumpAction () {
         this._jumpAction = Laya.Tween.to(
             this,
-            {x: 56, y: GLOBAL.CONF.GROUND_POS_Y - this._jumpHeight - this._girlHeight},
+            {x: 56, y: GLOBAL.CONF.GROUND_POS_Y - this._jumpHeight },
             this._jumpDuration,
             Laya.Ease.quadOut,
             Laya.Handler.create(this, () => {
@@ -61,13 +69,14 @@ class Girl extends Laya.Animation {
     createFallAction() {
         this._fallAction = Laya.Tween.to(
             this,
-            {x: 56, y: GLOBAL.CONF.GROUND_POS_Y - this._girlHeight},
+            {x: 56, y: GLOBAL.CONF.GROUND_POS_Y },
             this._fallDuration,
             Laya.Ease.quadIn,
             Laya.Handler.create(this, () => {
                 this._timer = Date.now();
                 GLOBAL.CONF.GIRL_STAT = 3;
                 this.loadImages(this._fallTextures);
+                this.pivot(0, this._jumpGirlHeight);
             }));
     }
     changeJumpDuration () { // 调整跳起下落的速度
@@ -82,6 +91,7 @@ class Girl extends Laya.Animation {
             .addLabel('show').to(this, {visible: true}, 50);
         this._dieBlink.on(Laya.Event.COMPLETE, this, () => {
             this.loadImages(this._dieGrayTextures);
+            this.pivot(0, this._dieGirlHeight);
             this.event('die');
         });
         // this._dieBlink.play();
@@ -114,14 +124,16 @@ class Girl extends Laya.Animation {
     }
     readyStart () { // 预备开始，主要是倒计时开始的时候用
         this.event('notRun');
-        this.pos(56, GLOBAL.CONF.GROUND_POS_Y - this._girlHeight);
+        this.pos(56, GLOBAL.CONF.GROUND_POS_Y);
         GLOBAL.CONF.GIRL_STAT = -1;
         this.loadImages(this._preTextures);
+        this.pivot(0, this._preGirlHeight)
         this.interval = 160;
     }
     startRun () {
         GLOBAL.CONF.GIRL_STAT = 0;
         this.loadImages(this._runTextures);
+        this.pivot(0, this._girlHeight);
         this.interval = 100;
         console.log('this', this.y, this.x);
         this.event('run');
@@ -133,6 +145,7 @@ class Girl extends Laya.Animation {
             this.event('notRun');
             Sound.playJump();
             this.loadImages(this._jumpTextures);
+            this.pivot(0, this._jumpGirlHeight)
             // this._jumpAction.restart();
             this.createJumpAction();
             this._jumpAction.resume();
@@ -143,6 +156,7 @@ class Girl extends Laya.Animation {
         this.event('notRun');
         Sound.playGameOver();
         this.loadImages([this._runTextures[0]]);
+        this.pivot(0, this._girlHeight);
         // this.removeActionsTrace();
         Laya.Tween.clearAll(this);
         // this.runAction(Tiny.Repeat(3, this._dieBlink));
@@ -169,6 +183,7 @@ class Girl extends Laya.Animation {
                     this._timer = Date.now();
                     GLOBAL.CONF.GIRL_STAT = 3;
                     this.loadImages(this._fallTextures);
+                    this.pivot(0, this._jumpGirlHeight);
                 }));
             // this.runAction(moveAction);
         } else if (GLOBAL.CONF.GIRL_STAT === 1) {
@@ -191,6 +206,7 @@ class Girl extends Laya.Animation {
             if (Date.now() - this._timer >= 100000 / 6 / this.interval ) {
                 this.event('run');
                 this.loadImages(this._runTextures);
+                this.pivot(0, this._girlHeight);
                 GLOBAL.CONF.GIRL_STAT = 0;
             }
         }

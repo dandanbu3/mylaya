@@ -78,7 +78,7 @@ class PauseScene extends Laya.Scene {
 
         this._angle = new Laya.Sprite();
         this._angle.loadImage(`${alias}angle.png`);
-        this._angle.pivot(0.5, 0);
+        this._angle.pivot(this._angle.width / 2, 0);
         this._angle.pos(375, 358);
         this._angle.visible = false;
         this.addChild(this._angle);
@@ -91,7 +91,7 @@ class PauseScene extends Laya.Scene {
         this._tip._noAllInventory = `${alias}tip_no_all_inventory.png`;
         // @ts-ignore
         this._tip._noTodayInventory = `${alias}tip_no_today_inventory.png`;
-        this._tip.pivot(0.5, 0);
+        this._tip.pivot(this._tip.width / 2, 0);
         this._tip.pos(375, 496);
         this._tip.visible = false;
         this.addChild(this._tip);

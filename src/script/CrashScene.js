@@ -9,7 +9,7 @@ class PrizeBox extends Laya.Sprite {
         this._tv = defaultTexture;
         this._heart = 'other/heart.png';
         this._empty = false;
-        this.pivot(0, 1);
+        this.pivot(0, this.height);
         const that = this;
         this.y = 0;
         this._moveUp = Laya.Tween.to(this, {y: 10}, 80, null, Laya.Handler.create(this, () => {
@@ -33,7 +33,7 @@ class EmptyFart extends Laya.Sprite {
     constructor() {
         super();
         this.loadImage(`other/tvempty.png`);
-        this.pivot(0.5, 1);
+        this.pivot(this.width / 2, this.height);
         this.pos(200, GLOBAL.CONF.PRIZE_POS_Y - 140);
         this._fadeAction = Laya.Tween.to(this, {alpha: 0}, 500, null, Laya.Handler.create(this, () => {
             this.alpha = 1;
@@ -66,7 +66,7 @@ class EnemyBox extends Laya.Animation {
         barrier.autoSize = true;
         barrier.loadImage(textures[0]);
         this.barrierHeight = barrier.height;
-        this.pivot(0, 1);
+        this.pivot(0, this.barrierHeight);
         this._inview = false;
         this._name = item.name;
         if (item.points) {
@@ -91,8 +91,8 @@ class CrashScene extends Laya.Scene {
         const randomItem = this.randomEnemyItem();
         const enemy = new EnemyBox(randomItem);
         enemy.play();
-        enemy.pivot(0, 1);
-        enemy.pos(Laya.stage.width * 3, GLOBAL.CONF.GROUND_POS_Y - enemy.barrierHeight);
+        enemy.pivot(0, enemy.barrierHeight);
+        enemy.pos(Laya.stage.width * 3, GLOBAL.CONF.GROUND_POS_Y);
         this.addChild(enemy);
         this._enemyCache.push(enemy);
 
@@ -125,7 +125,7 @@ class CrashScene extends Laya.Scene {
         const randomItem = this.randomEnemyItem();
         const enemy = new EnemyBox(randomItem);
         enemy.play();
-        enemy.pos(Laya.stage.width + randomInterval, GLOBAL.CONF.GROUND_POS_Y - enemy.barrierHeight);
+        enemy.pos(Laya.stage.width + randomInterval, GLOBAL.CONF.GROUND_POS_Y);
         this._enemyCache.push(enemy);
         this.addChild(enemy);
         this.addRandomPrize(enemy);

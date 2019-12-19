@@ -39,8 +39,8 @@ class BarScene extends Laya.Sprite {
         this.addChild(this._prizeIcon);
         const x = new Laya.Sprite();
         x.loadImage(`num/lg_x.png`);
-        x.pivot(0, 1);
-        x.pos(104, 232);
+        x.pivot(0, x.height);
+        x.pos(104, 242);
         this.addChild(x);
         this.drawNum('_prizeNumCache', GLOBAL.CONF.HIT, 'sm', {
             x: 133,
@@ -55,8 +55,8 @@ class BarScene extends Laya.Sprite {
         this.addChild(this._mileageIcon);
         const m = new Laya.Sprite();
         m.loadImage(`num/sm_m.png`);
-        m.pivot(0, 1);
-        m.pos(485, 232);
+        m.pivot(0, m.height);
+        m.pos(485, 242);
         this.addChild(m);
         this.drawNum('_mileageNumCache', GLOBAL.CONF.MILEAGE, 'sm', {
             x: 467,
@@ -102,7 +102,7 @@ class BarScene extends Laya.Sprite {
                 if (item !== oldArr[index]) {
                     const newSprite = new Laya.Sprite();
                     newSprite.loadImage(`num/sm_${item}.png`);
-                    newSprite.pivot(0.5, 1);
+                    newSprite.pivot(newSprite.width / 2, newSprite.height);
                     newSprite.pos(133 + index * 20, 202);
                     this.addChild(newSprite);
                     const oldSprite = this._prizeNumCache[index];

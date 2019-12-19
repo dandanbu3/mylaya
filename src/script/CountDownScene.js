@@ -32,7 +32,6 @@ class CountDownScene extends Laya.Scene {
             this['_go'].scale(this._initScale, this._initScale);
             // 倒计时结束事件
             this.event('done');
-            console.log('done', 'wanle')
         }));
         this._goAnime.pause();
         this._readyAnime = Laya.Tween.to(this['_ready'], {
