@@ -277,20 +277,20 @@ class MainLayer extends Laya.Scene {
         const girlRect = girl.getBounds();
         const collideRect = rect.getBounds();
         girlRect.x = girl.x + 26;
-        girlRect.y = girl.y;
+        girlRect.y = girl.y - girl.height;
         girlRect.width = girl.width - 40;
         girlRect.height = girl.height;
-        collideRect.width = rect.barrierHeight;
-        collideRect.height = rect.barrierWidth;
+        collideRect.width = rect.barrierWidth;
+        collideRect.height = rect.barrierHeight;
         if (rect._points) {
             const pointLength = rect._points.length;
             let hit = false;
             for (let i = 0; i < pointLength; i++) {
                 const point = rect._points[i];
                 const p = new Laya.Vector2(point.x + collideRect.x, point.y + collideRect.y);
+                console.log(collideRect, rect, 'collideRect');
+                console.log(girlRect, 'girlRect');
                 if (collideRect.x > 0 && this.boxContainsPoint(girlRect, p)) {
-                    console.log(collideRect, rect, 'collideRect');
-                    console.log(girlRect, 'girlRect');
                     hit = true;
                     break;
                 }

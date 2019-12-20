@@ -397,6 +397,7 @@
             preGirl.loadImage(this._preTextures[0]);
             this._preGirlHeight = preGirl.height;
             const dieGirl = new Laya.Sprite();
+            dieGirl.autoSize = true;
             dieGirl.loadImage(this._dieGrayTextures[0]);
             this._dieGirlHeight = dieGirl.height;
 
@@ -408,7 +409,7 @@
             
             // TODO 优化耦合性
             GLOBAL.CONF.PRIZE_POS_Y = GLOBAL.CONF.GROUND_POS_Y - this._girlHeight * (GLOBAL.CONF.GIRL_JUMP_TIMES + 1) + 30;
-            this._jumpHeight = this._jumpGirlHeight * GLOBAL.CONF.GIRL_JUMP_TIMES; // 跳起的高度
+            this._jumpHeight = this._girlHeight * GLOBAL.CONF.GIRL_JUMP_TIMES; // 跳起的高度
             this._jumpSpeed = 400;
             this._jumpDuration = this._jumpSpeed;
             this._fallDuration = this._jumpSpeed;
@@ -2826,20 +2827,20 @@
             const girlRect = girl.getBounds();
             const collideRect = rect.getBounds();
             girlRect.x = girl.x + 26;
-            girlRect.y = girl.y;
+            girlRect.y = girl.y - girl.height;
             girlRect.width = girl.width - 40;
             girlRect.height = girl.height;
-            collideRect.width = rect.barrierHeight;
-            collideRect.height = rect.barrierWidth;
+            collideRect.width = rect.barrierWidth;
+            collideRect.height = rect.barrierHeight;
             if (rect._points) {
                 const pointLength = rect._points.length;
                 let hit = false;
                 for (let i = 0; i < pointLength; i++) {
                     const point = rect._points[i];
                     const p = new Laya.Vector2(point.x + collideRect.x, point.y + collideRect.y);
+                    console.log(collideRect, rect, 'collideRect');
+                    console.log(girlRect, 'girlRect');
                     if (collideRect.x > 0 && this.boxContainsPoint(girlRect, p)) {
-                        console.log(collideRect, rect, 'collideRect');
-                        console.log(girlRect, 'girlRect');
                         hit = true;
                         break;
                     }

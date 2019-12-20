@@ -35,6 +35,7 @@ class Girl extends Laya.Animation {
         preGirl.loadImage(this._preTextures[0]);
         this._preGirlHeight = preGirl.height;
         const dieGirl = new Laya.Sprite();
+        dieGirl.autoSize = true;
         dieGirl.loadImage(this._dieGrayTextures[0]);
         this._dieGirlHeight = dieGirl.height;
 
@@ -46,7 +47,7 @@ class Girl extends Laya.Animation {
         
         // TODO 优化耦合性
         GLOBAL.CONF.PRIZE_POS_Y = GLOBAL.CONF.GROUND_POS_Y - this._girlHeight * (GLOBAL.CONF.GIRL_JUMP_TIMES + 1) + 30;
-        this._jumpHeight = this._jumpGirlHeight * GLOBAL.CONF.GIRL_JUMP_TIMES; // 跳起的高度
+        this._jumpHeight = this._girlHeight * GLOBAL.CONF.GIRL_JUMP_TIMES; // 跳起的高度
         this._jumpSpeed = 400;
         this._jumpDuration = this._jumpSpeed;
         this._fallDuration = this._jumpSpeed;
