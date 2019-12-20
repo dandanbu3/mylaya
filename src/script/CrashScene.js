@@ -10,21 +10,24 @@ class PrizeBox extends Laya.Sprite {
         this._heart = 'other/heart.png';
         this._empty = false;
         this.pivot(0, this.height);
-        const that = this;
         this.y = 0;
-        this._moveUp = Laya.Tween.to(this, {y: 10}, 80, null, Laya.Handler.create(this, () => {
-            this.y = 0;
-        }));
-        this._moveDown = Laya.Tween.to(this, {y: 10}, 80, null, Laya.Handler.create(this, () => {
-            this.y = 10;
-        }), 80);
+        this.barrierHeight = this.height;
+        this.barrierWidth = this.width;
     }
     playAnime () {
-        this._moveUp.resume();
+        this.y = GLOBAL.CONF.PRIZE_POS_Y;
+        this._moveUp = Laya.Tween.to(this, {y: GLOBAL.CONF.PRIZE_POS_Y - 10}, 80, null, Laya.Handler.create(this, () => {
+            this.y = GLOBAL.CONF.PRIZE_POS_Y - this.y;
+            this._moveDown.resume();
+        }));
+        this._moveDown = Laya.Tween.to(this, {y: GLOBAL.CONF.PRIZE_POS_Y}, 80, null, Laya.Handler.create(this, () => {
+            this.y = 10;
+        }), 80);
+        this._moveDown.pause();
     }
     stopAnime () {
-        this._moveUp.pause();
-        this._moveDown.pause();
+        this._moveUp && this._moveUp.pause();
+        this._moveDown && this._moveDown.pause();
     }
 }
 
@@ -32,9 +35,17 @@ class PrizeBox extends Laya.Sprite {
 class EmptyFart extends Laya.Sprite {
     constructor() {
         super();
+        this.autoSize = true;
         this.loadImage(`other/tvempty.png`);
         this.pivot(this.width / 2, this.height);
         this.pos(200, GLOBAL.CONF.PRIZE_POS_Y - 140);
+        this.barrierHeight = this.height;
+        this.barrierWidth = this.width;
+        this.scale(1.5, 1.5);
+        this.visible = false;
+    }
+    playAnime () {
+        this.visible = true;
         this._fadeAction = Laya.Tween.to(this, {alpha: 0}, 500, null, Laya.Handler.create(this, () => {
             this.alpha = 1;
         }));
@@ -43,29 +54,25 @@ class EmptyFart extends Laya.Sprite {
             this.y = GLOBAL.CONF.PRIZE_POS_Y - 140;
             this.visible = false;
         }));
-        this._moveAction.pause();
-        this.scale(1.5, 1.5);
-        this.visible = false;
-    }
-    playAnime () {
-        this.visible = true;
-        this._moveAction.resume();
-        this._fadeAction.resume();
     }
 }
 
 class EnemyBox extends Laya.Animation {
     constructor (item) {
+        super();
         const textures = [];
         for (let i = 0; i < item.frames; i++) {
             textures.push(`barrier/${item.name}_${i}.png`);
         }
-        super();
         this.loadImages(textures);
+        this.on(Laya.Event.COMPLETE, this, () => {
+            console.log(this.getBounds(), 'box');
+        });
         const barrier = new Laya.Sprite();
         barrier.autoSize = true;
         barrier.loadImage(textures[0]);
         this.barrierHeight = barrier.height;
+        this.barrierWidth = barrier.width;
         this.pivot(0, this.barrierHeight);
         this._inview = false;
         this._name = item.name;

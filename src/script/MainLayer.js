@@ -16,7 +16,7 @@ import Util from './utils';
 class MainLayer extends Laya.Scene {
     constructor (who) {
         super();
-        Laya.timer.frameLoop(1, this, this.onUpdate);
+        Laya.timer.loop(17, this, this.onUpdate);
         // Tiny.app.view.style['touch-action'] = 'none';
         // Tiny.app.renderer.plugins.interaction.autoPreventDefault = true;
         this._defaultTickerDuration = 500;
@@ -102,9 +102,9 @@ class MainLayer extends Laya.Scene {
         this._dieAnime.loadImages(this.aniUrls(`${who}/die_`, 18));
         this._dieAnime.interval = 83;
         const girlHeight = new Laya.Sprite();
-        girlHeight.loadImage(`${who}/die_0.png`);
+        girlHeight.autoSize = true;
+        girlHeight.loadImage(`${who}/die_1.png`);
         this._dieAnime.pivot(0, girlHeight.height);
-        console.log(girlHeight.height, 'girlHeight.height');
         if (who === 'girl22') {
             this._dieAnime.pos(32, GLOBAL.CONF.GROUND_POS_Y + 1);
         } else {
@@ -276,13 +276,12 @@ class MainLayer extends Laya.Scene {
     collide (girl, rect) {
         const girlRect = girl.getBounds();
         const collideRect = rect.getBounds();
-        console.log(collideRect, 'collideRect');
-        console.log(girlRect, 'girlRect');
-        console.log(rect._points, 'rect._points');
         girlRect.x = girl.x + 26;
         girlRect.y = girl.y;
-        girlRect.width = girl.width + 40;
+        girlRect.width = girl.width - 40;
         girlRect.height = girl.height;
+        collideRect.width = rect.barrierHeight;
+        collideRect.height = rect.barrierWidth;
         if (rect._points) {
             const pointLength = rect._points.length;
             let hit = false;
@@ -290,7 +289,8 @@ class MainLayer extends Laya.Scene {
                 const point = rect._points[i];
                 const p = new Laya.Vector2(point.x + collideRect.x, point.y + collideRect.y);
                 if (collideRect.x > 0 && this.boxContainsPoint(girlRect, p)) {
-                    console.log(girlRect, p, 'collide');
+                    console.log(collideRect, rect, 'collideRect');
+                    console.log(girlRect, 'girlRect');
                     hit = true;
                     break;
                 }
@@ -298,8 +298,9 @@ class MainLayer extends Laya.Scene {
             return hit;
         } else {
             let hit = collideRect.x > 0 && this.boxContainsBox(girlRect, collideRect);
-            console.log(girlRect, collideRect, 'nopoint', hit);
-            return ;
+            console.log(collideRect, rect, 'collideRect');
+            console.log(girlRect, 'girlRect', 'nopoint');
+            return hit;
         }
     }
     boxContainsPoint(a, b) {
@@ -310,7 +311,7 @@ class MainLayer extends Laya.Scene {
         return false;
     }
     boxContainsBox(a, b) {
-        console.log(this.boxContainsPoint(a, {x: b.x, y: b.y}), this.boxContainsPoint(a, {x: b.x, y: b.y + b.height}), this.boxContainsPoint(a, {x: b.x + b.width, y: b.y}), this.boxContainsPoint(a, {x: b.x + b.width, y: b.y + b.height}));
+        // console.log(this.boxContainsPoint(a, {x: b.x, y: b.y}), this.boxContainsPoint(a, {x: b.x, y: b.y + b.height}), this.boxContainsPoint(a, {x: b.x + b.width, y: b.y}), this.boxContainsPoint(a, {x: b.x + b.width, y: b.y + b.height}));
         return this.boxContainsPoint(a, {x: b.x, y: b.y})
             || this.boxContainsPoint(a, {x: b.x, y: b.y + b.height})
             || this.boxContainsPoint(a, {x: b.x + b.width, y: b.y})
@@ -336,6 +337,7 @@ class MainLayer extends Laya.Scene {
                     enemy.x = enemyPos - speed;
                 }
                 if (!enemy._destroyed && GLOBAL.CONF.GIRL_STAT !== -1 && this.collide(this._girl, enemy)) {
+                    console.log('barrier');
                     GLOBAL.CONF.MODE = GLOBAL.MODES.GAME_OVER;
                     this._girl.beInjured();
                     this._crash.stopAnime();
@@ -352,6 +354,7 @@ class MainLayer extends Laya.Scene {
                     prize.x = (prizePos - speed);
                 }
                 if (!prize.destroyed && this.collide(this._girl, prize)) {
+                    console.log('prize');
                     this._crash.hitPrize(prize, (release) => {
                         if (release) {
                             this._header.releaseOneBox();

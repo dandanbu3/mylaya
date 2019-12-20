@@ -71,9 +71,9 @@ class BarScene extends Laya.Sprite {
         this._pause.mouseEnabled = true;
         this._pause.on(Laya.Event.CLICK, this, (event) => {
             // event.data.originalEvent.preventDefault();
-            // if (GLOBAL.CONF.MODE === GLOBAL.MODES.PLAYING) {
+            if (GLOBAL.CONF.MODE === GLOBAL.MODES.PLAYING) {
                 this.event('pause');
-            // }
+            }
         });
         this.addChild(this._pause);
     }

@@ -382,15 +382,15 @@
             runrun.autoSize = true;
             runrun.loadImage(this._runTextures[0]);
             this._girlHeight = runrun.height;
-            const pre = new Laya.Sprite();
-            pre.autoSize = true;
-            pre.loadImage(this._jumpTextures[0]);
-            this._preHeight = pre.height;
-            console.log(pre.height, 'height');
             const jumpGirl = new Laya.Sprite();
             jumpGirl.autoSize = true;
-            jumpGirl.loadImage(this._fallTextures[0]);
+            jumpGirl.loadImage(this._jumpTextures[0]);
             this._jumpGirlHeight = jumpGirl.height;
+            console.log(jumpGirl.height, 'height');
+            const fallGirl = new Laya.Sprite();
+            fallGirl.autoSize = true;
+            fallGirl.loadImage(this._fallTextures[0]);
+            this._fallGirlHeight = fallGirl.height;
 
             const preGirl = new Laya.Sprite();
             preGirl.autoSize = true;
@@ -402,7 +402,7 @@
 
             this.loadImages(this._preTextures);
             this.interval = 160;
-            this.pivot(0, this._girlHeight);
+            this.pivot(0, this._preGirlHeight);
             this.pos(56, GLOBAL.CONF.GROUND_POS_Y);
             this.play();
             
@@ -412,9 +412,9 @@
             this._jumpSpeed = 400;
             this._jumpDuration = this._jumpSpeed;
             this._fallDuration = this._jumpSpeed;
-            this.createJumpAction();
+            // this.createJumpAction();
             this.createDieAction();
-            Laya.timer.frameLoop(1, this, this.onUpdate);
+            Laya.timer.frameLoop(2, this, this.onUpdate);
         }
         createJumpAction () {
             this._jumpAction = Laya.Tween.to(
@@ -438,7 +438,7 @@
                     this._timer = Date.now();
                     GLOBAL.CONF.GIRL_STAT = 3;
                     this.loadImages(this._fallTextures);
-                    this.pivot(0, this._jumpGirlHeight);
+                    this.pivot(0, this._fallGirlHeight);
                 }));
         }
         changeJumpDuration () { // 调整跳起下落的速度
@@ -497,7 +497,6 @@
             this.loadImages(this._runTextures);
             this.pivot(0, this._girlHeight);
             this.interval = 100;
-            console.log('this', this.y, this.x);
             this.event('run');
         }
         doJump () {
@@ -519,6 +518,7 @@
             Sound.playGameOver();
             this.loadImages([this._runTextures[0]]);
             this.pivot(0, this._girlHeight);
+            this.y = GLOBAL.CONF.GROUND_POS_Y;
             // this.removeActionsTrace();
             Laya.Tween.clearAll(this);
             // this.runAction(Tiny.Repeat(3, this._dieBlink));
@@ -545,7 +545,7 @@
                         this._timer = Date.now();
                         GLOBAL.CONF.GIRL_STAT = 3;
                         this.loadImages(this._fallTextures);
-                        this.pivot(0, this._jumpGirlHeight);
+                        this.pivot(0, this._fallGirlHeight);
                     }));
                 // this.runAction(moveAction);
             } else if (GLOBAL.CONF.GIRL_STAT === 1) {
@@ -558,21 +558,20 @@
                     Laya.Ease.quadOut,
                     Laya.Handler.create(this, () => {
                         GLOBAL.CONF.GIRL_STAT = 2;
-                        this._fallAction.resume();
+                        this.createFallAction();
                     }));
                 // this.runAction(jumpAction);
             }
         }
         onUpdate () {
             if (GLOBAL.CONF.MODE === GLOBAL.MODES.PLAYING && GLOBAL.CONF.GIRL_STAT === 3) {
-                if (Date.now() - this._timer >= 100000 / 6 / this.interval ) {
+                if (Date.now() - this._timer >= 100000 / (6 * this.interval)) {
                     this.event('run');
                     this.loadImages(this._runTextures);
                     this.pivot(0, this._girlHeight);
                     GLOBAL.CONF.GIRL_STAT = 0;
                 }
             }
-            // this.containerUpdateTransform();
         }
     }
 
@@ -580,7 +579,7 @@
     class BackgroundScene extends Laya.Sprite {
         constructor () {
             super();
-            Laya.timer.frameLoop(1, this, this.onUpdate);
+            Laya.timer.loop(17, this, this.onUpdate);
             this._bgCache = [];
             this._cloudCache = [];
             this._mgCache = [];
@@ -1048,9 +1047,9 @@
             this._pause.mouseEnabled = true;
             this._pause.on(Laya.Event.CLICK, this, (event) => {
                 // event.data.originalEvent.preventDefault();
-                // if (GLOBAL.CONF.MODE === GLOBAL.MODES.PLAYING) {
+                if (GLOBAL.CONF.MODE === GLOBAL.MODES.PLAYING) {
                     this.event('pause');
-                // }
+                }
             });
             this.addChild(this._pause);
         }
@@ -1123,19 +1122,23 @@
             this._empty = false;
             this.pivot(0, this.height);
             this.y = 0;
-            this._moveUp = Laya.Tween.to(this, {y: 10}, 80, null, Laya.Handler.create(this, () => {
-                this.y = 0;
-            }));
-            this._moveDown = Laya.Tween.to(this, {y: 10}, 80, null, Laya.Handler.create(this, () => {
-                this.y = 10;
-            }), 80);
+            this.barrierHeight = this.height;
+            this.barrierWidth = this.width;
         }
         playAnime () {
-            this._moveUp.resume();
+            this.y = GLOBAL.CONF.PRIZE_POS_Y;
+            this._moveUp = Laya.Tween.to(this, {y: GLOBAL.CONF.PRIZE_POS_Y - 10}, 80, null, Laya.Handler.create(this, () => {
+                this.y = GLOBAL.CONF.PRIZE_POS_Y - this.y;
+                this._moveDown.resume();
+            }));
+            this._moveDown = Laya.Tween.to(this, {y: GLOBAL.CONF.PRIZE_POS_Y}, 80, null, Laya.Handler.create(this, () => {
+                this.y = 10;
+            }), 80);
+            this._moveDown.pause();
         }
         stopAnime () {
-            this._moveUp.pause();
-            this._moveDown.pause();
+            this._moveUp && this._moveUp.pause();
+            this._moveDown && this._moveDown.pause();
         }
     }
 
@@ -1143,9 +1146,17 @@
     class EmptyFart extends Laya.Sprite {
         constructor() {
             super();
+            this.autoSize = true;
             this.loadImage(`other/tvempty.png`);
             this.pivot(this.width / 2, this.height);
             this.pos(200, GLOBAL.CONF.PRIZE_POS_Y - 140);
+            this.barrierHeight = this.height;
+            this.barrierWidth = this.width;
+            this.scale(1.5, 1.5);
+            this.visible = false;
+        }
+        playAnime () {
+            this.visible = true;
             this._fadeAction = Laya.Tween.to(this, {alpha: 0}, 500, null, Laya.Handler.create(this, () => {
                 this.alpha = 1;
             }));
@@ -1154,29 +1165,25 @@
                 this.y = GLOBAL.CONF.PRIZE_POS_Y - 140;
                 this.visible = false;
             }));
-            this._moveAction.pause();
-            this.scale(1.5, 1.5);
-            this.visible = false;
-        }
-        playAnime () {
-            this.visible = true;
-            this._moveAction.resume();
-            this._fadeAction.resume();
         }
     }
 
     class EnemyBox extends Laya.Animation {
         constructor (item) {
+            super();
             const textures = [];
             for (let i = 0; i < item.frames; i++) {
                 textures.push(`barrier/${item.name}_${i}.png`);
             }
-            super();
             this.loadImages(textures);
+            this.on(Laya.Event.COMPLETE, this, () => {
+                console.log(this.getBounds(), 'box');
+            });
             const barrier = new Laya.Sprite();
             barrier.autoSize = true;
             barrier.loadImage(textures[0]);
             this.barrierHeight = barrier.height;
+            this.barrierWidth = barrier.width;
             this.pivot(0, this.barrierHeight);
             this._inview = false;
             this._name = item.name;
@@ -2001,7 +2008,7 @@
         }
         drawFrame () {
             let logo = new Laya.Animation();
-            logo.loadImages(this.aniUrls('logo/logo_', 26));
+            logo.loadImages(this.aniUrls("logo/logo_", 27));
             logo.interval = 160;
             logo.pivot(0, 0);
             logo.pos(41, 277);
@@ -2558,7 +2565,7 @@
     class MainLayer extends Laya.Scene {
         constructor (who) {
             super();
-            Laya.timer.frameLoop(1, this, this.onUpdate);
+            Laya.timer.loop(17, this, this.onUpdate);
             // Tiny.app.view.style['touch-action'] = 'none';
             // Tiny.app.renderer.plugins.interaction.autoPreventDefault = true;
             this._defaultTickerDuration = 500;
@@ -2644,9 +2651,9 @@
             this._dieAnime.loadImages(this.aniUrls(`${who}/die_`, 18));
             this._dieAnime.interval = 83;
             const girlHeight = new Laya.Sprite();
-            girlHeight.loadImage(`${who}/die_0.png`);
+            girlHeight.autoSize = true;
+            girlHeight.loadImage(`${who}/die_1.png`);
             this._dieAnime.pivot(0, girlHeight.height);
-            console.log(girlHeight.height, 'girlHeight.height');
             if (who === 'girl22') {
                 this._dieAnime.pos(32, GLOBAL.CONF.GROUND_POS_Y + 1);
             } else {
@@ -2818,13 +2825,12 @@
         collide (girl, rect) {
             const girlRect = girl.getBounds();
             const collideRect = rect.getBounds();
-            console.log(collideRect, 'collideRect');
-            console.log(girlRect, 'girlRect');
-            console.log(rect._points, 'rect._points');
             girlRect.x = girl.x + 26;
             girlRect.y = girl.y;
-            girlRect.width = girl.width + 40;
+            girlRect.width = girl.width - 40;
             girlRect.height = girl.height;
+            collideRect.width = rect.barrierHeight;
+            collideRect.height = rect.barrierWidth;
             if (rect._points) {
                 const pointLength = rect._points.length;
                 let hit = false;
@@ -2832,7 +2838,8 @@
                     const point = rect._points[i];
                     const p = new Laya.Vector2(point.x + collideRect.x, point.y + collideRect.y);
                     if (collideRect.x > 0 && this.boxContainsPoint(girlRect, p)) {
-                        console.log(girlRect, p, 'collide');
+                        console.log(collideRect, rect, 'collideRect');
+                        console.log(girlRect, 'girlRect');
                         hit = true;
                         break;
                     }
@@ -2840,8 +2847,9 @@
                 return hit;
             } else {
                 let hit = collideRect.x > 0 && this.boxContainsBox(girlRect, collideRect);
-                console.log(girlRect, collideRect, 'nopoint', hit);
-                return ;
+                console.log(collideRect, rect, 'collideRect');
+                console.log(girlRect, 'girlRect', 'nopoint');
+                return hit;
             }
         }
         boxContainsPoint(a, b) {
@@ -2852,7 +2860,7 @@
             return false;
         }
         boxContainsBox(a, b) {
-            console.log(this.boxContainsPoint(a, {x: b.x, y: b.y}), this.boxContainsPoint(a, {x: b.x, y: b.y + b.height}), this.boxContainsPoint(a, {x: b.x + b.width, y: b.y}), this.boxContainsPoint(a, {x: b.x + b.width, y: b.y + b.height}));
+            // console.log(this.boxContainsPoint(a, {x: b.x, y: b.y}), this.boxContainsPoint(a, {x: b.x, y: b.y + b.height}), this.boxContainsPoint(a, {x: b.x + b.width, y: b.y}), this.boxContainsPoint(a, {x: b.x + b.width, y: b.y + b.height}));
             return this.boxContainsPoint(a, {x: b.x, y: b.y})
                 || this.boxContainsPoint(a, {x: b.x, y: b.y + b.height})
                 || this.boxContainsPoint(a, {x: b.x + b.width, y: b.y})
@@ -2878,6 +2886,7 @@
                         enemy.x = enemyPos - speed;
                     }
                     if (!enemy._destroyed && GLOBAL.CONF.GIRL_STAT !== -1 && this.collide(this._girl, enemy)) {
+                        console.log('barrier');
                         GLOBAL.CONF.MODE = GLOBAL.MODES.GAME_OVER;
                         this._girl.beInjured();
                         this._crash.stopAnime();
@@ -2894,6 +2903,7 @@
                         prize.x = (prizePos - speed);
                     }
                     if (!prize.destroyed && this.collide(this._girl, prize)) {
+                        console.log('prize');
                         this._crash.hitPrize(prize, (release) => {
                             if (release) {
                                 this._header.releaseOneBox();
