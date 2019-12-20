@@ -159,7 +159,7 @@ export default class menuLayer extends Laya.Scene {
     }
     drawFrame () {
         let logo = new Laya.Animation();
-        logo.loadImages(this.aniUrls('logo/logo_', 26));
+        logo.loadImages(this.aniUrls("logo/logo_", 27));
         logo.interval = 160;
         logo.pivot(0, 0);
         logo.pos(41, 277);
