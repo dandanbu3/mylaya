@@ -16,7 +16,7 @@ import Util from './utils';
 class MainLayer extends Laya.Scene {
     constructor (who) {
         super();
-        Laya.timer.loop(17, this, this.onUpdate);
+        Laya.timer.frameLoop(1, this, this.onUpdate);
         // Tiny.app.view.style['touch-action'] = 'none';
         // Tiny.app.renderer.plugins.interaction.autoPreventDefault = true;
         this._defaultTickerDuration = 500;
@@ -60,7 +60,6 @@ class MainLayer extends Laya.Scene {
         // 状态栏
         this._statusBar = new BarScene();
         this._statusBar.on('pause', this, () => {
-            console.log('pause');
             this.gamePause();
             this._pauseDialog.show();
         });
@@ -72,6 +71,7 @@ class MainLayer extends Laya.Scene {
         const dustHeight = new Laya.Sprite();
         dustHeight.loadImage('other/dust_0.png');
         this._dust.pivot(dustHeight.width, dustHeight.height);
+        dustHeight.removeSelf();
         this._dust.pos(120, GLOBAL.CONF.GROUND_POS_Y);
         this._dust.play();
         this._dust.visible = false;
@@ -105,6 +105,7 @@ class MainLayer extends Laya.Scene {
         girlHeight.autoSize = true;
         girlHeight.loadImage(`${who}/die_1.png`);
         this._dieAnime.pivot(0, girlHeight.height);
+        girlHeight.removeSelf();
         if (who === 'girl22') {
             this._dieAnime.pos(32, GLOBAL.CONF.GROUND_POS_Y + 1);
         } else {
@@ -174,7 +175,7 @@ class MainLayer extends Laya.Scene {
             GLOBAL.CONF.MODE = GLOBAL.MODES.MENU;
             if (GLOBAL.DATA.LOTTERY_LIST.length === 0) {
                 this.removeChildren();
-                this.destroy();
+                this.destroy(true);
                 const menuLayer = new MenuLayer();
                 // @ts-ignore
                 Laya.stage.addChild(menuLayer);
@@ -192,7 +193,7 @@ class MainLayer extends Laya.Scene {
         this._gameoverDialog.on('stop', this, () => {
             GLOBAL.CONF.MODE = GLOBAL.MODES.MENU;
             this.removeChildren();
-            this.destroy();
+            this.destroy(true);
             const menuLayer = new MenuLayer();
             // @ts-ignore
             Laya.stage.addChild(menuLayer);
@@ -248,7 +249,6 @@ class MainLayer extends Laya.Scene {
         btnJump.pos(94, 1012);
         btnJump.mouseEnabled = true;
         btnJump.on(Laya.Event.CLICK, this, (event) => {
-            console.log('jump', btnJump._clicked);
             // event.data.originalEvent.preventDefault();
             // @ts-ignore
             if (!btnJump._clicked) {
@@ -274,22 +274,24 @@ class MainLayer extends Laya.Scene {
         this._ticker.clear(this, this.setTimer);
     }
     collide (girl, rect) {
-        const girlRect = girl.getBounds();
-        const collideRect = rect.getBounds();
+        const girlRect = {} // getGraphicBounds();
+        const collideRect = {};// rect.getGraphicBounds();
         girlRect.x = girl.x + 26;
         girlRect.y = girl.y - girl.height;
         girlRect.width = girl.width - 40;
         girlRect.height = girl.height;
         collideRect.width = rect.barrierWidth;
         collideRect.height = rect.barrierHeight;
+        collideRect.x = rect.x;
+        collideRect.y = rect.y - rect.barrierHeight;
         if (rect._points) {
             const pointLength = rect._points.length;
             let hit = false;
             for (let i = 0; i < pointLength; i++) {
                 const point = rect._points[i];
                 const p = new Laya.Vector2(point.x + collideRect.x, point.y + collideRect.y);
-                console.log(collideRect, rect, 'collideRect');
-                console.log(girlRect, 'girlRect');
+                // console.log(collideRect, rect, 'collideRect');
+                // console.log(girlRect, 'girlRect');
                 if (collideRect.x > 0 && this.boxContainsPoint(girlRect, p)) {
                     hit = true;
                     break;
@@ -298,13 +300,13 @@ class MainLayer extends Laya.Scene {
             return hit;
         } else {
             let hit = collideRect.x > 0 && this.boxContainsBox(girlRect, collideRect);
-            console.log(collideRect, rect, 'collideRect');
-            console.log(girlRect, 'girlRect', 'nopoint');
+            // console.log(collideRect, rect, 'collideRect');
+            // console.log(girlRect, 'girlRect', 'nopoint');
             return hit;
         }
     }
     boxContainsPoint(a, b) {
-        console.log((a.x< b.x), (a.x + a.width > b.x), (a.y < b.y), (a.y + a.height > b.y));
+        // console.log((a.x< b.x), (a.x + a.width > b.x), (a.y < b.y), (a.y + a.height > b.y));
         if((a.x< b.x) && (a.x + a.width > b.x) && (a.y < b.y) && (a.y + a.height > b.y)) {
             return true;
         }
@@ -326,7 +328,7 @@ class MainLayer extends Laya.Scene {
             const prizeCache = this._crash._prizeCache;
             enemyCache.forEach(enemy => {
                 const enemyPos = enemy.x;
-                const enemyWidth = enemy.getBounds().width;
+                const enemyWidth = enemy.width;
                 if (!enemy._destroyed && enemyPos <= -enemyWidth * 2) {
                     enemy._destroyed = true;
                     this._crash.removeEnemy();

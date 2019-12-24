@@ -382,24 +382,29 @@
             runrun.autoSize = true;
             runrun.loadImage(this._runTextures[0]);
             this._girlHeight = runrun.height;
+            window.runrun = runrun;
+            runrun.removeSelf();
             const jumpGirl = new Laya.Sprite();
             jumpGirl.autoSize = true;
             jumpGirl.loadImage(this._jumpTextures[0]);
             this._jumpGirlHeight = jumpGirl.height;
-            console.log(jumpGirl.height, 'height');
+            jumpGirl.removeSelf();
             const fallGirl = new Laya.Sprite();
             fallGirl.autoSize = true;
             fallGirl.loadImage(this._fallTextures[0]);
             this._fallGirlHeight = fallGirl.height;
+            fallGirl.removeSelf();
 
             const preGirl = new Laya.Sprite();
             preGirl.autoSize = true;
             preGirl.loadImage(this._preTextures[0]);
             this._preGirlHeight = preGirl.height;
+            preGirl.removeSelf();
             const dieGirl = new Laya.Sprite();
             dieGirl.autoSize = true;
             dieGirl.loadImage(this._dieGrayTextures[0]);
             this._dieGirlHeight = dieGirl.height;
+            dieGirl.removeSelf();
 
             this.loadImages(this._preTextures);
             this.interval = 160;
@@ -414,8 +419,8 @@
             this._jumpDuration = this._jumpSpeed;
             this._fallDuration = this._jumpSpeed;
             // this.createJumpAction();
-            this.createDieAction();
-            Laya.timer.frameLoop(2, this, this.onUpdate);
+            // this.createDieAction();
+            Laya.timer.frameLoop(1, this, this.onUpdate);
         }
         createJumpAction () {
             this._jumpAction = Laya.Tween.to(
@@ -519,10 +524,11 @@
             Sound.playGameOver();
             this.loadImages([this._runTextures[0]]);
             this.pivot(0, this._girlHeight);
-            this.y = GLOBAL.CONF.GROUND_POS_Y;
+            // this.y = GLOBAL.CONF.GROUND_POS_Y;
             // this.removeActionsTrace();
             Laya.Tween.clearAll(this);
             // this.runAction(Tiny.Repeat(3, this._dieBlink));
+            this.createDieAction();
             this._dieBlink.play(3);
             this._dieMoveStart.resume();
         }
@@ -580,7 +586,7 @@
     class BackgroundScene extends Laya.Sprite {
         constructor () {
             super();
-            Laya.timer.loop(17, this, this.onUpdate);
+            Laya.timer.frameLoop(1, this, this.onUpdate);
             this._bgCache = [];
             this._cloudCache = [];
             this._mgCache = [];
@@ -1172,19 +1178,21 @@
     class EnemyBox extends Laya.Animation {
         constructor (item) {
             super();
+            this.autoSize = true;
             const textures = [];
             for (let i = 0; i < item.frames; i++) {
                 textures.push(`barrier/${item.name}_${i}.png`);
             }
             this.loadImages(textures);
             this.on(Laya.Event.COMPLETE, this, () => {
-                console.log(this.getBounds(), 'box');
+                console.log(this.getGraphicBounds(), 'box');
             });
             const barrier = new Laya.Sprite();
             barrier.autoSize = true;
             barrier.loadImage(textures[0]);
             this.barrierHeight = barrier.height;
             this.barrierWidth = barrier.width;
+            barrier.removeSelf();
             this.pivot(0, this.barrierHeight);
             this._inview = false;
             this._name = item.name;
@@ -2566,7 +2574,7 @@
     class MainLayer extends Laya.Scene {
         constructor (who) {
             super();
-            Laya.timer.loop(17, this, this.onUpdate);
+            Laya.timer.frameLoop(1, this, this.onUpdate);
             // Tiny.app.view.style['touch-action'] = 'none';
             // Tiny.app.renderer.plugins.interaction.autoPreventDefault = true;
             this._defaultTickerDuration = 500;
@@ -2610,7 +2618,6 @@
             // 状态栏
             this._statusBar = new BarScene();
             this._statusBar.on('pause', this, () => {
-                console.log('pause');
                 this.gamePause();
                 this._pauseDialog.show();
             });
@@ -2622,6 +2629,7 @@
             const dustHeight = new Laya.Sprite();
             dustHeight.loadImage('other/dust_0.png');
             this._dust.pivot(dustHeight.width, dustHeight.height);
+            dustHeight.removeSelf();
             this._dust.pos(120, GLOBAL.CONF.GROUND_POS_Y);
             this._dust.play();
             this._dust.visible = false;
@@ -2655,6 +2663,7 @@
             girlHeight.autoSize = true;
             girlHeight.loadImage(`${who}/die_1.png`);
             this._dieAnime.pivot(0, girlHeight.height);
+            girlHeight.removeSelf();
             if (who === 'girl22') {
                 this._dieAnime.pos(32, GLOBAL.CONF.GROUND_POS_Y + 1);
             } else {
@@ -2724,7 +2733,7 @@
                 GLOBAL.CONF.MODE = GLOBAL.MODES.MENU;
                 if (GLOBAL.DATA.LOTTERY_LIST.length === 0) {
                     this.removeChildren();
-                    this.destroy();
+                    this.destroy(true);
                     const menuLayer$1 = new menuLayer();
                     // @ts-ignore
                     Laya.stage.addChild(menuLayer$1);
@@ -2742,7 +2751,7 @@
             this._gameoverDialog.on('stop', this, () => {
                 GLOBAL.CONF.MODE = GLOBAL.MODES.MENU;
                 this.removeChildren();
-                this.destroy();
+                this.destroy(true);
                 const menuLayer$1 = new menuLayer();
                 // @ts-ignore
                 Laya.stage.addChild(menuLayer$1);
@@ -2798,7 +2807,6 @@
             btnJump.pos(94, 1012);
             btnJump.mouseEnabled = true;
             btnJump.on(Laya.Event.CLICK, this, (event) => {
-                console.log('jump', btnJump._clicked);
                 // event.data.originalEvent.preventDefault();
                 // @ts-ignore
                 if (!btnJump._clicked) {
@@ -2824,22 +2832,24 @@
             this._ticker.clear(this, this.setTimer);
         }
         collide (girl, rect) {
-            const girlRect = girl.getBounds();
-            const collideRect = rect.getBounds();
+            const girlRect = {}; // getGraphicBounds();
+            const collideRect = {};// rect.getGraphicBounds();
             girlRect.x = girl.x + 26;
             girlRect.y = girl.y - girl.height;
             girlRect.width = girl.width - 40;
             girlRect.height = girl.height;
             collideRect.width = rect.barrierWidth;
             collideRect.height = rect.barrierHeight;
+            collideRect.x = rect.x;
+            collideRect.y = rect.y - rect.barrierHeight;
             if (rect._points) {
                 const pointLength = rect._points.length;
                 let hit = false;
                 for (let i = 0; i < pointLength; i++) {
                     const point = rect._points[i];
                     const p = new Laya.Vector2(point.x + collideRect.x, point.y + collideRect.y);
-                    console.log(collideRect, rect, 'collideRect');
-                    console.log(girlRect, 'girlRect');
+                    // console.log(collideRect, rect, 'collideRect');
+                    // console.log(girlRect, 'girlRect');
                     if (collideRect.x > 0 && this.boxContainsPoint(girlRect, p)) {
                         hit = true;
                         break;
@@ -2848,13 +2858,13 @@
                 return hit;
             } else {
                 let hit = collideRect.x > 0 && this.boxContainsBox(girlRect, collideRect);
-                console.log(collideRect, rect, 'collideRect');
-                console.log(girlRect, 'girlRect', 'nopoint');
+                // console.log(collideRect, rect, 'collideRect');
+                // console.log(girlRect, 'girlRect', 'nopoint');
                 return hit;
             }
         }
         boxContainsPoint(a, b) {
-            console.log((a.x< b.x), (a.x + a.width > b.x), (a.y < b.y), (a.y + a.height > b.y));
+            // console.log((a.x< b.x), (a.x + a.width > b.x), (a.y < b.y), (a.y + a.height > b.y));
             if((a.x< b.x) && (a.x + a.width > b.x) && (a.y < b.y) && (a.y + a.height > b.y)) {
                 return true;
             }
@@ -2876,7 +2886,7 @@
                 const prizeCache = this._crash._prizeCache;
                 enemyCache.forEach(enemy => {
                     const enemyPos = enemy.x;
-                    const enemyWidth = enemy.getBounds().width;
+                    const enemyWidth = enemy.width;
                     if (!enemy._destroyed && enemyPos <= -enemyWidth * 2) {
                         enemy._destroyed = true;
                         this._crash.removeEnemy();
@@ -2963,6 +2973,7 @@
     		Laya.stage.alignV = GameConfig.alignV;
     		Laya.stage.alignH = GameConfig.alignH;
     		Laya.stage.bgColor = GameConfig.bgColor;
+    		Laya.stage.frameRate = 'fast';
     		//兼容微信不支持加载scene后缀场景
     		Laya.URL.exportSceneToJson = GameConfig.exportSceneToJson;
 

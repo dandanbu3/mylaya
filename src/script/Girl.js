@@ -20,24 +20,29 @@ class Girl extends Laya.Animation {
         runrun.autoSize = true;
         runrun.loadImage(this._runTextures[0]);
         this._girlHeight = runrun.height;
+        window.runrun = runrun;
+        runrun.removeSelf();
         const jumpGirl = new Laya.Sprite();
         jumpGirl.autoSize = true;
         jumpGirl.loadImage(this._jumpTextures[0]);
         this._jumpGirlHeight = jumpGirl.height;
-        console.log(jumpGirl.height, 'height');
+        jumpGirl.removeSelf();
         const fallGirl = new Laya.Sprite();
         fallGirl.autoSize = true;
         fallGirl.loadImage(this._fallTextures[0]);
         this._fallGirlHeight = fallGirl.height;
+        fallGirl.removeSelf();
 
         const preGirl = new Laya.Sprite();
         preGirl.autoSize = true;
         preGirl.loadImage(this._preTextures[0]);
         this._preGirlHeight = preGirl.height;
+        preGirl.removeSelf();
         const dieGirl = new Laya.Sprite();
         dieGirl.autoSize = true;
         dieGirl.loadImage(this._dieGrayTextures[0]);
         this._dieGirlHeight = dieGirl.height;
+        dieGirl.removeSelf();
 
         this.loadImages(this._preTextures);
         this.interval = 160;
@@ -52,8 +57,8 @@ class Girl extends Laya.Animation {
         this._jumpDuration = this._jumpSpeed;
         this._fallDuration = this._jumpSpeed;
         // this.createJumpAction();
-        this.createDieAction();
-        Laya.timer.frameLoop(2, this, this.onUpdate);
+        // this.createDieAction();
+        Laya.timer.frameLoop(1, this, this.onUpdate);
     }
     createJumpAction () {
         this._jumpAction = Laya.Tween.to(
@@ -157,10 +162,11 @@ class Girl extends Laya.Animation {
         Sound.playGameOver();
         this.loadImages([this._runTextures[0]]);
         this.pivot(0, this._girlHeight);
-        this.y = GLOBAL.CONF.GROUND_POS_Y;
+        // this.y = GLOBAL.CONF.GROUND_POS_Y;
         // this.removeActionsTrace();
         Laya.Tween.clearAll(this);
         // this.runAction(Tiny.Repeat(3, this._dieBlink));
+        this.createDieAction();
         this._dieBlink.play(3);
         this._dieMoveStart.resume();
     }

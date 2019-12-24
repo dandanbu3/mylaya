@@ -60,19 +60,21 @@ class EmptyFart extends Laya.Sprite {
 class EnemyBox extends Laya.Animation {
     constructor (item) {
         super();
+        this.autoSize = true;
         const textures = [];
         for (let i = 0; i < item.frames; i++) {
             textures.push(`barrier/${item.name}_${i}.png`);
         }
         this.loadImages(textures);
         this.on(Laya.Event.COMPLETE, this, () => {
-            console.log(this.getBounds(), 'box');
+            console.log(this.getGraphicBounds(), 'box');
         });
         const barrier = new Laya.Sprite();
         barrier.autoSize = true;
         barrier.loadImage(textures[0]);
         this.barrierHeight = barrier.height;
         this.barrierWidth = barrier.width;
+        barrier.removeSelf();
         this.pivot(0, this.barrierHeight);
         this._inview = false;
         this._name = item.name;
