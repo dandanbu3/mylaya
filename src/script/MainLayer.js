@@ -306,14 +306,12 @@ class MainLayer extends Laya.Scene {
         }
     }
     boxContainsPoint(a, b) {
-        // console.log((a.x< b.x), (a.x + a.width > b.x), (a.y < b.y), (a.y + a.height > b.y));
         if((a.x< b.x) && (a.x + a.width > b.x) && (a.y < b.y) && (a.y + a.height > b.y)) {
             return true;
         }
         return false;
     }
     boxContainsBox(a, b) {
-        // console.log(this.boxContainsPoint(a, {x: b.x, y: b.y}), this.boxContainsPoint(a, {x: b.x, y: b.y + b.height}), this.boxContainsPoint(a, {x: b.x + b.width, y: b.y}), this.boxContainsPoint(a, {x: b.x + b.width, y: b.y + b.height}));
         return this.boxContainsPoint(a, {x: b.x, y: b.y})
             || this.boxContainsPoint(a, {x: b.x, y: b.y + b.height})
             || this.boxContainsPoint(a, {x: b.x + b.width, y: b.y})
@@ -321,7 +319,6 @@ class MainLayer extends Laya.Scene {
     }
     // OVERWRITE
     onUpdate () {
-        // console.log('this1');
         if (GLOBAL.CONF.MODE === GLOBAL.MODES.PLAYING) {
             const speed = GLOBAL.CONF.SPEED;
             const enemyCache = this._crash._enemyCache;
@@ -329,16 +326,17 @@ class MainLayer extends Laya.Scene {
             enemyCache.forEach(enemy => {
                 const enemyPos = enemy.x;
                 const enemyWidth = enemy.width;
-                if (!enemy._destroyed && enemyPos <= -enemyWidth * 2) {
-                    enemy._destroyed = true;
+                if (!enemy.destroyed && enemyPos <= -enemyWidth * 2) {
+                    enemy.removeSelf();
+                    // enemy.destroy(false);
                     this._crash.removeEnemy();
                 } else if (!enemy._inview && enemyPos < Laya.stage.width) {
                     enemy._inview = true;
                     this._crash.addNext();
-                } else if (!enemy._destroyed) {
+                } else if (!enemy.destroyed) {
                     enemy.x = enemyPos - speed;
                 }
-                if (!enemy._destroyed && GLOBAL.CONF.GIRL_STAT !== -1 && this.collide(this._girl, enemy)) {
+                if (!enemy.destroyed && GLOBAL.CONF.GIRL_STAT !== -1 && this.collide(this._girl, enemy)) {
                     console.log('barrier');
                     GLOBAL.CONF.MODE = GLOBAL.MODES.GAME_OVER;
                     this._girl.beInjured();
@@ -349,11 +347,12 @@ class MainLayer extends Laya.Scene {
             });
             prizeCache.forEach(prize => {
                 const prizePos = prize.x;
-                if (!prize._destroyed && prizePos <= -224) {
-                    prize._destroyed = true;
+                if (!prize.destroyed && prizePos <= -224) {
+                    prize.removeSelf();
+                    // prize.destroy(false);
                     this._crash.removePrize();
-                } else if (!prize._destroyed) {
-                    prize.x = (prizePos - speed);
+                } else if (!prize.destroyed) {
+                    prize.x = prizePos - speed;
                 }
                 if (!prize.destroyed && this.collide(this._girl, prize)) {
                     console.log('prize');

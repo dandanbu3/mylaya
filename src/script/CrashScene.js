@@ -5,6 +5,7 @@ class PrizeBox extends Laya.Sprite {
     constructor () {
         const defaultTexture = 'other/tv.png';
         super();
+        this.autoSize = true;
         this.loadImage(defaultTexture);
         this._tv = defaultTexture;
         this._heart = 'other/heart.png';
@@ -193,7 +194,9 @@ class CrashScene extends Laya.Scene {
         }
     }
     hitPrize (prize, callback) {
-        prize.destroyed = true;
+        prize.removeSelf();
+        console.log(prize.texture);
+        // prize.destroy && prize.destroy(true);
         prize.loadImage(prize._heart);
         prize.playAnime();
         if (prize._empty) {

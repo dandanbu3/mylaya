@@ -74,6 +74,7 @@ class GameOverScene extends Laya.Scene {
                     key: 'restart'
                 });
                 this.visible = false;
+                this.close();
                 this.event('restart');
             }
         });
