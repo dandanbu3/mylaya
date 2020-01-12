@@ -242,6 +242,7 @@ class GameOverScene extends Laya.Scene {
         }
         this._numCache.forEach(item => {
             this._mileage.removeChild(item);
+            console.log(this._mileage.removeChild);
         });
         this._numCache = [];
     }

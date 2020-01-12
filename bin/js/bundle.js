@@ -378,34 +378,37 @@
             this._dieGrayTextures = [`${who}/die_gray.png`];
 
             // 计算动画高度
-            const runrun = new Laya.Sprite();
+            let runrun = new Laya.Sprite();
             runrun.autoSize = true;
             runrun.loadImage(this._runTextures[0]);
             this._girlHeight = runrun.height;
-            window.runrun = runrun;
-            runrun.removeSelf();
+            // window.runrun = runrun;
+            // runrun.removeSelf();
+            runrun.destroy(false);
             const jumpGirl = new Laya.Sprite();
             jumpGirl.autoSize = true;
             jumpGirl.loadImage(this._jumpTextures[0]);
             this._jumpGirlHeight = jumpGirl.height;
-            jumpGirl.removeSelf();
+            jumpGirl.removeSelf(false);
+            jumpGirl.destroy();
             const fallGirl = new Laya.Sprite();
             fallGirl.autoSize = true;
             fallGirl.loadImage(this._fallTextures[0]);
             this._fallGirlHeight = fallGirl.height;
             fallGirl.removeSelf();
-
+            fallGirl.destroy();
             const preGirl = new Laya.Sprite();
             preGirl.autoSize = true;
             preGirl.loadImage(this._preTextures[0]);
             this._preGirlHeight = preGirl.height;
             preGirl.removeSelf();
+            preGirl.destroy();
             const dieGirl = new Laya.Sprite();
             dieGirl.autoSize = true;
             dieGirl.loadImage(this._dieGrayTextures[0]);
             this._dieGirlHeight = dieGirl.height;
             dieGirl.removeSelf();
-
+            dieGirl.destroy();
             this.loadImages(this._preTextures);
             this.interval = 160;
             this.pivot(0, this._preGirlHeight);
@@ -435,6 +438,7 @@
             this._jumpAction.pause();
         }
         createFallAction() {
+            console.log('createFallAction');
             this._fallAction = Laya.Tween.to(
                 this,
                 {x: 56, y: GLOBAL.CONF.GROUND_POS_Y },
@@ -445,6 +449,7 @@
                     GLOBAL.CONF.GIRL_STAT = 3;
                     this.loadImages(this._fallTextures);
                     this.pivot(0, this._fallGirlHeight);
+                    console.log('createFallActionend');
                 }));
         }
         changeJumpDuration () { // 调整跳起下落的速度
@@ -502,7 +507,7 @@
             GLOBAL.CONF.GIRL_STAT = 0;
             this.loadImages(this._runTextures);
             this.pivot(0, this._girlHeight);
-            this.interval = 100;
+            this.interval = 160;
             this.event('run');
         }
         doJump () {
@@ -571,7 +576,9 @@
             }
         }
         onUpdate () {
+            console.log(GLOBAL.CONF.MODE === GLOBAL.MODES.PLAYING, GLOBAL.CONF.GIRL_STAT);
             if (GLOBAL.CONF.MODE === GLOBAL.MODES.PLAYING && GLOBAL.CONF.GIRL_STAT === 3) {
+                console.log(Date.now() - this._timer, 100000 / (6 * this.interval));
                 if (Date.now() - this._timer >= 100000 / (6 * this.interval)) {
                     this.event('run');
                     this.loadImages(this._runTextures);
@@ -1123,6 +1130,7 @@
         constructor () {
             const defaultTexture = 'other/tv.png';
             super();
+            this.autoSize = true;
             this.loadImage(defaultTexture);
             this._tv = defaultTexture;
             this._heart = 'other/heart.png';
@@ -1311,7 +1319,9 @@
             }
         }
         hitPrize (prize, callback) {
-            prize.destroyed = true;
+            prize.removeSelf();
+            console.log(prize.texture);
+            // prize.destroy && prize.destroy(true);
             prize.loadImage(prize._heart);
             prize.playAnime();
             if (prize._empty) {
@@ -2102,13 +2112,14 @@
                             score: GLOBAL.DATA.OPEN_CHANCE,
                             mid: GLOBAL.DATA.MID
                         });
+                        
                         const startLayer = new MainLayer(this._choosen);
                         startLayer.on('transitionend', this, () => {
                             startLayer.startRunAction();
                         });
                         Laya.stage.addChild(startLayer);
-                        this.removeSelf();
                         startLayer.event('transitionend');
+                        this.destroy();
                         GLOBAL.CONF.MODE = GLOBAL.MODES.PRE;
                     } else {
                         window.kfcMario && window.kfcMario.goToLogin && window.kfcMario.goToLogin();
@@ -2399,6 +2410,7 @@
                         key: 'restart'
                     });
                     this.visible = false;
+                    this.close();
                     this.event('restart');
                 }
             });
@@ -2566,6 +2578,7 @@
             }
             this._numCache.forEach(item => {
                 this._mileage.removeChild(item);
+                console.log(this._mileage.removeChild);
             });
             this._numCache = [];
         }
@@ -2630,6 +2643,7 @@
             dustHeight.loadImage('other/dust_0.png');
             this._dust.pivot(dustHeight.width, dustHeight.height);
             dustHeight.removeSelf();
+            dustHeight.destroy();
             this._dust.pos(120, GLOBAL.CONF.GROUND_POS_Y);
             this._dust.play();
             this._dust.visible = false;
@@ -2664,6 +2678,7 @@
             girlHeight.loadImage(`${who}/die_1.png`);
             this._dieAnime.pivot(0, girlHeight.height);
             girlHeight.removeSelf();
+            girlHeight.destroy();
             if (who === 'girl22') {
                 this._dieAnime.pos(32, GLOBAL.CONF.GROUND_POS_Y + 1);
             } else {
@@ -2864,14 +2879,12 @@
             }
         }
         boxContainsPoint(a, b) {
-            // console.log((a.x< b.x), (a.x + a.width > b.x), (a.y < b.y), (a.y + a.height > b.y));
             if((a.x< b.x) && (a.x + a.width > b.x) && (a.y < b.y) && (a.y + a.height > b.y)) {
                 return true;
             }
             return false;
         }
         boxContainsBox(a, b) {
-            // console.log(this.boxContainsPoint(a, {x: b.x, y: b.y}), this.boxContainsPoint(a, {x: b.x, y: b.y + b.height}), this.boxContainsPoint(a, {x: b.x + b.width, y: b.y}), this.boxContainsPoint(a, {x: b.x + b.width, y: b.y + b.height}));
             return this.boxContainsPoint(a, {x: b.x, y: b.y})
                 || this.boxContainsPoint(a, {x: b.x, y: b.y + b.height})
                 || this.boxContainsPoint(a, {x: b.x + b.width, y: b.y})
@@ -2879,7 +2892,6 @@
         }
         // OVERWRITE
         onUpdate () {
-            // console.log('this1');
             if (GLOBAL.CONF.MODE === GLOBAL.MODES.PLAYING) {
                 const speed = GLOBAL.CONF.SPEED;
                 const enemyCache = this._crash._enemyCache;
@@ -2887,16 +2899,17 @@
                 enemyCache.forEach(enemy => {
                     const enemyPos = enemy.x;
                     const enemyWidth = enemy.width;
-                    if (!enemy._destroyed && enemyPos <= -enemyWidth * 2) {
-                        enemy._destroyed = true;
+                    if (!enemy.destroyed && enemyPos <= -enemyWidth * 2) {
+                        enemy.removeSelf();
+                        enemy.destroy();
                         this._crash.removeEnemy();
                     } else if (!enemy._inview && enemyPos < Laya.stage.width) {
                         enemy._inview = true;
                         this._crash.addNext();
-                    } else if (!enemy._destroyed) {
+                    } else if (!enemy.destroyed) {
                         enemy.x = enemyPos - speed;
                     }
-                    if (!enemy._destroyed && GLOBAL.CONF.GIRL_STAT !== -1 && this.collide(this._girl, enemy)) {
+                    if (!enemy.destroyed && GLOBAL.CONF.GIRL_STAT !== -1 && this.collide(this._girl, enemy)) {
                         console.log('barrier');
                         GLOBAL.CONF.MODE = GLOBAL.MODES.GAME_OVER;
                         this._girl.beInjured();
@@ -2907,11 +2920,12 @@
                 });
                 prizeCache.forEach(prize => {
                     const prizePos = prize.x;
-                    if (!prize._destroyed && prizePos <= -224) {
-                        prize._destroyed = true;
+                    if (!prize.destroyed && prizePos <= -224) {
+                        prize.removeSelf();
+                        prize.destroy();
                         this._crash.removePrize();
-                    } else if (!prize._destroyed) {
-                        prize.x = (prizePos - speed);
+                    } else if (!prize.destroyed) {
+                        prize.x = prizePos - speed;
                     }
                     if (!prize.destroyed && this.collide(this._girl, prize)) {
                         console.log('prize');
@@ -2973,7 +2987,6 @@
     		Laya.stage.alignV = GameConfig.alignV;
     		Laya.stage.alignH = GameConfig.alignH;
     		Laya.stage.bgColor = GameConfig.bgColor;
-    		Laya.stage.frameRate = 'fast';
     		//兼容微信不支持加载scene后缀场景
     		Laya.URL.exportSceneToJson = GameConfig.exportSceneToJson;
 

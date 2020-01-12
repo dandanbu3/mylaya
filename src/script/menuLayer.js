@@ -244,13 +244,14 @@ export default class menuLayer extends Laya.Scene {
                         score: GLOBAL.DATA.OPEN_CHANCE,
                         mid: GLOBAL.DATA.MID
                     });
+                    
                     const startLayer = new MainLayer(this._choosen);
                     startLayer.on('transitionend', this, () => {
                         startLayer.startRunAction();
                     });
                     Laya.stage.addChild(startLayer);
-                    this.removeSelf();
                     startLayer.event('transitionend');
+                    this.destroy();
                     GLOBAL.CONF.MODE = GLOBAL.MODES.PRE;
                 } else {
                     window.kfcMario && window.kfcMario.goToLogin && window.kfcMario.goToLogin();

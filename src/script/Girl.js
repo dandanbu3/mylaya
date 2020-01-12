@@ -16,34 +16,37 @@ class Girl extends Laya.Animation {
         this._dieGrayTextures = [`${who}/die_gray.png`];
 
         // 计算动画高度
-        const runrun = new Laya.Sprite();
+        let runrun = new Laya.Sprite();
         runrun.autoSize = true;
         runrun.loadImage(this._runTextures[0]);
         this._girlHeight = runrun.height;
-        window.runrun = runrun;
-        runrun.removeSelf();
+        // window.runrun = runrun;
+        // runrun.removeSelf();
+        runrun.destroy(false);
         const jumpGirl = new Laya.Sprite();
         jumpGirl.autoSize = true;
         jumpGirl.loadImage(this._jumpTextures[0]);
         this._jumpGirlHeight = jumpGirl.height;
-        jumpGirl.removeSelf();
+        jumpGirl.removeSelf(false);
+        jumpGirl.destroy();
         const fallGirl = new Laya.Sprite();
         fallGirl.autoSize = true;
         fallGirl.loadImage(this._fallTextures[0]);
         this._fallGirlHeight = fallGirl.height;
         fallGirl.removeSelf();
-
+        fallGirl.destroy();
         const preGirl = new Laya.Sprite();
         preGirl.autoSize = true;
         preGirl.loadImage(this._preTextures[0]);
         this._preGirlHeight = preGirl.height;
         preGirl.removeSelf();
+        preGirl.destroy();
         const dieGirl = new Laya.Sprite();
         dieGirl.autoSize = true;
         dieGirl.loadImage(this._dieGrayTextures[0]);
         this._dieGirlHeight = dieGirl.height;
         dieGirl.removeSelf();
-
+        dieGirl.destroy();
         this.loadImages(this._preTextures);
         this.interval = 160;
         this.pivot(0, this._preGirlHeight);
@@ -73,6 +76,7 @@ class Girl extends Laya.Animation {
         this._jumpAction.pause();
     }
     createFallAction() {
+        console.log('createFallAction');
         this._fallAction = Laya.Tween.to(
             this,
             {x: 56, y: GLOBAL.CONF.GROUND_POS_Y },
@@ -83,6 +87,7 @@ class Girl extends Laya.Animation {
                 GLOBAL.CONF.GIRL_STAT = 3;
                 this.loadImages(this._fallTextures);
                 this.pivot(0, this._fallGirlHeight);
+                console.log('createFallActionend')
             }));
     }
     changeJumpDuration () { // 调整跳起下落的速度
@@ -140,7 +145,7 @@ class Girl extends Laya.Animation {
         GLOBAL.CONF.GIRL_STAT = 0;
         this.loadImages(this._runTextures);
         this.pivot(0, this._girlHeight);
-        this.interval = 100;
+        this.interval = 160;
         this.event('run');
     }
     doJump () {
@@ -209,7 +214,9 @@ class Girl extends Laya.Animation {
         }
     }
     onUpdate () {
+        console.log(GLOBAL.CONF.MODE === GLOBAL.MODES.PLAYING, GLOBAL.CONF.GIRL_STAT);
         if (GLOBAL.CONF.MODE === GLOBAL.MODES.PLAYING && GLOBAL.CONF.GIRL_STAT === 3) {
+            console.log(Date.now() - this._timer, 100000 / (6 * this.interval));
             if (Date.now() - this._timer >= 100000 / (6 * this.interval)) {
                 this.event('run');
                 this.loadImages(this._runTextures);

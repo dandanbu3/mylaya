@@ -72,6 +72,7 @@ class MainLayer extends Laya.Scene {
         dustHeight.loadImage('other/dust_0.png');
         this._dust.pivot(dustHeight.width, dustHeight.height);
         dustHeight.removeSelf();
+        dustHeight.destroy();
         this._dust.pos(120, GLOBAL.CONF.GROUND_POS_Y);
         this._dust.play();
         this._dust.visible = false;
@@ -106,6 +107,7 @@ class MainLayer extends Laya.Scene {
         girlHeight.loadImage(`${who}/die_1.png`);
         this._dieAnime.pivot(0, girlHeight.height);
         girlHeight.removeSelf();
+        girlHeight.destroy();
         if (who === 'girl22') {
             this._dieAnime.pos(32, GLOBAL.CONF.GROUND_POS_Y + 1);
         } else {
@@ -328,7 +330,7 @@ class MainLayer extends Laya.Scene {
                 const enemyWidth = enemy.width;
                 if (!enemy.destroyed && enemyPos <= -enemyWidth * 2) {
                     enemy.removeSelf();
-                    // enemy.destroy(false);
+                    enemy.destroy();
                     this._crash.removeEnemy();
                 } else if (!enemy._inview && enemyPos < Laya.stage.width) {
                     enemy._inview = true;
@@ -349,7 +351,7 @@ class MainLayer extends Laya.Scene {
                 const prizePos = prize.x;
                 if (!prize.destroyed && prizePos <= -224) {
                     prize.removeSelf();
-                    // prize.destroy(false);
+                    prize.destroy();
                     this._crash.removePrize();
                 } else if (!prize.destroyed) {
                     prize.x = prizePos - speed;
