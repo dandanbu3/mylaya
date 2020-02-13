@@ -21,14 +21,14 @@ export default class GameConfig {
 GameConfig.width = 750;
 GameConfig.height = 1144;
 GameConfig.bgColor = "#5a7b9a";
-GameConfig.scaleMode ="fixedwidth";
+GameConfig.scaleMode ="showall";
 GameConfig.screenMode = "none";
 GameConfig.alignV = "top";
 GameConfig.alignH = "left";
 // GameConfig.startScene = "test/TestScene.scene";
-GameConfig.sceneRoot = "";
-GameConfig.debug = true;
-GameConfig.stat = false;
+GameConfig.sceneRotrue
+GameConfig.debug = false;
+GameConfig.stat = true;
 GameConfig.physicsDebug = false;
 GameConfig.exportSceneToJson = true;
 

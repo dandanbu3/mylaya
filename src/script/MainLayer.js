@@ -106,6 +106,7 @@ class MainLayer extends Laya.Scene {
         girlHeight.autoSize = true;
         girlHeight.loadImage(`${who}/die_1.png`);
         this._dieAnime.pivot(0, girlHeight.height);
+        girlHeight.texture = null;
         girlHeight.removeSelf();
         girlHeight.destroy();
         if (who === 'girl22') {
@@ -329,6 +330,7 @@ class MainLayer extends Laya.Scene {
                 const enemyPos = enemy.x;
                 const enemyWidth = enemy.width;
                 if (!enemy.destroyed && enemyPos <= -enemyWidth * 2) {
+                    enemy.texture = null;
                     enemy.removeSelf();
                     enemy.destroy();
                     this._crash.removeEnemy();
@@ -350,6 +352,7 @@ class MainLayer extends Laya.Scene {
             prizeCache.forEach(prize => {
                 const prizePos = prize.x;
                 if (!prize.destroyed && prizePos <= -224) {
+                    prize.texture = null;
                     prize.removeSelf();
                     prize.destroy();
                     this._crash.removePrize();

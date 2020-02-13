@@ -378,37 +378,42 @@
             this._dieGrayTextures = [`${who}/die_gray.png`];
 
             // 计算动画高度
-            let runrun = new Laya.Sprite();
+            var runrun = new Laya.Sprite();
             runrun.autoSize = true;
             runrun.loadImage(this._runTextures[0]);
             this._girlHeight = runrun.height;
             // window.runrun = runrun;
             // runrun.removeSelf();
-            runrun.destroy(false);
+            runrun.texture = null;
+            // runrun.destroy(false);
             const jumpGirl = new Laya.Sprite();
             jumpGirl.autoSize = true;
             jumpGirl.loadImage(this._jumpTextures[0]);
             this._jumpGirlHeight = jumpGirl.height;
             jumpGirl.removeSelf(false);
-            jumpGirl.destroy();
+            jumpGirl.texture = null;
+            // jumpGirl.destroy();
             const fallGirl = new Laya.Sprite();
             fallGirl.autoSize = true;
             fallGirl.loadImage(this._fallTextures[0]);
             this._fallGirlHeight = fallGirl.height;
+            fallGirl.texture = null;
             fallGirl.removeSelf();
-            fallGirl.destroy();
+            // fallGirl.destroy();
             const preGirl = new Laya.Sprite();
             preGirl.autoSize = true;
             preGirl.loadImage(this._preTextures[0]);
             this._preGirlHeight = preGirl.height;
+            preGirl.texture = null;
             preGirl.removeSelf();
-            preGirl.destroy();
+            // preGirl.destroy();
             const dieGirl = new Laya.Sprite();
             dieGirl.autoSize = true;
             dieGirl.loadImage(this._dieGrayTextures[0]);
             this._dieGirlHeight = dieGirl.height;
+            dieGirl.texture = null;
             dieGirl.removeSelf();
-            dieGirl.destroy();
+            // dieGirl.destroy();
             this.loadImages(this._preTextures);
             this.interval = 160;
             this.pivot(0, this._preGirlHeight);
@@ -576,9 +581,9 @@
             }
         }
         onUpdate () {
-            console.log(GLOBAL.CONF.MODE === GLOBAL.MODES.PLAYING, GLOBAL.CONF.GIRL_STAT);
+            // console.log(GLOBAL.CONF.MODE === GLOBAL.MODES.PLAYING, GLOBAL.CONF.GIRL_STAT);
             if (GLOBAL.CONF.MODE === GLOBAL.MODES.PLAYING && GLOBAL.CONF.GIRL_STAT === 3) {
-                console.log(Date.now() - this._timer, 100000 / (6 * this.interval));
+               /// console.log(Date.now() - this._timer, 100000 / (6 * this.interval));
                 if (Date.now() - this._timer >= 100000 / (6 * this.interval)) {
                     this.event('run');
                     this.loadImages(this._runTextures);
@@ -2119,7 +2124,9 @@
                         });
                         Laya.stage.addChild(startLayer);
                         startLayer.event('transitionend');
-                        this.destroy();
+                        this.close();
+                        this.removeSelf();
+                        // this.destroy();
                         GLOBAL.CONF.MODE = GLOBAL.MODES.PRE;
                     } else {
                         window.kfcMario && window.kfcMario.goToLogin && window.kfcMario.goToLogin();
@@ -2677,6 +2684,7 @@
             girlHeight.autoSize = true;
             girlHeight.loadImage(`${who}/die_1.png`);
             this._dieAnime.pivot(0, girlHeight.height);
+            girlHeight.texture = null;
             girlHeight.removeSelf();
             girlHeight.destroy();
             if (who === 'girl22') {
@@ -2885,10 +2893,11 @@
             return false;
         }
         boxContainsBox(a, b) {
-            return this.boxContainsPoint(a, {x: b.x, y: b.y})
-                || this.boxContainsPoint(a, {x: b.x, y: b.y + b.height})
-                || this.boxContainsPoint(a, {x: b.x + b.width, y: b.y})
-                || this.boxContainsPoint(a, {x: b.x + b.width, y: b.y + b.height});
+            return false;
+            // return this.boxContainsPoint(a, {x: b.x, y: b.y})
+            //     || this.boxContainsPoint(a, {x: b.x, y: b.y + b.height})
+            //     || this.boxContainsPoint(a, {x: b.x + b.width, y: b.y})
+            //     || this.boxContainsPoint(a, {x: b.x + b.width, y: b.y + b.height});
         }
         // OVERWRITE
         onUpdate () {
@@ -2900,6 +2909,7 @@
                     const enemyPos = enemy.x;
                     const enemyWidth = enemy.width;
                     if (!enemy.destroyed && enemyPos <= -enemyWidth * 2) {
+                        enemy.texture = null;
                         enemy.removeSelf();
                         enemy.destroy();
                         this._crash.removeEnemy();
@@ -2921,6 +2931,7 @@
                 prizeCache.forEach(prize => {
                     const prizePos = prize.x;
                     if (!prize.destroyed && prizePos <= -224) {
+                        prize.texture = null;
                         prize.removeSelf();
                         prize.destroy();
                         this._crash.removePrize();
@@ -2962,14 +2973,12 @@
     GameConfig.width = 750;
     GameConfig.height = 1144;
     GameConfig.bgColor = "#5a7b9a";
-    GameConfig.scaleMode ="fixedwidth";
+    GameConfig.scaleMode ="showall";
     GameConfig.screenMode = "none";
     GameConfig.alignV = "top";
     GameConfig.alignH = "left";
-    // GameConfig.startScene = "test/TestScene.scene";
-    GameConfig.sceneRoot = "";
-    GameConfig.debug = true;
-    GameConfig.stat = false;
+    GameConfig.debug = false;
+    GameConfig.stat = true;
     GameConfig.physicsDebug = false;
     GameConfig.exportSceneToJson = true;
 

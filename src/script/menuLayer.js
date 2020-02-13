@@ -251,7 +251,9 @@ export default class menuLayer extends Laya.Scene {
                     });
                     Laya.stage.addChild(startLayer);
                     startLayer.event('transitionend');
-                    this.destroy();
+                    this.close();
+                    this.removeSelf();
+                    // this.destroy();
                     GLOBAL.CONF.MODE = GLOBAL.MODES.PRE;
                 } else {
                     window.kfcMario && window.kfcMario.goToLogin && window.kfcMario.goToLogin();
