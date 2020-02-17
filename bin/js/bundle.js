@@ -2650,7 +2650,7 @@
             dustHeight.loadImage('other/dust_0.png');
             this._dust.pivot(dustHeight.width, dustHeight.height);
             dustHeight.removeSelf();
-            dustHeight.destroy();
+            // dustHeight.destroy();
             this._dust.pos(120, GLOBAL.CONF.GROUND_POS_Y);
             this._dust.play();
             this._dust.visible = false;
@@ -2686,7 +2686,7 @@
             this._dieAnime.pivot(0, girlHeight.height);
             girlHeight.texture = null;
             girlHeight.removeSelf();
-            girlHeight.destroy();
+            // girlHeight.destroy();
             if (who === 'girl22') {
                 this._dieAnime.pos(32, GLOBAL.CONF.GROUND_POS_Y + 1);
             } else {
@@ -2756,7 +2756,8 @@
                 GLOBAL.CONF.MODE = GLOBAL.MODES.MENU;
                 if (GLOBAL.DATA.LOTTERY_LIST.length === 0) {
                     this.removeChildren();
-                    this.destroy(true);
+                    this.removeSelf();
+                    // this.destroy(true);
                     const menuLayer$1 = new menuLayer();
                     // @ts-ignore
                     Laya.stage.addChild(menuLayer$1);
@@ -2774,7 +2775,8 @@
             this._gameoverDialog.on('stop', this, () => {
                 GLOBAL.CONF.MODE = GLOBAL.MODES.MENU;
                 this.removeChildren();
-                this.destroy(true);
+                this.removeSelf();
+                // this.destroy(true);
                 const menuLayer$1 = new menuLayer();
                 // @ts-ignore
                 Laya.stage.addChild(menuLayer$1);
@@ -2871,8 +2873,6 @@
                 for (let i = 0; i < pointLength; i++) {
                     const point = rect._points[i];
                     const p = new Laya.Vector2(point.x + collideRect.x, point.y + collideRect.y);
-                    // console.log(collideRect, rect, 'collideRect');
-                    // console.log(girlRect, 'girlRect');
                     if (collideRect.x > 0 && this.boxContainsPoint(girlRect, p)) {
                         hit = true;
                         break;
@@ -2881,8 +2881,6 @@
                 return hit;
             } else {
                 let hit = collideRect.x > 0 && this.boxContainsBox(girlRect, collideRect);
-                // console.log(collideRect, rect, 'collideRect');
-                // console.log(girlRect, 'girlRect', 'nopoint');
                 return hit;
             }
         }
@@ -2893,11 +2891,10 @@
             return false;
         }
         boxContainsBox(a, b) {
-            return false;
-            // return this.boxContainsPoint(a, {x: b.x, y: b.y})
-            //     || this.boxContainsPoint(a, {x: b.x, y: b.y + b.height})
-            //     || this.boxContainsPoint(a, {x: b.x + b.width, y: b.y})
-            //     || this.boxContainsPoint(a, {x: b.x + b.width, y: b.y + b.height});
+            return this.boxContainsPoint(a, {x: b.x, y: b.y})
+                || this.boxContainsPoint(a, {x: b.x, y: b.y + b.height})
+                || this.boxContainsPoint(a, {x: b.x + b.width, y: b.y})
+                || this.boxContainsPoint(a, {x: b.x + b.width, y: b.y + b.height});
         }
         // OVERWRITE
         onUpdate () {
@@ -2911,7 +2908,7 @@
                     if (!enemy.destroyed && enemyPos <= -enemyWidth * 2) {
                         enemy.texture = null;
                         enemy.removeSelf();
-                        enemy.destroy();
+                        enemy.destroy(true);
                         this._crash.removeEnemy();
                     } else if (!enemy._inview && enemyPos < Laya.stage.width) {
                         enemy._inview = true;
@@ -2920,7 +2917,6 @@
                         enemy.x = enemyPos - speed;
                     }
                     if (!enemy.destroyed && GLOBAL.CONF.GIRL_STAT !== -1 && this.collide(this._girl, enemy)) {
-                        console.log('barrier');
                         GLOBAL.CONF.MODE = GLOBAL.MODES.GAME_OVER;
                         this._girl.beInjured();
                         this._crash.stopAnime();
@@ -2933,13 +2929,12 @@
                     if (!prize.destroyed && prizePos <= -224) {
                         prize.texture = null;
                         prize.removeSelf();
-                        prize.destroy();
+                        prize.destroy(true);
                         this._crash.removePrize();
                     } else if (!prize.destroyed) {
                         prize.x = prizePos - speed;
                     }
                     if (!prize.destroyed && this.collide(this._girl, prize)) {
-                        console.log('prize');
                         this._crash.hitPrize(prize, (release) => {
                             if (release) {
                                 this._header.releaseOneBox();
@@ -2977,7 +2972,7 @@
     GameConfig.screenMode = "none";
     GameConfig.alignV = "top";
     GameConfig.alignH = "left";
-    GameConfig.debug = false;
+    GameConfig.debug = true;
     GameConfig.stat = true;
     GameConfig.physicsDebug = false;
     GameConfig.exportSceneToJson = true;

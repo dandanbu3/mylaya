@@ -73,7 +73,6 @@ class GameOverScene extends Laya.Scene {
                 window.kfcMario && window.kfcMario.logger && window.kfcMario.logger('click', {
                     key: 'restart'
                 });
-                this.visible = false;
                 this.close();
                 this.event('restart');
             }
@@ -242,7 +241,6 @@ class GameOverScene extends Laya.Scene {
         }
         this._numCache.forEach(item => {
             this._mileage.removeChild(item);
-            console.log(this._mileage.removeChild);
         });
         this._numCache = [];
     }

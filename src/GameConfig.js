@@ -27,7 +27,7 @@ GameConfig.alignV = "top";
 GameConfig.alignH = "left";
 // GameConfig.startScene = "test/TestScene.scene";
 GameConfig.sceneRotrue
-GameConfig.debug = false;
+GameConfig.debug = true;
 GameConfig.stat = true;
 GameConfig.physicsDebug = false;
 GameConfig.exportSceneToJson = true;
