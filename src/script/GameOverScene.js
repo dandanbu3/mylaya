@@ -57,6 +57,7 @@ class GameOverScene extends Laya.Scene {
             // event.data.originalEvent.preventDefault();
             if (!GLOBAL.CONF.PREVENT) {
                 this.close();
+                // this.removeSelf();
                 this.event('stop');
             }
         });

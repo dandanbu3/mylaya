@@ -251,7 +251,7 @@ export default class menuLayer extends Laya.Scene {
                     });
                     Laya.stage.addChild(startLayer);
                     startLayer.event('transitionend');
-                    this.close();
+                    // this.close();
                     this.removeSelf();
                     // this.destroy();
                     GLOBAL.CONF.MODE = GLOBAL.MODES.PRE;

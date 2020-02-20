@@ -50,6 +50,7 @@ class MainLayer extends Laya.Scene {
         }
     }
     init (who) {
+        console.log('initstart');
         // 背景
         if (GLOBAL.CONF.DEGRADE) {
             this._background = new BackgroundDegrade();
@@ -196,7 +197,7 @@ class MainLayer extends Laya.Scene {
         });
         this._gameoverDialog.on('stop', this, () => {
             GLOBAL.CONF.MODE = GLOBAL.MODES.MENU;
-            this.removeChildren();
+            // this.removeChildren();
             this.removeSelf();
             // this.destroy(true);
             const menuLayer = new MenuLayer();
@@ -219,6 +220,7 @@ class MainLayer extends Laya.Scene {
             GLOBAL.CONF.MODE = GLOBAL.MODES.GAME_OVER;
             this._gameoverDialog.show(info);
         };
+        console.log('initend');
     }
     aniUrls(name, num) {
         var urls = [];
@@ -265,9 +267,9 @@ class MainLayer extends Laya.Scene {
                     delete this._hand;
                 }
             }
-            // if (GLOBAL.CONF.MODE === GLOBAL.MODES.PLAYING) {
+            if (GLOBAL.CONF.MODE === GLOBAL.MODES.PLAYING) {
                 this._girl.doJump();
-            // }
+            }
         });
         return btnJump;
     }

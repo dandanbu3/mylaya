@@ -2124,7 +2124,7 @@
                         });
                         Laya.stage.addChild(startLayer);
                         startLayer.event('transitionend');
-                        this.close();
+                        // this.close();
                         this.removeSelf();
                         // this.destroy();
                         GLOBAL.CONF.MODE = GLOBAL.MODES.PRE;
@@ -2400,6 +2400,7 @@
                 // event.data.originalEvent.preventDefault();
                 if (!GLOBAL.CONF.PREVENT) {
                     this.close();
+                    // this.removeSelf();
                     this.event('stop');
                 }
             });
@@ -2416,7 +2417,6 @@
                     window.kfcMario && window.kfcMario.logger && window.kfcMario.logger('click', {
                         key: 'restart'
                     });
-                    this.visible = false;
                     this.close();
                     this.event('restart');
                 }
@@ -2585,7 +2585,6 @@
             }
             this._numCache.forEach(item => {
                 this._mileage.removeChild(item);
-                console.log(this._mileage.removeChild);
             });
             this._numCache = [];
         }
@@ -2628,6 +2627,7 @@
             }
         }
         init (who) {
+            console.log('initstart');
             // 背景
             if (GLOBAL.CONF.DEGRADE) {
                 this._background = new BackgroundDegrade();
@@ -2774,7 +2774,7 @@
             });
             this._gameoverDialog.on('stop', this, () => {
                 GLOBAL.CONF.MODE = GLOBAL.MODES.MENU;
-                this.removeChildren();
+                // this.removeChildren();
                 this.removeSelf();
                 // this.destroy(true);
                 const menuLayer$1 = new menuLayer();
@@ -2797,6 +2797,7 @@
                 GLOBAL.CONF.MODE = GLOBAL.MODES.GAME_OVER;
                 this._gameoverDialog.show(info);
             };
+            console.log('initend');
         }
         aniUrls(name, num) {
             var urls = [];
@@ -2843,9 +2844,9 @@
                         delete this._hand;
                     }
                 }
-                // if (GLOBAL.CONF.MODE === GLOBAL.MODES.PLAYING) {
+                if (GLOBAL.CONF.MODE === GLOBAL.MODES.PLAYING) {
                     this._girl.doJump();
-                // }
+                }
             });
             return btnJump;
         }
