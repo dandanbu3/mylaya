@@ -72,8 +72,8 @@ class MainLayer extends Laya.Scene {
         const dustHeight = new Laya.Sprite();
         dustHeight.loadImage('other/dust_0.png');
         this._dust.pivot(dustHeight.width, dustHeight.height);
+        dustHeight.texture = null;
         dustHeight.removeSelf();
-        // dustHeight.destroy();
         this._dust.pos(120, GLOBAL.CONF.GROUND_POS_Y);
         this._dust.play();
         this._dust.visible = false;
@@ -109,7 +109,6 @@ class MainLayer extends Laya.Scene {
         this._dieAnime.pivot(0, girlHeight.height);
         girlHeight.texture = null;
         girlHeight.removeSelf();
-        // girlHeight.destroy();
         if (who === 'girl22') {
             this._dieAnime.pos(32, GLOBAL.CONF.GROUND_POS_Y + 1);
         } else {
@@ -199,6 +198,11 @@ class MainLayer extends Laya.Scene {
             GLOBAL.CONF.MODE = GLOBAL.MODES.MENU;
             // this.removeChildren();
             this.removeSelf();
+            this._crash.removeSelf();
+            this._ticker.clearAll(this);
+            this._ticker.clearAll(this._crash);
+            this._ticker.clearAll(this._girl);
+            this._ticker.clearAll(this._background);
             // this.destroy(true);
             const menuLayer = new MenuLayer();
             // @ts-ignore
@@ -217,6 +221,7 @@ class MainLayer extends Laya.Scene {
         };
         window.kfcMario.gameOver = info => {
             this.gamePause();
+            console.log('come here1');
             GLOBAL.CONF.MODE = GLOBAL.MODES.GAME_OVER;
             this._gameoverDialog.show(info);
         };
@@ -238,6 +243,7 @@ class MainLayer extends Laya.Scene {
         GLOBAL.CONF.MILEAGE = 0;
         this._girl.changeJumpDuration();
         this._crash.init();
+        console.log(this._crash._enemyCache, 'enemy');
         this._header.reset();
         this._statusBar.reset();
         this._girl.readyStart();
@@ -258,6 +264,7 @@ class MainLayer extends Laya.Scene {
         btnJump.on(Laya.Event.CLICK, this, (event) => {
             // event.data.originalEvent.preventDefault();
             // @ts-ignore
+            console.log('btn-click', GLOBAL.CONF.MODE, GLOBAL.MODES.PLAYING);
             if (!btnJump._clicked) {
                 // @ts-ignore
                 btnJump._clicked = true;
@@ -326,6 +333,7 @@ class MainLayer extends Laya.Scene {
             const speed = GLOBAL.CONF.SPEED;
             const enemyCache = this._crash._enemyCache;
             const prizeCache = this._crash._prizeCache;
+            console.log(this._crash._enemyCache, 'enemyCache');
             enemyCache.forEach(enemy => {
                 const enemyPos = enemy.x;
                 const enemyWidth = enemy.width;
@@ -341,6 +349,7 @@ class MainLayer extends Laya.Scene {
                     enemy.x = enemyPos - speed;
                 }
                 if (!enemy.destroyed && GLOBAL.CONF.GIRL_STAT !== -1 && this.collide(this._girl, enemy)) {
+                    console.log('come here2');
                     GLOBAL.CONF.MODE = GLOBAL.MODES.GAME_OVER;
                     this._girl.beInjured();
                     this._crash.stopAnime();

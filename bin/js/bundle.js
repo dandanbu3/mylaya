@@ -382,38 +382,33 @@
             runrun.autoSize = true;
             runrun.loadImage(this._runTextures[0]);
             this._girlHeight = runrun.height;
-            // window.runrun = runrun;
-            // runrun.removeSelf();
             runrun.texture = null;
-            // runrun.destroy(false);
+            runrun.removeSelf();
             const jumpGirl = new Laya.Sprite();
             jumpGirl.autoSize = true;
             jumpGirl.loadImage(this._jumpTextures[0]);
             this._jumpGirlHeight = jumpGirl.height;
             jumpGirl.removeSelf(false);
             jumpGirl.texture = null;
-            // jumpGirl.destroy();
+            jumpGirl.removeSelf();
             const fallGirl = new Laya.Sprite();
             fallGirl.autoSize = true;
             fallGirl.loadImage(this._fallTextures[0]);
             this._fallGirlHeight = fallGirl.height;
             fallGirl.texture = null;
             fallGirl.removeSelf();
-            // fallGirl.destroy();
             const preGirl = new Laya.Sprite();
             preGirl.autoSize = true;
             preGirl.loadImage(this._preTextures[0]);
             this._preGirlHeight = preGirl.height;
             preGirl.texture = null;
             preGirl.removeSelf();
-            // preGirl.destroy();
             const dieGirl = new Laya.Sprite();
             dieGirl.autoSize = true;
             dieGirl.loadImage(this._dieGrayTextures[0]);
             this._dieGirlHeight = dieGirl.height;
             dieGirl.texture = null;
             dieGirl.removeSelf();
-            // dieGirl.destroy();
             this.loadImages(this._preTextures);
             this.interval = 160;
             this.pivot(0, this._preGirlHeight);
@@ -583,7 +578,6 @@
         onUpdate () {
             // console.log(GLOBAL.CONF.MODE === GLOBAL.MODES.PLAYING, GLOBAL.CONF.GIRL_STAT);
             if (GLOBAL.CONF.MODE === GLOBAL.MODES.PLAYING && GLOBAL.CONF.GIRL_STAT === 3) {
-               /// console.log(Date.now() - this._timer, 100000 / (6 * this.interval));
                 if (Date.now() - this._timer >= 100000 / (6 * this.interval)) {
                     this.event('run');
                     this.loadImages(this._runTextures);
@@ -1227,6 +1221,7 @@
             this.removeChildren();
             this._enemyCache = []; // 渲染的障碍物
             this._prizeCache = []; // 渲染的奖品箱
+            console.log(this._enemyCache, 'this._enemyCache');
             // 初始化障碍
             const randomItem = this.randomEnemyItem();
             const enemy = new EnemyBox(randomItem);
@@ -2106,6 +2101,7 @@
         }
         onReady (event) {
             // event.data.originalEvent.preventDefault();
+            console.log(GLOBAL.CONF.PREVENT, 'GLOBAL.CONF.PREVENT');
             if (!GLOBAL.CONF.PREVENT) {
                 if (GLOBAL.DATA.STATUS !== 1) {
                     if (GLOBAL.DATA.IS_LOGIN) {
@@ -2120,6 +2116,7 @@
                         
                         const startLayer = new MainLayer(this._choosen);
                         startLayer.on('transitionend', this, () => {
+                            console.log('transitionend');
                             startLayer.startRunAction();
                         });
                         Laya.stage.addChild(startLayer);
@@ -2128,6 +2125,7 @@
                         this.removeSelf();
                         // this.destroy();
                         GLOBAL.CONF.MODE = GLOBAL.MODES.PRE;
+                        console.log(GLOBAL.CONF.MODE, 'GLOBAL.CONF.MODE');
                     } else {
                         window.kfcMario && window.kfcMario.goToLogin && window.kfcMario.goToLogin();
                     }
@@ -2649,8 +2647,8 @@
             const dustHeight = new Laya.Sprite();
             dustHeight.loadImage('other/dust_0.png');
             this._dust.pivot(dustHeight.width, dustHeight.height);
+            dustHeight.texture = null;
             dustHeight.removeSelf();
-            // dustHeight.destroy();
             this._dust.pos(120, GLOBAL.CONF.GROUND_POS_Y);
             this._dust.play();
             this._dust.visible = false;
@@ -2686,7 +2684,6 @@
             this._dieAnime.pivot(0, girlHeight.height);
             girlHeight.texture = null;
             girlHeight.removeSelf();
-            // girlHeight.destroy();
             if (who === 'girl22') {
                 this._dieAnime.pos(32, GLOBAL.CONF.GROUND_POS_Y + 1);
             } else {
@@ -2776,6 +2773,11 @@
                 GLOBAL.CONF.MODE = GLOBAL.MODES.MENU;
                 // this.removeChildren();
                 this.removeSelf();
+                this._crash.removeSelf();
+                this._ticker.clearAll(this);
+                this._ticker.clearAll(this._crash);
+                this._ticker.clearAll(this._girl);
+                this._ticker.clearAll(this._background);
                 // this.destroy(true);
                 const menuLayer$1 = new menuLayer();
                 // @ts-ignore
@@ -2794,6 +2796,7 @@
             };
             window.kfcMario.gameOver = info => {
                 this.gamePause();
+                console.log('come here1');
                 GLOBAL.CONF.MODE = GLOBAL.MODES.GAME_OVER;
                 this._gameoverDialog.show(info);
             };
@@ -2815,6 +2818,7 @@
             GLOBAL.CONF.MILEAGE = 0;
             this._girl.changeJumpDuration();
             this._crash.init();
+            console.log(this._crash._enemyCache, 'enemy');
             this._header.reset();
             this._statusBar.reset();
             this._girl.readyStart();
@@ -2835,6 +2839,7 @@
             btnJump.on(Laya.Event.CLICK, this, (event) => {
                 // event.data.originalEvent.preventDefault();
                 // @ts-ignore
+                console.log('btn-click', GLOBAL.CONF.MODE, GLOBAL.MODES.PLAYING);
                 if (!btnJump._clicked) {
                     // @ts-ignore
                     btnJump._clicked = true;
@@ -2899,10 +2904,12 @@
         }
         // OVERWRITE
         onUpdate () {
+            console.log(this._crash._enemyCache, 'enemyCache');
             if (GLOBAL.CONF.MODE === GLOBAL.MODES.PLAYING) {
                 const speed = GLOBAL.CONF.SPEED;
                 const enemyCache = this._crash._enemyCache;
                 const prizeCache = this._crash._prizeCache;
+                console.log(this._crash._enemyCache, 'enemyCache');
                 enemyCache.forEach(enemy => {
                     const enemyPos = enemy.x;
                     const enemyWidth = enemy.width;
@@ -2918,6 +2925,7 @@
                         enemy.x = enemyPos - speed;
                     }
                     if (!enemy.destroyed && GLOBAL.CONF.GIRL_STAT !== -1 && this.collide(this._girl, enemy)) {
+                        console.log('come here2');
                         GLOBAL.CONF.MODE = GLOBAL.MODES.GAME_OVER;
                         this._girl.beInjured();
                         this._crash.stopAnime();

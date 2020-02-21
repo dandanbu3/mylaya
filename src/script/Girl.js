@@ -20,38 +20,33 @@ class Girl extends Laya.Animation {
         runrun.autoSize = true;
         runrun.loadImage(this._runTextures[0]);
         this._girlHeight = runrun.height;
-        // window.runrun = runrun;
-        // runrun.removeSelf();
         runrun.texture = null;
-        // runrun.destroy(false);
+        runrun.removeSelf();
         const jumpGirl = new Laya.Sprite();
         jumpGirl.autoSize = true;
         jumpGirl.loadImage(this._jumpTextures[0]);
         this._jumpGirlHeight = jumpGirl.height;
         jumpGirl.removeSelf(false);
         jumpGirl.texture = null;
-        // jumpGirl.destroy();
+        jumpGirl.removeSelf();
         const fallGirl = new Laya.Sprite();
         fallGirl.autoSize = true;
         fallGirl.loadImage(this._fallTextures[0]);
         this._fallGirlHeight = fallGirl.height;
         fallGirl.texture = null;
         fallGirl.removeSelf();
-        // fallGirl.destroy();
         const preGirl = new Laya.Sprite();
         preGirl.autoSize = true;
         preGirl.loadImage(this._preTextures[0]);
         this._preGirlHeight = preGirl.height;
         preGirl.texture = null;
         preGirl.removeSelf();
-        // preGirl.destroy();
         const dieGirl = new Laya.Sprite();
         dieGirl.autoSize = true;
         dieGirl.loadImage(this._dieGrayTextures[0]);
         this._dieGirlHeight = dieGirl.height;
         dieGirl.texture = null;
         dieGirl.removeSelf();
-        // dieGirl.destroy();
         this.loadImages(this._preTextures);
         this.interval = 160;
         this.pivot(0, this._preGirlHeight);
@@ -221,7 +216,6 @@ class Girl extends Laya.Animation {
     onUpdate () {
         // console.log(GLOBAL.CONF.MODE === GLOBAL.MODES.PLAYING, GLOBAL.CONF.GIRL_STAT);
         if (GLOBAL.CONF.MODE === GLOBAL.MODES.PLAYING && GLOBAL.CONF.GIRL_STAT === 3) {
-           /// console.log(Date.now() - this._timer, 100000 / (6 * this.interval));
             if (Date.now() - this._timer >= 100000 / (6 * this.interval)) {
                 this.event('run');
                 this.loadImages(this._runTextures);

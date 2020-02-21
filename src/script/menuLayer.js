@@ -233,6 +233,7 @@ export default class menuLayer extends Laya.Scene {
     }
     onReady (event) {
         // event.data.originalEvent.preventDefault();
+        console.log(GLOBAL.CONF.PREVENT, 'GLOBAL.CONF.PREVENT');
         if (!GLOBAL.CONF.PREVENT) {
             if (GLOBAL.DATA.STATUS !== 1) {
                 if (GLOBAL.DATA.IS_LOGIN) {
@@ -247,6 +248,7 @@ export default class menuLayer extends Laya.Scene {
                     
                     const startLayer = new MainLayer(this._choosen);
                     startLayer.on('transitionend', this, () => {
+                        console.log('transitionend');
                         startLayer.startRunAction();
                     });
                     Laya.stage.addChild(startLayer);
@@ -255,6 +257,7 @@ export default class menuLayer extends Laya.Scene {
                     this.removeSelf();
                     // this.destroy();
                     GLOBAL.CONF.MODE = GLOBAL.MODES.PRE;
+                    console.log(GLOBAL.CONF.MODE, 'GLOBAL.CONF.MODE');
                 } else {
                     window.kfcMario && window.kfcMario.goToLogin && window.kfcMario.goToLogin();
                 }
