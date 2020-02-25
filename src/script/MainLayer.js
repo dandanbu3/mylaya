@@ -333,7 +333,6 @@ class MainLayer extends Laya.Scene {
             const speed = GLOBAL.CONF.SPEED;
             const enemyCache = this._crash._enemyCache;
             const prizeCache = this._crash._prizeCache;
-            console.log(this._crash._enemyCache, 'enemyCache');
             enemyCache.forEach(enemy => {
                 const enemyPos = enemy.x;
                 const enemyWidth = enemy.width;

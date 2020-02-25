@@ -73,7 +73,7 @@ class Girl extends Laya.Animation {
                 GLOBAL.CONF.GIRL_STAT = 2;
                 this.createFallAction();
             }));
-        this._jumpAction.pause();
+        // this._jumpAction.pause();
     }
     createFallAction() {
         console.log('createFallAction');
@@ -108,13 +108,13 @@ class Girl extends Laya.Animation {
         // this._dieBlink.play();
         this._dieMoveStart = Laya.Tween.to(
             this,
-            {x: 46, y: GLOBAL.CONF.GROUND_POS_Y - 30}, 
+            {x: 46, y: GLOBAL.CONF.GROUND_POS_Y - 30},
             150,
             null,
             Laya.Handler.create(this, () => {
                 this._dieMoveEnd.resume();
             }));
-        this._dieMoveStart.pause();
+        // this._dieMoveStart.pause();
         this._dieMoveEnd = Laya.Tween.to(
             this,
             {x: 36, y: GLOBAL.CONF.GROUND_POS_Y}, 
@@ -158,7 +158,7 @@ class Girl extends Laya.Animation {
             this.pivot(0, this._jumpGirlHeight)
             // this._jumpAction.restart();
             this.createJumpAction();
-            this._jumpAction.resume();
+            // this._jumpAction.resume();
         }
     }
     beInjured () {
@@ -173,7 +173,7 @@ class Girl extends Laya.Animation {
         // this.runAction(Tiny.Repeat(3, this._dieBlink));
         this.createDieAction();
         this._dieBlink.play(3);
-        this._dieMoveStart.resume();
+        // this._dieMoveStart.resume();
     }
     freeze () {
         // this.removeActionsTrace();

@@ -435,7 +435,7 @@
                     GLOBAL.CONF.GIRL_STAT = 2;
                     this.createFallAction();
                 }));
-            this._jumpAction.pause();
+            // this._jumpAction.pause();
         }
         createFallAction() {
             console.log('createFallAction');
@@ -520,7 +520,7 @@
                 this.pivot(0, this._jumpGirlHeight);
                 // this._jumpAction.restart();
                 this.createJumpAction();
-                this._jumpAction.resume();
+                // this._jumpAction.resume();
             }
         }
         beInjured () {
@@ -1221,7 +1221,6 @@
             this.removeChildren();
             this._enemyCache = []; // 渲染的障碍物
             this._prizeCache = []; // 渲染的奖品箱
-            console.log(this._enemyCache, 'this._enemyCache');
             // 初始化障碍
             const randomItem = this.randomEnemyItem();
             const enemy = new EnemyBox(randomItem);
@@ -1946,9 +1945,9 @@
             anime22.interval = 200;
             this._radio22 = new GrilRadio(anime22, true);
             this._radio22.pos(240, 736);
-            this._radio22.mouseEnabled = true;
-            this._radio22.on(Laya.Event.CLICK, this, (event) => {
-                // event.data.originalEvent.preventDefault();
+            // this._radio22.mouseEnabled = true;
+            this._radio22.on(Laya.Event.CLICK, this, () => {
+                console.log('click22');
                 if (!GLOBAL.CONF.PREVENT) {
                     this._choosen = 'girl22';
                     this._radio33.click(false);
@@ -1962,9 +1961,9 @@
             anime33.interval = 200;
             this._radio33 = new GrilRadio(anime33, false);
             this._radio33.pos(507, 736);
-            this._radio33.mouseEnabled = true;
-            this._radio33.on(Laya.Event.CLICK, this, (event) => {
-                // event.data.originalEvent.preventDefault();
+            // this._radio33.mouseEnabled = true;
+            this._radio33.on(Laya.Event.CLICK, this, () => {
+                console.log('click33');
                 if (!GLOBAL.CONF.PREVENT) {
                     this._choosen = 'girl33';
                     this._radio22.click(false);
@@ -2154,7 +2153,7 @@
             this.addChild(this._frontSprite);
             this._iconSprite = new Laya.Sprite();
             this._iconSprite.loadImage(this._selectedIcon);
-            this._iconSprite.zOrder = 10;
+            this._iconSprite.zOrder = 1;
             if (!this._checked) {
                 this._iconSprite.visible = false;
             } else {
@@ -2904,12 +2903,10 @@
         }
         // OVERWRITE
         onUpdate () {
-            console.log(this._crash._enemyCache, 'enemyCache');
             if (GLOBAL.CONF.MODE === GLOBAL.MODES.PLAYING) {
                 const speed = GLOBAL.CONF.SPEED;
                 const enemyCache = this._crash._enemyCache;
                 const prizeCache = this._crash._prizeCache;
-                console.log(this._crash._enemyCache, 'enemyCache');
                 enemyCache.forEach(enemy => {
                     const enemyPos = enemy.x;
                     const enemyWidth = enemy.width;

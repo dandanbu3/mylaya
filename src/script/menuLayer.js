@@ -78,9 +78,9 @@ export default class menuLayer extends Laya.Scene {
         anime22.interval = 200;
         this._radio22 = new GrilRadio(anime22, true);
         this._radio22.pos(240, 736);
-        this._radio22.mouseEnabled = true;
-        this._radio22.on(Laya.Event.CLICK, this, (event) => {
-            // event.data.originalEvent.preventDefault();
+        // this._radio22.mouseEnabled = true;
+        this._radio22.on(Laya.Event.CLICK, this, () => {
+            console.log('click22');
             if (!GLOBAL.CONF.PREVENT) {
                 this._choosen = 'girl22';
                 this._radio33.click(false);
@@ -94,9 +94,9 @@ export default class menuLayer extends Laya.Scene {
         anime33.interval = 200;
         this._radio33 = new GrilRadio(anime33, false);
         this._radio33.pos(507, 736);
-        this._radio33.mouseEnabled = true;
-        this._radio33.on(Laya.Event.CLICK, this, (event) => {
-            // event.data.originalEvent.preventDefault();
+        // this._radio33.mouseEnabled = true;
+        this._radio33.on(Laya.Event.CLICK, this, () => {
+            console.log('click33');
             if (!GLOBAL.CONF.PREVENT) {
                 this._choosen = 'girl33';
                 this._radio22.click(false);
@@ -286,7 +286,7 @@ class GrilRadio extends Laya.Sprite {
         this.addChild(this._frontSprite);
         this._iconSprite = new Laya.Sprite();
         this._iconSprite.loadImage(this._selectedIcon);
-        this._iconSprite.zOrder = 10;
+        this._iconSprite.zOrder = 1;
         if (!this._checked) {
             this._iconSprite.visible = false;
         } else {
