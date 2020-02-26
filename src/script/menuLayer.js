@@ -77,6 +77,7 @@ export default class menuLayer extends Laya.Scene {
         anime22.pos(-87, -70);
         anime22.interval = 200;
         this._radio22 = new GrilRadio(anime22, true);
+        // this._radio22.pivot(this._radio22.width / 2, this._radio22.height / 2);
         this._radio22.pos(240, 736);
         // this._radio22.mouseEnabled = true;
         this._radio22.on(Laya.Event.CLICK, this, () => {
@@ -93,6 +94,7 @@ export default class menuLayer extends Laya.Scene {
         anime33.pos(-67, -70);
         anime33.interval = 200;
         this._radio33 = new GrilRadio(anime33, false);
+        // this._radio33.pivot(this._radio33.width / 2, this._radio33.height / 2);
         this._radio33.pos(507, 736);
         // this._radio33.mouseEnabled = true;
         this._radio33.on(Laya.Event.CLICK, this, () => {
@@ -279,10 +281,12 @@ class GrilRadio extends Laya.Sprite {
         this._bgSprite = new Laya.Sprite();
         this._bgSprite.loadImage(this._checked ? this._selectedBg : this._selectBg);
         this._bgSprite.pos(-79, -82);
+        this._bgSprite.mouseEnabled = true;
         this.addChild(this._bgSprite);
         this._frontSprite = new Laya.Sprite();
         this._frontSprite.loadImage(this._checked ? this._selectedFront : this._selectFront);
         this._frontSprite.pos(-93, -96);
+        this._frontSprite.mouseEnabled = true;
         this.addChild(this._frontSprite);
         this._iconSprite = new Laya.Sprite();
         this._iconSprite.loadImage(this._selectedIcon);
@@ -296,6 +300,7 @@ class GrilRadio extends Laya.Sprite {
         this.addChild(this._iconSprite);
         if (animateSprite) {
             animateSprite.play();
+            animateSprite.mouseEnabled = true;
             this.addChild(animateSprite);
         }
     }

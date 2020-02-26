@@ -470,13 +470,13 @@
             // this._dieBlink.play();
             this._dieMoveStart = Laya.Tween.to(
                 this,
-                {x: 46, y: GLOBAL.CONF.GROUND_POS_Y - 30}, 
+                {x: 46, y: GLOBAL.CONF.GROUND_POS_Y - 30},
                 150,
                 null,
                 Laya.Handler.create(this, () => {
                     this._dieMoveEnd.resume();
                 }));
-            this._dieMoveStart.pause();
+            // this._dieMoveStart.pause();
             this._dieMoveEnd = Laya.Tween.to(
                 this,
                 {x: 36, y: GLOBAL.CONF.GROUND_POS_Y}, 
@@ -535,7 +535,7 @@
             // this.runAction(Tiny.Repeat(3, this._dieBlink));
             this.createDieAction();
             this._dieBlink.play(3);
-            this._dieMoveStart.resume();
+            // this._dieMoveStart.resume();
         }
         freeze () {
             // this.removeActionsTrace();
@@ -1944,6 +1944,7 @@
             anime22.pos(-87, -70);
             anime22.interval = 200;
             this._radio22 = new GrilRadio(anime22, true);
+            // this._radio22.pivot(this._radio22.width / 2, this._radio22.height / 2);
             this._radio22.pos(240, 736);
             // this._radio22.mouseEnabled = true;
             this._radio22.on(Laya.Event.CLICK, this, () => {
@@ -1960,6 +1961,7 @@
             anime33.pos(-67, -70);
             anime33.interval = 200;
             this._radio33 = new GrilRadio(anime33, false);
+            // this._radio33.pivot(this._radio33.width / 2, this._radio33.height / 2);
             this._radio33.pos(507, 736);
             // this._radio33.mouseEnabled = true;
             this._radio33.on(Laya.Event.CLICK, this, () => {
@@ -2146,10 +2148,12 @@
             this._bgSprite = new Laya.Sprite();
             this._bgSprite.loadImage(this._checked ? this._selectedBg : this._selectBg);
             this._bgSprite.pos(-79, -82);
+            this._bgSprite.mouseEnabled = true;
             this.addChild(this._bgSprite);
             this._frontSprite = new Laya.Sprite();
             this._frontSprite.loadImage(this._checked ? this._selectedFront : this._selectFront);
             this._frontSprite.pos(-93, -96);
+            this._frontSprite.mouseEnabled = true;
             this.addChild(this._frontSprite);
             this._iconSprite = new Laya.Sprite();
             this._iconSprite.loadImage(this._selectedIcon);
@@ -2163,6 +2167,7 @@
             this.addChild(this._iconSprite);
             if (animateSprite) {
                 animateSprite.play();
+                animateSprite.mouseEnabled = true;
                 this.addChild(animateSprite);
             }
         }
