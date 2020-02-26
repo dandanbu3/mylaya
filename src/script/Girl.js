@@ -5,7 +5,6 @@ class Girl extends Laya.Animation {
     constructor (who) {
         super();
         this.autoSize = true;
-        console.log(who, 'who');
         const preRun = [`${who}/run_0.png`];
         this.loadImages(preRun);
         this._preTextures = this.createTextures(who, 'pre', 0, 2);
@@ -182,7 +181,6 @@ class Girl extends Laya.Animation {
     }
     resume () {
         this.play();
-        console.log(GLOBAL.CONF.GIRL_STAT, 'GLOBAL.CONF.GIRL_STAT');
         if (GLOBAL.CONF.GIRL_STAT === 2) {
             const currentDis = GLOBAL.CONF.GROUND_POS_Y - this.y;
             const speed = this._jumpSpeed * currentDis / this._jumpHeight;
