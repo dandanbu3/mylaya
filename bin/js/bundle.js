@@ -367,7 +367,6 @@
         constructor (who) {
             super();
             this.autoSize = true;
-            console.log(who, 'who');
             const preRun = [`${who}/run_0.png`];
             this.loadImages(preRun);
             this._preTextures = this.createTextures(who, 'pre', 0, 2);
@@ -377,6 +376,11 @@
             this._dieTextures = [`${who}/die.png`];
             this._dieGrayTextures = [`${who}/die_gray.png`];
 
+            Laya.Animation.createFrames(this._preTextures, 'pre');
+            Laya.Animation.createFrames(this._runTextures, 'run');
+            Laya.Animation.createFrames(this._jumpTextures, 'jump');
+            Laya.Animation.createFrames(this._fallTextures, 'fall');
+            Laya.Animation.createFrames(this._dieGrayTextures, 'gray');
             // 计算动画高度
             var runrun = new Laya.Sprite();
             runrun.autoSize = true;
@@ -409,7 +413,8 @@
             this._dieGirlHeight = dieGirl.height;
             dieGirl.texture = null;
             dieGirl.removeSelf();
-            this.loadImages(this._preTextures);
+            // this.loadImages(this._preTextures, 'pre');
+            this.play(0, true, 'pre');
             this.interval = 160;
             this.pivot(0, this._preGirlHeight);
             this.pos(56, GLOBAL.CONF.GROUND_POS_Y);
@@ -447,7 +452,8 @@
                 Laya.Handler.create(this, () => {
                     this._timer = Date.now();
                     GLOBAL.CONF.GIRL_STAT = 3;
-                    this.loadImages(this._fallTextures);
+                    // this.loadImages(this._fallTextures, 'fall');
+                    this.play(0, true, 'fall');
                     this.pivot(0, this._fallGirlHeight);
                     console.log('createFallActionend');
                 }));
@@ -463,7 +469,8 @@
             this._dieBlink.addLabel('hide').to(this, {visible: false}, 50)
                 .addLabel('show').to(this, {visible: true}, 50);
             this._dieBlink.on(Laya.Event.COMPLETE, this, () => {
-                this.loadImages(this._dieGrayTextures);
+                // this.loadImages(this._dieGrayTextures);
+                this.play(0, true, 'gray');
                 this.pivot(0, this._dieGirlHeight);
                 this.event('die');
             });
@@ -499,13 +506,15 @@
             this.event('notRun');
             this.pos(56, GLOBAL.CONF.GROUND_POS_Y);
             GLOBAL.CONF.GIRL_STAT = -1;
-            this.loadImages(this._preTextures);
+            // this.loadImages(this._preTextures);
+            this.play(0, true, 'pre');
             this.pivot(0, this._preGirlHeight);
             this.interval = 160;
         }
         startRun () {
             GLOBAL.CONF.GIRL_STAT = 0;
-            this.loadImages(this._runTextures);
+            // this.loadImages(this._runTextures, 'run');
+            this.play(0, true, 'run');
             this.pivot(0, this._girlHeight);
             this.interval = 160;
             this.event('run');
@@ -516,7 +525,8 @@
                 GLOBAL.CONF.GIRL_STAT = 1;
                 this.event('notRun');
                 Sound.playJump();
-                this.loadImages(this._jumpTextures);
+                // this.loadImages(this._jumpTextures, 'jump');
+                this.play(0, true, 'jump');
                 this.pivot(0, this._jumpGirlHeight);
                 // this._jumpAction.restart();
                 this.createJumpAction();
@@ -544,7 +554,6 @@
         }
         resume () {
             this.play();
-            console.log(GLOBAL.CONF.GIRL_STAT, 'GLOBAL.CONF.GIRL_STAT');
             if (GLOBAL.CONF.GIRL_STAT === 2) {
                 const currentDis = GLOBAL.CONF.GROUND_POS_Y - this.y;
                 const speed = this._jumpSpeed * currentDis / this._jumpHeight;
@@ -556,7 +565,8 @@
                     Laya.Handler.create(this, () => {
                         this._timer = Date.now();
                         GLOBAL.CONF.GIRL_STAT = 3;
-                        this.loadImages(this._fallTextures);
+                        // this.loadImages(this._fallTextures);
+                        this.play(0, true, 'fall');
                         this.pivot(0, this._fallGirlHeight);
                     }));
                 // this.runAction(moveAction);
@@ -580,7 +590,8 @@
             if (GLOBAL.CONF.MODE === GLOBAL.MODES.PLAYING && GLOBAL.CONF.GIRL_STAT === 3) {
                 if (Date.now() - this._timer >= 100000 / (6 * this.interval)) {
                     this.event('run');
-                    this.loadImages(this._runTextures);
+                    // this.loadImages(this._runTextures, 'run');
+                    this.play(0, true, 'run');
                     this.pivot(0, this._girlHeight);
                     GLOBAL.CONF.GIRL_STAT = 0;
                 }
