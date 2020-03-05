@@ -3,7 +3,7 @@ const ENEMY_CONF = {
         items: [{
             name: 'box',
             frames: 4,
-            speed: 0.1,
+            interval: 160,
             points: [{
                 x: 16, y: 8
             }, {
@@ -14,7 +14,7 @@ const ENEMY_CONF = {
         }, {
             name: 'cat',
             frames: 8,
-            speed: 0.1,
+            interval: 160,
             points: [{
                 x: 2, y: 16
             }, {
@@ -25,7 +25,7 @@ const ENEMY_CONF = {
         }, {
             name: 'cone',
             frames: 4,
-            speed: 0.1,
+            interval: 160,
             points: [{
                 x: 0, y: 73
             }, {
@@ -36,7 +36,7 @@ const ENEMY_CONF = {
         }, {
             name: 'tc',
             frames: 4,
-            speed: 0.1,
+            interval: 160,
             points: [{
                 x: 8, y: 22
             }, {
@@ -50,7 +50,7 @@ const ENEMY_CONF = {
         items: [{
             name: 'fish',
             frames: 6,
-            speed: 0.2,
+            interval: 80,
             points: [{
                 x: 0, y: 24
             }, {
@@ -61,7 +61,7 @@ const ENEMY_CONF = {
         }, {
             name: 'vortex',
             frames: 4,
-            speed: 0.2,
+            interval: 80,
             points: [{
                 x: 0, y: 20
             }, {
@@ -75,7 +75,7 @@ const ENEMY_CONF = {
         items: [{
             name: 'eat_flower',
             frames: 3,
-            speed: 0.1,
+            interval: 160,
             points: [{
                 x: 0, y: 28
             }, {
@@ -86,7 +86,7 @@ const ENEMY_CONF = {
         }, {
             name: 'flower',
             frames: 3,
-            speed: 0.1,
+            interval: 160,
             points: [{
                 x: 0, y: 58
             }, {
@@ -99,7 +99,7 @@ const ENEMY_CONF = {
         }, {
             name: 'fire',
             frames: 3,
-            speed: 0.2,
+            interval: 80,
             points: [{
                 x: 0, y: 72
             }, {
@@ -110,7 +110,7 @@ const ENEMY_CONF = {
         }, {
             name: 'ghost',
             frames: 3,
-            speed: 0.1,
+            interval: 160,
             points: [{
                 x: 0, y: 46
             }, {

@@ -67,9 +67,9 @@ class EnemyBox extends Laya.Animation {
             textures.push(`barrier/${item.name}_${i}.png`);
         }
         this.loadImages(textures);
-        this.on(Laya.Event.COMPLETE, this, () => {
-            console.log(this.getGraphicBounds(), 'box');
-        });
+        // this.on(Laya.Event.COMPLETE, this, () => {
+        //     console.log(this.getGraphicBounds(), 'box');
+        // });
         const barrier = new Laya.Sprite();
         barrier.autoSize = true;
         barrier.loadImage(textures[0]);
